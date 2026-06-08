@@ -1,0 +1,12 @@
+---
+description: Shared Agent Hub rules
+alwaysApply: true
+---
+
+Follow @AGENTS.md, @README.md, and @agents/cursor.md.
+
+When a task mentions a skill, read the matching @skills/<skill-slug>/SKILL.md.
+
+For AgentOS, Agent infra, AI research, Product UI/features/architecture, audio-visual sync, interactive game-film, Agent Team, or IT Agent Team tasks, read @skills/agent-team-router/SKILL.md.
+
+When organizing project content, rules, Skills, reports, or cleanup/deletion decisions, read @skills/project-content-curation/SKILL.md first.

@@ -1,0 +1,6 @@
+---
+description: Trigger paper-record skill when user says paper record
+alwaysApply: true
+---
+
+When the user message contains **paper record** (case-insensitive), read and follow `@skills/paper-record/SKILL.md` in the same turn: synthesize the full conversation into a pyramid-structured thinking research report, save under `reports/` using semantic `关于<领域>-<topic>.md` naming, update `reports/index.md`, and reply with the file path.

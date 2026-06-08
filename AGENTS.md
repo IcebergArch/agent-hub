@@ -1,0 +1,173 @@
+# Shared Agent Instructions
+
+这个仓库是 Codex、Cursor 共用的 Agent 工作资产中心。无论当前使用 Codex 还是 Cursor，都优先遵守这里的通用规则，再读取对应工具适配文件。
+
+## Minimal Structure
+
+- `agents/`：Codex、Cursor 等工具适配入口。
+- `skills/`：可复用技能，推荐格式为 `skills/<skill-slug>/SKILL.md`。
+- `reports/`：长期保留的输出，先按个人与公司隔离。个人单独与 Agent 探讨、设计或研究写入 `reports/personal/agent/<kind>/YYYY-MM-DD-关于<领域>-<topic>.md`；个人项目写入 `reports/personal/projects/<project-slug>/<kind>/YYYY-MM-DD-关于<领域>-<topic>.md`；公司项目写入 `reports/company/projects/<project-slug>/<kind>/YYYY-MM-DD-关于<领域>-<topic>.md`。日期、类型、项目、来源、版式等元信息写入正文顶部。
+
+当前长期维护范围只包括 Codex 和 Cursor；不为 OpenCode 维护配置、入口或兼容文档，除非用户未来明确要求恢复。
+
+除非用户明确要求，不新增 `knowledge/`、`templates/`、`attachments/`、`archive/` 等目录。
+
+## Loading Order
+
+1. 读取本文件。
+2. 读取 `README.md`，将其作为持续成长的长期协作上下文；不要要求用户每次手动附带该文件。
+3. 按当前工具读取一个适配文件：
+   - Codex: `agents/codex.md`
+   - Cursor: `agents/cursor.md`
+4. 如果任务触发某个技能，读取 `skills/<skill-slug>/SKILL.md`。
+5. 如果任务属于某个项目，按归属优先查看 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/` 下已有沉淀；如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
+6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team` 时，读取 `skills/agent-team-router/SKILL.md`，先按路由机制选择角色，再进行分析或执行。
+7. 当用户要求整理项目内容、规则、Skills、报告或删除内容时，读取 `skills/project-content-curation/SKILL.md`，先完成内容分类，再执行迁移、保留或删除。
+8. 当用户说 `rule update`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
+9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
+
+## Living Context Maintenance
+
+- `README.md` 是长期协作上下文入口，用于沉淀用户稳定的工作方向、产品域、协作偏好和会影响后续判断的背景。
+- 当用户表达新的长期方向、稳定产品边界、持续偏好或跨任务复用背景时，应更新 `README.md`，让它随协作自然成长。
+- 不把一次性任务细节、临时过程记录、未验证猜测、密钥、账号、私密凭据或业务敏感明细写入 `README.md`。
+- 如果信息更像可执行规则，写入 `AGENTS.md`、`agents/<tool>.md` 或 `skills/<skill-slug>/SKILL.md`；如果信息更像长期报告，写入 `reports/`。
+
+## Naming
+
+- 目录名使用小写短横线或稳定项目 slug，例如 `project-slug`、`tool-suite`。
+- 新报告文件使用语义标题命名：`YYYY-MM-DD-关于<领域>-<topic>.md`，例如 `2026-06-04-关于AgentOS-longToolRuntimeScheduling.md`、`2026-06-04-关于AI发展-codingLanguageFuture.md`；文件名必须放日期前缀，不放 kind。存量报告在整理时也应同步迁移到该命名，避免同一目录混用日期前缀和语义命名两套规则。
+- 技能目录使用 `<skill-slug>/SKILL.md`，脚本或参考资料只放在该技能目录内部。
+
+## User Collaboration Style
+
+- 用户给出明确路径、仓库或模块范围时，将其视为硬边界；动手前先核对精确路径，尤其要区分相近目录名、单复数目录名和不同 workspace。
+- 用户说“OK”、“do it”、“没问题”或类似确认时，默认进入执行模式；除非存在高风险歧义，不停留在方案描述。
+- 用户要求“只涉及”某个仓库、模块或目录时，最终必须检查变更清单，确认无关位置没有被修改；如因验证需要触及边界外内容，只读不写并在回复中说明。
+- 用户明确限定信息来源时，将其视为硬边界；例如要求“联网”“不要参考本地”时，本地文件只能用于读取仓库规则或定位问题，不能作为事实来源或论证依据，最终回复应说明实际采用的来源范围。
+- 用户偏好中文协作语境时，方案、总结和长期文档默认使用中文；保留代码标识、命令、路径和接口名的原文。
+- 用户要求本地调试时，优先提供可直接运行的 Markdown shell block，写明 `cd` 路径、必要环境变量、窄范围测试和全量验证命令。
+
+## Paper Record
+
+- 当用户消息包含 **paper record**（大小写不敏感）时，将其视为**当前聊天归档的收尾动作**：读取 `skills/paper-record/SKILL.md` 并在当轮执行，将**当前对话完整脉络**整合为思考研究报告（非过程日志）。个人单独与 Agent 探讨、设计或研究写入 `reports/personal/agent/<kind>/`；个人项目写入 `reports/personal/projects/<project-slug>/<kind>/`；公司项目写入 `reports/company/projects/<project-slug>/<kind>/`。
+- 触发 `paper record` 后，默认停止继续扩展新论证或新实现；只做归档、索引更新和简短确认，除非用户在同条消息中明确要求继续处理其他事项。
+- 默认 `kind` 为 **chat**；文件名使用 `YYYY-MM-DD-关于<领域>-<topic>.md`；日期、类型、项目、来源、版式写入正文顶部；更新 `reports/index.md`。
+- 用户可在同条消息附 `project:`、`kind:`、`topic:` 提示；未给出时从对话主题推断。
+
+## Report Front Matter
+
+- 新归档报告顶部必须写明元信息，至少包含：`日期`、`类型`、`项目`、`来源`；讨论型文档还应写 `版式`。
+- 推荐格式：
+
+```text
+日期：2026-06-04
+类型：analysis
+项目：maxwell-ai
+来源：7 角色 10 轮架构讨论整理
+版式：金字塔结构，结论先行，图文并存
+```
+
+- 日期必须放入新文件名，格式为 YYYY-MM-DD；索引展示日期时与文件名前缀、文档元信息保持一致。
+
+## Plan Archiving
+
+- 当用户明确要求保存方案、复盘、diff 报告或长期沉淀时，个人单独与 Agent 探讨、设计或研究默认归档到 `reports/personal/agent/<kind>/`；个人项目默认归档到 `reports/personal/projects/<project-slug>/<kind>/`；公司项目默认归档到 `reports/company/projects/<project-slug>/<kind>/`；只在用户只是即时讨论且未要求保留时跳过归档。
+- 当用户说明某类设计“后续都需要落分析文档”时，将其视为长期偏好；后续同类设计按归属默认沉淀到 `reports/personal/agent/analysis/`、`reports/personal/projects/<project-slug>/analysis/` 或 `reports/company/projects/<project-slug>/analysis/`。
+- 当用户要求后续无需再次提醒生成报告时，将其视为长期归档偏好；后续架构、体系、技术取舍类讨论只要形成稳定结论，默认归档到 `reports/personal/agent/analysis/`、`reports/personal/projects/<project-slug>/analysis/` 或 `reports/company/projects/<project-slug>/analysis/`。
+- 方案类沉淀按主意图分类：新增能力用 `feature`，缺陷修复用 `fix`，结构调整且不改变行为用 `refactor`；混合场景选择最主要的对外意图，并在正文说明次要类型。
+- 非落地方案按用途分类：事实调研用 `analysis`，代码审查用 `review`，操作手册用 `runbooks`，对话整理用 `chat`。
+- 新报告文件名使用语义标题：`YYYY-MM-DD-关于<领域>-<topic>.md`；`topic` 用简洁英文或 camelCase/短横线短语，避免本地路径、用户信息、临时编号或含糊词。
+- 设计类归档正文至少包含 Summary、Decision、Scope、Architecture、Checklist、Flow、Validation、Follow-ups；需要表达链路时优先使用 Mermaid。讨论型文档默认采用金字塔结构：结论先行 -> 关键判断/决策 -> 证据与约束 -> 架构或流程图 -> 分场景展开 -> 路线图/后续。文字大于图，图只用于降低理解成本。
+- 报告结构、图表、Mermaid、表格、清单和固定章节名只是表达手段，不是生成目标；不要为了让报告里出现某个元素而硬塞内容。选择最适合信息本身的表达方式，核心文档指标是面向人的可读性、清晰度、判断效率和可复用性。
+- 归档正文保留可复用信息；删除过程日志、一次性命令输出和未采纳草稿，避免长期目录变成临时缓存。
+
+## Interface Contract Hygiene
+
+- 当新增、删除、改名或暴露 API/Gateway/surface operation 时，必须先盘点完整接口面，而不是只处理用户点名的单个 operation：列出当前全部 operation/route/method、真实消费者、真实后端能力、生命周期 owner 和目标状态（supported / unsupported / deprecated / internal）。
+- 这类任务必须触发 `skills/interface-contract-audit/SKILL.md`；全局规则只保留硬约束，具体盘点步骤、测试要求和输出格式按 skill 执行。
+- 对接前后端、跨仓库或多 agent 模块时，必须核对真实消费者代码、测试和文档；如果消费者由另一个 agent/thread 维护，应读取或询问该线程，再收敛契约。旧 scenario、隐藏管理页、fixture 或历史兼容入口不能自动升级为 clean API 合约。
+- 没有真实能力或当前目标不需要的接口，默认移除或返回明确 unsupported，并补 negative contract test 防止伪接口回归；最终回复要列出完整 supported/unsupported 面，而不是只汇报本轮点名项。
+
+## Design Planning
+
+- 当未来演进方向尚未确定归属时，只沉淀兼容性边界、稳定契约和可组合性要求；不要提前在当前模块中加入未定责的接口、目录、生命周期或实现机制。
+- 做模块设计时优先保持模块独立、原子、可单独验证；面向未来的扩展点应通过公开协议、元数据、回执和测试约束表达，避免让当前模块依赖尚未存在的外部架构。
+- 设计被上层系统调用的执行模块时，必须明确故障隔离边界：内部 panic、超时、阻塞、资源耗尽、依赖降级和部分失败要收敛成标准错误或回执，不能穿透并干扰上层系统。
+- 当读写、存储或管理能力由外部模块承接时，当前模块只保留 facade、client port、DTO 映射和可替换 mock；mock 只用于入口和测试，不应演化为内部持久化方案。
+- 当用户明确项目的主要维护语言或技术栈时，设计文档应以该语言或技术栈作为执行事实来源；旧实现只作为功能清单、行为 golden 和信息来源，不应支配新模块的内部结构。
+- 设计工具、Agent loop、runtime 或 store 相关能力时，优先建设真实链路：模型可见 schema、调度入口、执行回执、状态/事件落点和验证测试必须连成闭环；mock 只能作为请求级、fixture 级或测试级替身。
+- 当能力需要未来接入外部 runtime 或 store 时，当前实现应通过稳定接口、回执和事件表达衔接点，而不是把未来 store 细节提前写死。
+
+## External Reference Refresh
+
+- 涉及快速演进领域时，必须把“外部参考刷新”作为默认前置环节；典型领域包括 Agent infra、LLM tooling、MCP、模型 API、runtime、tool calling、observability、evaluation、安全权限、Product UI/IA 和行业竞品形态。
+- 外部参考刷新不是泛泛联网搜索，而是先读取本地长期上下文和项目规则，再核对当前官方文档、规格、release notes、论文、可信工程案例；社区讨论只能作为痛点信号，不能作为唯一事实来源。
+- 输出方案、设计或实现前，应区分“已核对的外部事实”“本项目推断”“采纳/不采纳的取舍”，并在需要落文档时附来源链接和日期。
+- 不把模型已有知识当作最新事实。对最近可能变化的信息、工具链能力、API 行为、协议语义、产品形态和安全要求，默认重新核对。
+- 该规则是触发式规则：普通 typo、小范围已知 bug、纯本地机械重命名不需要拖慢；会影响定位、架构、信息架构、执行链路、权限安全、trace/eval/store 闭环的任务必须执行。
+
+## Rule Maintenance
+
+- P0：用户使用 `rule update` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Report 还是不沉淀，并完成对应修改与验证。
+- P0：每次交互都必须执行规则适配检查；如果本轮暴露出可复用的协作偏好、流程约束、工具差异或质量门槛，必须抽象成不含业务信息的规则，并更新到最对应的 `skills/<skill-slug>/SKILL.md` 或 `agents/<tool>.md`；跨工具通用规则写入 `AGENTS.md`。
+- P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的原则、流程和检查项。
+- P0：每次规则维护或内容清理收尾前，必须执行内容整理阶段：把新增或存量内容判断为 Skill、Rule、Report、Keep 或 Delete；该抽成 Skill 的抽成 Skill，该保留为规则的保留为规则，该删除的验证后删除。
+- 后续每次处理问题、方案或落地任务后，都必须审查是否有新的经验、约束或流程应沉淀为规则。
+- 更新规则前先读取现有规则，保留已有规则的有效内容和语义，不因整理而丢失约束。
+- 新增规则优先归入现有小节；只有现有分类无法清晰承载时，才新增小节。
+- 对存量规则和新增规则做归纳整理：合并重复项，拆开混杂项，删除空泛表述，保持规则短、清晰、可执行。
+- 通用规则写入 `AGENTS.md`；工具专属规则写入 `agents/<tool>.md`；个人讨论沉淀写入 `reports/personal/agent/`；个人项目沉淀写入 `reports/personal/projects/<project-slug>/`；公司项目沉淀写入 `reports/company/projects/<project-slug>/`。
+- 如果审查后没有可抽象的通用规则，不要为了更新而写入空泛规则；最终回复中说明已经审查且未发现需要新增或调整的规则。
+
+## Hub Refactor
+
+- 当用户说 `rule update`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Report、Keep、Delete 落位。
+- `refactor hub` 的目标是优化 agent-hub 的长期可用性，不是把对话过程原样归档；只沉淀稳定、可复用、可触发的流程和约束。
+
+## Project Content Curation
+
+- 当任务目标是整理项目、规则、技能、报告、入口文件或长期上下文时，必须先执行 `skills/project-content-curation/SKILL.md`，不要只做局部文字补丁。
+- 分类标准：可重复触发、带步骤和输出形态的流程写入 `skills/<skill-slug>/SKILL.md`；跨工具稳定约束写入 `AGENTS.md`；工具专属差异写入 `agents/<tool>.md` 或轻量工具规则；项目结论和证据写入 `reports/`；本地系统文件、IDE 状态、重复旧入口、临时日志和未引用废弃内容验证后删除。
+- 内容迁移后必须更新入口说明、目录图、技能索引和工具触发规则；删除前必须搜索旧路径、旧标题和旧触发词，确认没有仍需保留的引用。
+- 最终回复必须说明抽成了哪些 Skill、保留了哪些规则、删除了哪些内容，以及没有删除但刻意保留的兼容入口。
+
+## Change Cleanup Review
+
+- 当用户要求清理或审查已修改、未提交、重构后的代码时，先把范围限定到用户指定任务、模块或本轮变更，不做全仓库机会主义整理。
+- 清理前先用状态、diff 和搜索把相关文件分层：必要实现、测试或文档；旧入口或过渡代码；本地 mock、fallback 或假数据；临时过程文件；以及无关改动。无关改动保持不动，必要实现及其测试、golden、文档说明应保留。
+- 删除文件或内容前，必须验证没有生产入口、路由、导入、运行链路或配置引用；只保留测试中的旧标识引用，当它用于防止旧行为回归时。
+- 对前后端打通类变更，不把前端本地 mock、fallback 列表或假数据当成真实链路的替代；除非用户明确要求，页面应消费真实后端契约，测试数据应收敛在测试或 fixture 边界。
+- 对 UI 可见或前后端联动变更，收尾前必须跑一遍关键 UI workflow：确认当前前端进程、后端进程和代理目标都来自本轮代码或预期版本；通过页面入口进入目标功能；用指定租户、空间、业务等上下文验证数据可见、关键操作可触发、错误不会被空页面或旧服务掩盖。
+- 对管理页能力变更，收尾前必须检查完整 workflow 是否闭环：列表入口、创建、编辑配置、启停、删除、单点执行、默认参数模板回显、错误态和租户/业务上下文隔离；如果页面上出现重复入口、缺失操作按钮或需要手工猜接口，必须作为交互缺陷修正后再结束。
+- 管理页里配置、执行、测试、审查等需要用户保留上下文的操作，默认使用弹窗或侧栏承载输入与结果；不要把结果固定追加到长页面底部，除非该页面本身就是日志流或用户明确要求内联展示。
+- 清理后必须重新搜索旧名称、mock、stub、fallback、临时文件和过渡变量，并按风险从窄到宽运行格式化、单测、类型检查、race、bench 或页面 smoke。
+- 最终回复要说明删除了什么、保留了什么以及保留原因，并列出已跑的验证命令或未能验证的缺口。
+
+## Pre-commit Diff Review
+
+- 每次准备提交、暂存、交付代码或用户要求“只提交本次改动”前，必须先做 diff 审查；不要只看 `git status`。默认执行并对比 staged / unstaged 两套视图：`git status --short`、`git diff --name-status`、`git diff --stat`、`git diff --cached --name-status`、`git diff --cached --stat`，再对高风险文件运行定向 `git diff -- <path>` 或 `git diff --cached -- <path>`。
+- diff 审查要按来源分层：本轮必要实现、测试/文档/配置、生成产物、工具缓存或临时文件、用户已有改动、无关漂移。提交前只暂存本轮必要内容；无关改动保持原样，不擅自回滚。生成缓存、包管理缓存和临时输出不得混入提交。
+- `reports/company/projects/` 默认不得进入 git 提交；只有报告对应开源项目，且经过明确 diff 审查确认不含私有信息时，才允许单独纳入提交。`reports/personal/agent/` 与 `reports/personal/projects/` 保留为普通可提交内容，但提交前仍需按 diff 审查确认没有敏感信息。
+- 对 IDL、API client、schema、golden、snapshot、lockfile 等生成产物，必须追溯到事实源和生成命令：确认是否由规范脚本生成、是否手改了生成文件、是否把事实源之外的历史漂移一起带入。若生成产物变化远大于本轮目标，必须检查对应事实源 diff 和消费者调用点，说明哪些变化是本轮必需、哪些是已存在但本次补齐、哪些属于无关干扰。
+- 对 API、工具定义、路由、类型签名、公共组件、配置和运行时入口这类共享面，diff 审查必须覆盖当前模块和其它真实消费者：搜索调用点，确认旧 workflow、相邻模块和负向行为仍一致；不能只验证用户截图中的单页或单接口。
+- 对 UI 或前后端联动变更，提交前必须结合 diff 结果跑最窄有效验证：类型检查、相关单测、API smoke 或关键页面 workflow。验证报告要区分“当前模块修复”“其它模块未破坏”“仅静态通过”三种状态。
+- 最终回复或提交前说明应包含：本次 staged 文件清单、刻意保留的其它未提交改动、生成产物来源、已跑验证，以及任何未覆盖风险。若用户质疑 diff 过大，先收敛来源和影响面，再决定是否保留生成结果。
+
+## Verification Semantics
+
+- 汇报验证结果时必须区分“UI 可打开 / route 被调用 / gateway wiring 正确 / 错误被暴露”和“端到端能力可用”。只有目标 workflow 返回成功业务结果并满足最小验收条件时，才能说“已打通”“可用”或“验证通过”。
+- 对前后端、gateway、runtime、tool、MCP、跨仓库或跨 agent 对接类任务，最终回复必须按链路分层说明验证状态：本地页面或入口状态、请求是否到达预期下游、下游 operation 是否支持、业务结果是否成功、仍阻塞在哪一层。
+- 如果 smoke 只证明错误态被正确展示，必须明确写成“错误暴露/缺口确认”，不能写成“接入可用”。遇到 4xx/5xx、`unsupported_operation`、mock/fallback/dry-run、空数据或被跳过步骤时，默认视为未打通，除非用户明确只要求验证错误处理。
+- 使用“通过”“可用”“已接上”“打通”这类结论词前，先对照用户目标列出最小验收信号；缺任一信号时用“部分完成”“wiring 已到位”“等待上游支持”或“阻塞于 X”。
+- 对实现、优化、接口、UI、跨模块对接或质量风险较高的改动，默认引入“测试 Agent”视角：可以是独立 agent、专门脚本、测试套件或 review checklist，但必须从真实用户 workflow、端到端信号、负向断言和回归风险验证本轮改动；不能只由实现者用 mock、局部单测或手动观察自证。
+- 测试 Agent 视角要重点寻找误报：unsupported/partial/fallback/mock/dry-run 被显示为成功、旧入口仍可触发、隐藏路径绕过 clean contract、当前进程或下游服务不是预期版本、以及文档/fixture/scenario 把废弃能力重新升级为“可用”。
+- 当发现验证缺口来自流程而非单点 bug 时，优先把测试 Agent 视角固化为项目内可运行验证入口或通用 hub 规则；不要只在最终回复中道歉或口头提醒。
+
+## Tool Policy
+
+- 搜索优先使用仓库搜索能力，例如 `rg`、grep、glob 或当前工具的等价能力。
+- 编辑优先使用 patch/diff 风格，避免整文件重写。
+- 报告和技能要写到通用目录，不写进工具专属目录。
+- 对删除、重置、覆盖配置、安装依赖、联网抓取等动作，按当前工具权限规则请求确认。
+- 需要验证时，先跑最窄的有效检查，再根据风险扩大验证范围。
