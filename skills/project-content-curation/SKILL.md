@@ -30,12 +30,13 @@ description: >-
 1. **Scope**：确认用户指定的仓库、目录和硬边界；没有明确范围时，先从当前项目入口文件开始。
 2. **Inventory**：用 `rg --files`、`find` 和入口文档列出内容，不只看 README。
 3. **Read Entrypoints**：优先读 `AGENTS.md`、`README.md`、工具适配文件、`skills/README.md`、`reports/README.md` 和工具规则入口。
-4. **Classify**：按上表把内容簇标记为 Skill、Rule、Report、Keep 或 Delete；业务方案不要写进规则。
-5. **Extract Skills**：将可复用流程迁到 `skills/<skill-slug>/SKILL.md`，保留清晰 frontmatter、触发条件、步骤、输出和验证；不要创建无关 README 或过程文档。
-6. **Preserve Rules**：只把跨任务稳定约束写入规则；通用规则写 `AGENTS.md`，工具专属差异写 `agents/<tool>.md` 或轻量工具规则。
-7. **Prune**：删除前搜索旧路径、旧标题和旧触发词，确认没有生产入口、工具入口或兼容约定仍依赖它。
-8. **Sync Maps**：更新目录图、索引、触发说明、工具规则和兼容入口说明。
-9. **Validate**：重新搜索迁移前的旧引用、临时文件、重复段落和本地噪声；必要时列出无法验证的缺口。
+4. **Classify**：按上表把内容簇标记为 Skill、Rule、Report、Keep 或 Delete；业务方案不要写进规则。更新 `README.md`、`AGENTS.md`、工具适配文件或 Skill 前，先判断候选内容是否只来自具体项目、公司项目或单个业务域：若是，写入对应 reports；只有抽象成跨任务流程约束后才可进入规则入口。
+5. **Keep Entrypoints Small**：除报告文件外，内部入口、工具适配和 Skill 只保留触发条件、判断标准、短步骤和链接；长说明、完整命令序列、历史上下文、示例矩阵和细节论证迁入 reports 或技能内部按需引用资源。
+6. **Extract Skills**：将可复用流程迁到 `skills/<skill-slug>/SKILL.md`，保留清晰 frontmatter、触发条件、步骤、输出和验证；不要创建无关 README 或过程文档。
+7. **Preserve Rules**：只把跨任务稳定约束写入规则；通用规则写 `AGENTS.md`，工具专属差异写 `agents/<tool>.md` 或轻量工具规则。
+8. **Prune**：删除前搜索旧路径、旧标题和旧触发词，确认没有生产入口、工具入口或兼容约定仍依赖它。
+9. **Sync Maps**：更新目录图、索引、触发说明、工具规则和兼容入口说明；公司项目报告默认不在根索引列具体条目，避免把本地隔离内容重新暴露为公共入口。
+10. **Validate**：重新搜索迁移前的旧引用、临时文件、重复段落和本地噪声；提交前额外检查最终提交树或 staged 清单，确认 `.DS_Store`、`reports/company/projects/` 和旧报告路径没有进入提交；必要时列出无法验证的缺口。
 
 ## Output
 

@@ -16,6 +16,8 @@
 
 本文件只沉淀稳定、可复用、会影响后续协作判断的信息；一次性任务细节、临时草稿、密钥、私密凭据和未验证过程日志不要写入这里。
 
+常用指令摘要见 `reports/personal/agent/runbooks/2026-06-08-关于AgentHub-projectRefactor.md`；它用于人工翻阅和 LLM 快速查询，完整规则仍以 `AGENTS.md`、`README.md` 和对应 Skill 为准。
+
 ## Work Directions
 
 用户长期工作方向包括：
@@ -32,11 +34,25 @@
 
 当对话涉及以上方向时，默认读取 `skills/agent-team-router/SKILL.md`，按其中的 Agent Team Router 自动选择参与视角；用户不需要手动指定角色。
 
+## Collaboration Efficiency
+
+后续用户可能直接携带本 README 与 Agent 沟通。新任务开始前，Agent 应先基于本文件判断是否缺少必要信息；只有缺口会显著造成返工时才提问，且一次只问最关键的 1-3 个问题。
+
+默认目标是把长任务从 2-4 小时压缩到更短闭环：
+
+- 30 分钟：边界清楚的小修、小 UI、单接口问题。
+- 1 小时：一条完整 CRUD 或前后端窄链路。
+- 2 小时：跨 DB、API、前端、runtime 的功能闭环。
+
+新任务进入执行前，Agent 应优先冻结 3-7 条不变量：目标仓库/模块、必须修改与禁止修改范围、核心数据源/owner、ID 与权限语义、优先级顺序、非目标、验收信号。若信息已足够，直接执行；若用户连续纠偏、提速或中断，立即切换到快速收敛模式：停止旧计划，只确认当前状态、最新约束和下一步最小动作。
+
+推荐节奏：5 分钟冻结约束，30 分钟做最小闭环，10 分钟审查 diff 边界，20 分钟补测试和验证。每 20-30 分钟给一次短状态更新，重点说明是否越界、是否阻塞、下一步是什么。
+
 ## Required Curation Stage
 
 当用户要求整理项目内容、规则、Skills、报告或删除内容时，必须先执行内容整理阶段：分析存量内容，将可复用流程抽成 Skill，将稳定约束保留为规则，将项目结论放入 reports，将本地噪声、重复旧入口和未引用废弃内容验证后删除。
 
-当用户说 `refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，触发 `skills/refactor-hub/SKILL.md`：先回看当前对话消息和现有 hub 内容，再分析并落位可优化部分。
+当用户说 `project refactor`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，触发 `skills/refactor-hub/SKILL.md`：先回看当前对话消息和现有 hub 内容，再分析并落位可优化部分。
 
 ## Directory Map
 
@@ -61,7 +77,8 @@
     ├── personal/
     │   ├── agent/
     │   │   ├── analysis/
-    │   │   └── chat/
+    │   │   ├── chat/
+    │   │   └── runbooks/
     │   └── projects/
     │       └── auto-info/
     └── README.md

@@ -23,7 +23,7 @@
 5. 如果任务属于某个项目，按归属优先查看 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/` 下已有沉淀；如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
 6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team` 时，读取 `skills/agent-team-router/SKILL.md`，先按路由机制选择角色，再进行分析或执行。
 7. 当用户要求整理项目内容、规则、Skills、报告或删除内容时，读取 `skills/project-content-curation/SKILL.md`，先完成内容分类，再执行迁移、保留或删除。
-8. 当用户说 `rule update`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
+8. 当用户说 `project refactor`、`rule update`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
 9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
 
 ## Living Context Maintenance
@@ -31,6 +31,8 @@
 - `README.md` 是长期协作上下文入口，用于沉淀用户稳定的工作方向、产品域、协作偏好和会影响后续判断的背景。
 - 当用户表达新的长期方向、稳定产品边界、持续偏好或跨任务复用背景时，应更新 `README.md`，让它随协作自然成长。
 - 不把一次性任务细节、临时过程记录、未验证猜测、密钥、账号、私密凭据或业务敏感明细写入 `README.md`。
+- 不把具体项目、公司项目或业务域专属设计规则写入 `README.md`、`AGENTS.md`、工具适配文件或 Skill；这类内容应按归属写入 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/`。如果规则看似通用但来源于单个项目，先抽象掉项目名、业务方案和实现决策，只保留跨任务可复用的流程约束。
+- 除报告文件外，入口文件、工具适配文件和 Skill 都应保持短小、索引化和可快速扫描；详细论证、长流程、完整命令清单和历史上下文写入 reports，让 LLM 按需渐进式加载。
 - 如果信息更像可执行规则，写入 `AGENTS.md`、`agents/<tool>.md` 或 `skills/<skill-slug>/SKILL.md`；如果信息更像长期报告，写入 `reports/`。
 
 ## Naming
@@ -47,6 +49,9 @@
 - 用户明确限定信息来源时，将其视为硬边界；例如要求“联网”“不要参考本地”时，本地文件只能用于读取仓库规则或定位问题，不能作为事实来源或论证依据，最终回复应说明实际采用的来源范围。
 - 用户偏好中文协作语境时，方案、总结和长期文档默认使用中文；保留代码标识、命令、路径和接口名的原文。
 - 用户要求本地调试时，优先提供可直接运行的 Markdown shell block，写明 `cd` 路径、必要环境变量、窄范围测试和全量验证命令。
+- 用户要求“给我文件内容”“我贴到公共文档上”或类似可复制正文时，正文内容是核心交付；先直接给可复制内容，再处理临时文件清理、规则收尾或背景验证。除非临时文件会造成安全、提交或用户工作区风险，不要让删除、回滚等收尾动作挡在核心答案前。
+- 当用户中断当前回合、连续发送 `quickly`/`hurry`/“快点”等提速指令，或新消息明显覆盖旧请求时，立即切换到快速收敛模式：停止延续旧计划，先确认当前未完成/已部分修改状态，再只执行最新请求所需的最小动作；回复保持短结论、当前风险和下一步，不展开长方案。
+- 当同一任务中用户多次纠正架构语义、范围边界或优先级顺序时，下一次实现前必须先把已确认的不变量列成 3-7 条检查清单，并据此审查改动范围；若仍缺关键排序、owner 或数据源语义，只问一个最小问题，不能继续按旧假设扩写实现。
 
 ## Paper Record
 
@@ -80,24 +85,42 @@
 - 新报告文件名使用语义标题：`YYYY-MM-DD-关于<领域>-<topic>.md`；`topic` 用简洁英文或 camelCase/短横线短语，避免本地路径、用户信息、临时编号或含糊词。
 - 设计类归档正文至少包含 Summary、Decision、Scope、Architecture、Checklist、Flow、Validation、Follow-ups；需要表达链路时优先使用 Mermaid。讨论型文档默认采用金字塔结构：结论先行 -> 关键判断/决策 -> 证据与约束 -> 架构或流程图 -> 分场景展开 -> 路线图/后续。文字大于图，图只用于降低理解成本。
 - 报告结构、图表、Mermaid、表格、清单和固定章节名只是表达手段，不是生成目标；不要为了让报告里出现某个元素而硬塞内容。选择最适合信息本身的表达方式，核心文档指标是面向人的可读性、清晰度、判断效率和可复用性。
+- 当同一任务需要多份设计、协议或执行文档时，先按受众拆分再写内容：给 Agent/Codex 的文档写成短执行 brief，强调当前阶段、硬边界、实施顺序和验收；给人的协议或方案文档写成结果化的步骤、字段、接口、状态和 checklist，不展开长篇论证。若用户明确要求“直接给结果”“不要废话”，默认删去背景推理、过程复盘和过量样例，只保留决策、契约和下一步。
 - 归档正文保留可复用信息；删除过程日志、一次性命令输出和未采纳草稿，避免长期目录变成临时缓存。
+
+## Resource Identity And Registry Hygiene
+
+- 当设计 create/import API、管理台表单、tool/skill/resource registry 或跨模块引用时，系统身份必须由 owning service 生成并保持不可变；用户输入只能成为 `name`、`title`、`displayName`、`slug`、`alias`、搜索词或 source hint，不得成为主 ID、权限主键、审计主键或存储路径。
+- API/schema/generated client 必须区分 system-generated/output-only ID、canonical ref、用户可编辑 alias/display 字段和幂等键；创建接口默认不要求用户提供 ID，更新/删除接口收到的 ID 只是已有资源引用，仍需按租户、账号、业务等 scope 做对象级授权。
+- 删除、解绑、更新等动作接口必须做字段必要性审计：以 canonical resource ref 作为最小输入，先证明服务端无法凭系统 ID、会话/账号授权、registry/access 关系和绑定索引自行定位对象，才能要求调用方额外传 scope/sourceScope/business/tenant 等限定字段；不得把“绑定检测需要某维度”误读成“调用方必须传该维度”。
+- 删除前的依赖/绑定检测应抽象为 access/relationship 查询能力，不散落在 HTTP handler、UI 或临时业务扫描里。若现有 access 表暂时只表达可见关系，先用单一 guard/facade 封装当前绑定索引；后续关系维护迁入 access 表时，外部删除契约保持不变。
+- Registry/DB 是发现、权限、状态、索引、版本、source pointer 和轻量缓存层；真实内容事实源属于 backend、artifact store、NAS 或其它 source owner。写入顺序优先是 source 成功后刷新 registry，读取顺序优先是 registry 定位后按需加载 source；无 registry 时才允许受限 source 扫描作为兜底。
+- Skill/tool/resource 的 manifest 是运行时能力契约，不是数据库身份。渐进式加载应先披露稳定 metadata，再在触发后加载主说明，最后按需读取 references/scripts/files，避免把完整 catalog 或用户临时命名一次性塞进模型上下文。
+- 用户可见名称可以重名、重命名、迁移或作为 alias 废弃；canonical ref 和 system ID 不随展示名变化。删除重建即使同名也应产生新 ID，并让审计、缓存和权限关系可区分。
+- 已存在的 seed、fixture、生产数据或跨表引用 ID 不得只因“语义更好看”而迁移、重写或换号；ID 迁移必须是显式数据迁移需求，先评估引用面、回滚策略和兼容窗口。可修正 scope、access、meta、状态或索引关系时，不顺手改动原 ID。
 
 ## Interface Contract Hygiene
 
 - 当新增、删除、改名或暴露 API/Gateway/surface operation 时，必须先盘点完整接口面，而不是只处理用户点名的单个 operation：列出当前全部 operation/route/method、真实消费者、真实后端能力、生命周期 owner 和目标状态（supported / unsupported / deprecated / internal）。
 - 这类任务必须触发 `skills/interface-contract-audit/SKILL.md`；全局规则只保留硬约束，具体盘点步骤、测试要求和输出格式按 skill 执行。
 - 对接前后端、跨仓库或多 agent 模块时，必须核对真实消费者代码、测试和文档；如果消费者由另一个 agent/thread 维护，应读取或询问该线程，再收敛契约。旧 scenario、隐藏管理页、fixture 或历史兼容入口不能自动升级为 clean API 合约。
+- 收口或删除旧链路时，不默认保留“以后可能会用”的兼容分支；除非用户明确要求迁移窗口或向后兼容，否则本领域 ownership 内的 route/schema/generated client/docs/tests/UI 入口要一起清理。反过来，不能把其他模块、相邻 fixture、mock option、静态素材或既有产品占位顺手删掉；是否“别人模块”以 owner、入口和消费者归属判断，不以文件相邻判断。
 - 没有真实能力或当前目标不需要的接口，默认移除或返回明确 unsupported，并补 negative contract test 防止伪接口回归；最终回复要列出完整 supported/unsupported 面，而不是只汇报本轮点名项。
+- 对 tool/gateway/runtime 这类模型披露链路，必须区分管理目录视图和模型可调用视图：上游选择工具时以显式 `toolIds` 或授权引用作为唯一选择源，不用 `IncludeDefault*`、`IncludeRuntime*`、`IncludeBackend*` 等布尔开关向模型注入默认工具。管理页需要全量目录时，使用 catalog/list/detail surface 或内部查询承载，不污染 runtime build DTO。
+- 对 tool call 执行链路，schema/build 和 execute 必须闭合在同一个 tool gateway/surface 语义下：runtime loop 只负责编排模型消息、调用 gateway 和回塞结果，不按 tool name 直接 switch 执行具体工具。若底层资源 client 仍由 runtime、backend、workspace 或 sandbox 模块拥有，应通过 adapter 注入 tools runner，而不是从 runtime core 绕过 tools 管理、审计、参数校验和回执归一化。
 
 ## Design Planning
 
 - 当未来演进方向尚未确定归属时，只沉淀兼容性边界、稳定契约和可组合性要求；不要提前在当前模块中加入未定责的接口、目录、生命周期或实现机制。
 - 做模块设计时优先保持模块独立、原子、可单独验证；面向未来的扩展点应通过公开协议、元数据、回执和测试约束表达，避免让当前模块依赖尚未存在的外部架构。
+- 不为单个前置检查或单条调用链过早拆出跨域 service、guard 或 platform package。若能力只服务某个 owner 的 CRUD/生命周期，优先由 owner service 暴露窄方法；只有关系本身有独立生命周期、多个 owner 共同维护或需要替换为统一 access/relationship 层时，才抽 facade/guard。
 - 设计被上层系统调用的执行模块时，必须明确故障隔离边界：内部 panic、超时、阻塞、资源耗尽、依赖降级和部分失败要收敛成标准错误或回执，不能穿透并干扰上层系统。
 - 当读写、存储或管理能力由外部模块承接时，当前模块只保留 facade、client port、DTO 映射和可替换 mock；mock 只用于入口和测试，不应演化为内部持久化方案。
 - 当用户明确项目的主要维护语言或技术栈时，设计文档应以该语言或技术栈作为执行事实来源；旧实现只作为功能清单、行为 golden 和信息来源，不应支配新模块的内部结构。
 - 设计工具、Agent loop、runtime 或 store 相关能力时，优先建设真实链路：模型可见 schema、调度入口、执行回执、状态/事件落点和验证测试必须连成闭环；mock 只能作为请求级、fixture 级或测试级替身。
 - 当能力需要未来接入外部 runtime 或 store 时，当前实现应通过稳定接口、回执和事件表达衔接点，而不是把未来 store 细节提前写死。
+- Runtime 中的配置引用与真实加载状态必须区分：preset/profile 可保留 resource IDs 作为配置输入，但只有 loader/middleware 真正解析并装载内容后才能称为 loaded。删除或找不到的旧引用不应反查到真实资源；同时应在 run metadata、event、trace 或调用明细中记录 requested / resolved / unresolved 诊断，方便排查“配置了但未加载”的能力。
+- 当仓库已有 SQL 模板、query 目录、ORM mapper 或代码生成链路时，新增/调整持久化查询应优先修改事实源模板并重新生成 client；服务层只调用生成查询或窄 repository 方法，不散落多行内嵌 SQL。例外仅限没有模板链路的极小一次性查询；收尾时必须检查生成文件来源、运行生成命令或等价验证，并搜索确认本轮没有把可复用查询耦合进业务 service。
 
 ## External Reference Refresh
 
@@ -110,6 +133,7 @@
 ## Rule Maintenance
 
 - P0：用户使用 `rule update` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Report 还是不沉淀，并完成对应修改与验证。
+- P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `rule update`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
 - P0：每次交互都必须执行规则适配检查；如果本轮暴露出可复用的协作偏好、流程约束、工具差异或质量门槛，必须抽象成不含业务信息的规则，并更新到最对应的 `skills/<skill-slug>/SKILL.md` 或 `agents/<tool>.md`；跨工具通用规则写入 `AGENTS.md`。
 - P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的原则、流程和检查项。
 - P0：每次规则维护或内容清理收尾前，必须执行内容整理阶段：把新增或存量内容判断为 Skill、Rule、Report、Keep 或 Delete；该抽成 Skill 的抽成 Skill，该保留为规则的保留为规则，该删除的验证后删除。
@@ -122,7 +146,7 @@
 
 ## Hub Refactor
 
-- 当用户说 `rule update`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Report、Keep、Delete 落位。
+- 当用户说 `project refactor`、`rule update`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Report、Keep、Delete 落位。
 - `refactor hub` 的目标是优化 agent-hub 的长期可用性，不是把对话过程原样归档；只沉淀稳定、可复用、可触发的流程和约束。
 
 ## Project Content Curation
@@ -146,13 +170,29 @@
 
 ## Pre-commit Diff Review
 
+- 当用户说 `git diff` 时，将其视为只读 diff 边界与影响审查指令：执行 staged / unstaged 两套 diff 检查并按来源分层汇报，核心是判断实际改动是否仍在用户预期范围内、是否引入预期外文件/模块/生成物/共享面影响；不修改文件、不暂存、不提交。
 - 每次准备提交、暂存、交付代码或用户要求“只提交本次改动”前，必须先做 diff 审查；不要只看 `git status`。默认执行并对比 staged / unstaged 两套视图：`git status --short`、`git diff --name-status`、`git diff --stat`、`git diff --cached --name-status`、`git diff --cached --stat`，再对高风险文件运行定向 `git diff -- <path>` 或 `git diff --cached -- <path>`。
+- 当工作区干净但当前分支相对 upstream 或目标分支存在未推送提交、刚执行 merge/rebase，或用户要求审查“本次改动/改动边界”时，`git diff` 不能只停在 staged / unstaged；必须补充 base/head diff 审查：确认基准分支或 merge-base，列出提交、文件和 stat，并把变化分成目标分支合入、本轮必要实现、测试/文档/生成物、已有分支改动和无关漂移，明确说明是否超出用户任务边界。
 - diff 审查要按来源分层：本轮必要实现、测试/文档/配置、生成产物、工具缓存或临时文件、用户已有改动、无关漂移。提交前只暂存本轮必要内容；无关改动保持原样，不擅自回滚。生成缓存、包管理缓存和临时输出不得混入提交。
 - `reports/company/projects/` 默认不得进入 git 提交；只有报告对应开源项目，且经过明确 diff 审查确认不含私有信息时，才允许单独纳入提交。`reports/personal/agent/` 与 `reports/personal/projects/` 保留为普通可提交内容，但提交前仍需按 diff 审查确认没有敏感信息。
+- 提交或改写远端最新提交前，必须检查最终提交树而不只检查工作区：用 `git ls-tree -r --name-only HEAD` 或 staged 等价检查确认没有 `.DS_Store`、`reports/company/projects/`、旧报告路径或被忽略的本地内容进入提交；若刚执行 amend，推送前再次确认 `HEAD` 与预期一致。
 - 对 IDL、API client、schema、golden、snapshot、lockfile 等生成产物，必须追溯到事实源和生成命令：确认是否由规范脚本生成、是否手改了生成文件、是否把事实源之外的历史漂移一起带入。若生成产物变化远大于本轮目标，必须检查对应事实源 diff 和消费者调用点，说明哪些变化是本轮必需、哪些是已存在但本次补齐、哪些属于无关干扰。
 - 对 API、工具定义、路由、类型签名、公共组件、配置和运行时入口这类共享面，diff 审查必须覆盖当前模块和其它真实消费者：搜索调用点，确认旧 workflow、相邻模块和负向行为仍一致；不能只验证用户截图中的单页或单接口。
 - 对 UI 或前后端联动变更，提交前必须结合 diff 结果跑最窄有效验证：类型检查、相关单测、API smoke 或关键页面 workflow。验证报告要区分“当前模块修复”“其它模块未破坏”“仅静态通过”三种状态。
+- 当用户用 PR 页面或远端 diff 质疑“文件数不对 / 改动没出现”时，先区分远端 PR 状态与本地状态：PR 只展示已 push 的提交，不展示本地 staged/unstaged；必须同时检查 `git status --short --branch`、`git log --decorate`、`git diff origin/main...HEAD`、`git diff --cached --name-status`，再判断是未提交、未推送、目标分支不对还是 GitHub 页面缓存。
+- `git diff` 审查回复必须先给边界结论：推断的预期范围、实际变化范围、是否存在预期外改动或影响面、需要继续确认的文件/模块；即使工作区干净，也要说明是“无本地 diff”还是仍存在 base/head/远端 PR 差异。
 - 最终回复或提交前说明应包含：本次 staged 文件清单、刻意保留的其它未提交改动、生成产物来源、已跑验证，以及任何未覆盖风险。若用户质疑 diff 过大，先收敛来源和影响面，再决定是否保留生成结果。
+
+## Git Update
+
+- 当用户说 `git update` 时，将其视为同步目标分支到当前分支的协作指令，而不是 Git 子命令：先确认当前仓库、当前分支、目标分支和工作区状态，再 `fetch` 目标分支，并把目标分支 merge 到当前分支；默认目标为 `origin/main` / `main`，除非用户明确指定其它目标。
+- merge 前必须明确本次方向，形如 `当前分支 <- 目标分支`。如果当前分支或目标分支推断不清、当前分支是保护分支、目标分支不是默认主分支/用户指定分支，或用户表达可能指向另一个仓库/分支，应先向用户确认；如果方向清楚且风险检查通过，不要停留在只报告状态。
+- 如果工作区存在未提交改动（staged、unstaged、deleted 或 untracked），仍以完成 merge 为默认目标：先做本地改动文件与目标分支新增改动文件的精确重叠检查；若无重叠且无明显生成产物/API client 手改风险，应直接 merge 并保留本地未提交改动。只有存在重叠、生成产物风险、merge 会被 dirty worktree 阻塞或需要 stash/index 操作时，才暂停请求决策。
+- dirty worktree 下的 update 报告必须包含：当前分支与 upstream/main 的 ahead-behind、当前本地改动文件、远端 main 新增改动文件、本地改动与远端改动的重叠文件、生成产物/API client 是否被本地手改、以及是否存在需要用户决策的合并风险。
+- 当需要预判合并风险时，优先使用只读检查（如 `merge-base`、`merge-tree`、`diff --name-status`、关键冲突信号搜索）；不要把大型 merge-tree 输出原样倾倒到回复里，只提炼冲突/重叠信号。
+- 如果 `merge` 因 dirty worktree 被拦截，或 `stash`/index 操作报错，应立即停止进一步自动修复，保留现场并报告阻塞原因；不要连续尝试可能改变索引或工作区状态的绕路命令。
+- `git update` 是结果导向流程：若 fetch 后确认目标分支已被当前分支包含，仍可用 `git merge <目标>` 验证 no-op，但不要为了流程创建 stash、重排 index 或输出长报告；成功时最终只给“merge 完成”级别结论，除非用户明确要求细节。
+- `git update` 必须保护用户本地改动；详细流程见 `reports/personal/agent/runbooks/2026-06-08-关于AgentHub-projectRefactor.md`，按需加载，不在入口文件展开长步骤。
 
 ## Verification Semantics
 
