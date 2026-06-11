@@ -7,6 +7,10 @@ Follow @AGENTS.md, @README.md, and @agents/cursor.md.
 
 When a task mentions a skill, read the matching @skills/<skill-slug>/SKILL.md.
 
-For AgentOS, Agent infra, AI research, Product UI/features/architecture, audio-visual sync, interactive game-film, Agent Team, or IT Agent Team tasks, read @skills/agent-team-router/SKILL.md.
+Use the Execution Budget in @AGENTS.md: choose the smallest sufficient loop, and do not load long references for mechanical tasks.
+
+For AgentOS, Agent infra, AI research, Product UI/features/architecture, audio-visual sync, interactive game-film, Agent Team, or IT Agent Team tasks that need product, architecture, technical, or role judgment, read @skills/agent-team-router/SKILL.md.
 
 When organizing project content, rules, Skills, reports, or cleanup/deletion decisions, read @skills/project-content-curation/SKILL.md first.
+
+When absorbing Superpowers, external agent frameworks, plugins, skill libraries, engineering methodologies, or workflow best practices into Agent Hub, read @skills/methodology-harvest/SKILL.md first.

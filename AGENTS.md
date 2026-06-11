@@ -21,10 +21,21 @@
    - Cursor: `agents/cursor.md`
 4. 如果任务触发某个技能，读取 `skills/<skill-slug>/SKILL.md`。
 5. 如果任务属于某个项目，按归属优先查看 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/` 下已有沉淀；如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
-6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team` 时，读取 `skills/agent-team-router/SKILL.md`，先按路由机制选择角色，再进行分析或执行。
+6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team`，且需要产品、架构、技术或角色判断时，读取 `skills/agent-team-router/SKILL.md`；路径明确的机械改动不额外路由。
 7. 当用户要求整理项目内容、规则、Skills、报告或删除内容时，读取 `skills/project-content-curation/SKILL.md`，先完成内容分类，再执行迁移、保留或删除。
 8. 当用户说 `project refactor`、`rule update`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
 9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
+10. 当用户发布非机械的实现、重构、UI、架构、协议、数据、工具链或跨模块任务时，读取 `skills/task-execution-lifecycle/SKILL.md`；小修、单点文档和路径明确的机械改动走轻量执行预算，不额外加载长 reference。
+11. 当用户要求吸收 Superpowers、外部 Agent framework、插件、技能库、工程方法论或优秀实践到 Hub 时，读取 `skills/methodology-harvest/SKILL.md`；优先抽取机制并落到既有 Skill/Rule/Report，不照搬外部目录、品牌口吻或不适配当前工具的强制门禁。
+
+## Execution Budget
+
+- 默认使用“最小足够闭环”：先完成用户目标所需的最小读取、最小修改和最小验证；每增加一个 Skill、reference、报告、外部搜索、subagent、main sync 或完整 diff 审查，都必须由明确触发词、风险信号或收尾动作支撑。
+- 轻量路径适用于 typo、小文档、单文件小修、已知范围的机械调整和只读解释：读取入口与直接相关文件，冻结显而易见的不变量，执行定向修改，跑 `git diff --check`、引用搜索或最窄命令即可；不做外部研究、报告沉淀、main 更新或完整分支收尾。
+- 标准路径适用于普通实现、bugfix、UI 调整和局部重构：读取对应 Skill，冻结 3-7 条关键不变量，按最小闭环实现，做定向验证和 diff 边界审查。
+- 高风险路径只在接口/权限/安全/DB/生成物/runtime/tool/gateway/跨仓库/跨 agent、反复失败、准备提交/PR/合并、用户明确要求研究或质量审查时升级：按需加载 reference、外部资料、测试 Agent 视角和更宽验证。
+- 如果某个 Skill 被关键词误触发，读取后可用一句话记录不适用原因并退出；不要因为已经读取就强行执行完整流程。
+- 规则更新、自我提升、报告归档和长期沉淀是触发式质量动作；除非用户当前目标就是整理 Hub，否则不得抢占主任务时间预算。
 
 ## Living Context Maintenance
 
@@ -124,8 +135,11 @@
 
 ## External Reference Refresh
 
-- 涉及快速演进领域时，必须把“外部参考刷新”作为默认前置环节；典型领域包括 Agent infra、LLM tooling、MCP、模型 API、runtime、tool calling、observability、evaluation、安全权限、Product UI/IA 和行业竞品形态。
+- 当用户要求“研究下”“好好研究”“看看业界优秀实践”“参考最佳实践”或类似表达，或任务结论依赖最新外部事实时，进入研究型工作流：先读取本地长期上下文、项目历史文档和相关 reports/skills，再搜索官方文档、行业优秀产品或可信工程案例，最后结合当前项目约束给出取舍和适配方案。除非用户明确要求立即改代码，否则不要跳过研究直接实现。
+- 当外部参考对象是 Agent 方法论、插件、技能库或工作流体系时，按 `skills/methodology-harvest/SKILL.md` 执行：先核对来源，再把稳定机制映射到 Hub 现有技能、规则或报告；不要把外部全量 catalog 或临时安装路径直接升级为 Hub 入口。
+- 涉及快速演进领域且会影响架构、协议、权限、安全、模型 API、产品形态或长期决策时，默认做外部参考刷新；普通本地小修、已冻结契约内实现和机械清理不因此自动联网或加载长报告。
 - 外部参考刷新不是泛泛联网搜索，而是先读取本地长期上下文和项目规则，再核对当前官方文档、规格、release notes、论文、可信工程案例；社区讨论只能作为痛点信号，不能作为唯一事实来源。
+- 研究型输出必须包含三层结论：历史/本地文档已经约束了什么，外部优秀实践提供了什么稳定模式，本项目应采纳、调整或不采纳什么。若随后进入实现，先用这三层结论冻结设计不变量，避免边做边推翻。
 - 输出方案、设计或实现前，应区分“已核对的外部事实”“本项目推断”“采纳/不采纳的取舍”，并在需要落文档时附来源链接和日期。
 - 不把模型已有知识当作最新事实。对最近可能变化的信息、工具链能力、API 行为、协议语义、产品形态和安全要求，默认重新核对。
 - 该规则是触发式规则：普通 typo、小范围已知 bug、纯本地机械重命名不需要拖慢；会影响定位、架构、信息架构、执行链路、权限安全、trace/eval/store 闭环的任务必须执行。
@@ -133,11 +147,13 @@
 ## Rule Maintenance
 
 - P0：用户使用 `rule update` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Report 还是不沉淀，并完成对应修改与验证。
+- P0：用户把某类 Hub 升级、方法论吸收或规则复查描述为“常驻”时，只把它记录为后续触发条件；只有用户再次明确要求、触发 `rule update`，或存在已设置的定时提醒/自动化时才执行，不在当前线程无限续跑或持续等待。
 - P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `rule update`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
-- P0：每次交互都必须执行规则适配检查；如果本轮暴露出可复用的协作偏好、流程约束、工具差异或质量门槛，必须抽象成不含业务信息的规则，并更新到最对应的 `skills/<skill-slug>/SKILL.md` 或 `agents/<tool>.md`；跨工具通用规则写入 `AGENTS.md`。
+- P0：普通交互不自动触发 `rule update`。只做轻量判断：本轮是否出现明确用户要求、已设置的定时/自动化触发、反复出现的流程缺口、高风险设计原则，或会影响后续安全/权限/接口/验证的稳定约束；不满足这些条件时，不修改规则库。
+- P0：完成架构设计、coding 分层设计、系统设计、UI/交互设计、数据体系设计或其他高风险设计后，可以执行自我提升判断；默认先作为候选经验或报告线索，只有用户要求、问题反复出现、或原则明显跨任务复用且影响高风险边界时，才更新 `skills/design-principle-library/SKILL.md` 或相关专门 Skill。
 - P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的原则、流程和检查项。
 - P0：每次规则维护或内容清理收尾前，必须执行内容整理阶段：把新增或存量内容判断为 Skill、Rule、Report、Keep 或 Delete；该抽成 Skill 的抽成 Skill，该保留为规则的保留为规则，该删除的验证后删除。
-- 后续每次处理问题、方案或落地任务后，都必须审查是否有新的经验、约束或流程应沉淀为规则。
+- 后续处理问题、方案或落地任务后，只在出现明确触发条件时沉淀规则；普通一次性经验、低风险偏好或未验证猜测不写入规则库。
 - 更新规则前先读取现有规则，保留已有规则的有效内容和语义，不因整理而丢失约束。
 - 新增规则优先归入现有小节；只有现有分类无法清晰承载时，才新增小节。
 - 对存量规则和新增规则做归纳整理：合并重复项，拆开混杂项，删除空泛表述，保持规则短、清晰、可执行。
@@ -163,6 +179,7 @@
 - 删除文件或内容前，必须验证没有生产入口、路由、导入、运行链路或配置引用；只保留测试中的旧标识引用，当它用于防止旧行为回归时。
 - 对前后端打通类变更，不把前端本地 mock、fallback 列表或假数据当成真实链路的替代；除非用户明确要求，页面应消费真实后端契约，测试数据应收敛在测试或 fixture 边界。
 - 对 UI 可见或前后端联动变更，收尾前必须跑一遍关键 UI workflow：确认当前前端进程、后端进程和代理目标都来自本轮代码或预期版本；通过页面入口进入目标功能；用指定租户、空间、业务等上下文验证数据可见、关键操作可触发、错误不会被空页面或旧服务掩盖。
+- 按新的目录架构移动、拆分或归位前端页面/组件后，必须同步审查相对 import、route 引用、懒加载入口、测试引用和生成 client 引用；不能只改调用方路径。收尾至少运行对应前端 typecheck，并在已有热部署页面上确认不会出现 Vite import-analysis / module not found overlay。
 - 对管理页能力变更，收尾前必须检查完整 workflow 是否闭环：列表入口、创建、编辑配置、启停、删除、单点执行、默认参数模板回显、错误态和租户/业务上下文隔离；如果页面上出现重复入口、缺失操作按钮或需要手工猜接口，必须作为交互缺陷修正后再结束。
 - 管理页里配置、执行、测试、审查等需要用户保留上下文的操作，默认使用弹窗或侧栏承载输入与结果；不要把结果固定追加到长页面底部，除非该页面本身就是日志流或用户明确要求内联展示。
 - 清理后必须重新搜索旧名称、mock、stub、fallback、临时文件和过渡变量，并按风险从窄到宽运行格式化、单测、类型检查、race、bench 或页面 smoke。
@@ -170,8 +187,8 @@
 
 ## Pre-commit Diff Review
 
-- 当用户说 `git diff` 时，将其视为只读 diff 边界与影响审查指令：执行 staged / unstaged 两套 diff 检查并按来源分层汇报，核心是判断实际改动是否仍在用户预期范围内、是否引入预期外文件/模块/生成物/共享面影响；不修改文件、不暂存、不提交。
-- 每次准备提交、暂存、交付代码或用户要求“只提交本次改动”前，必须先做 diff 审查；不要只看 `git status`。默认执行并对比 staged / unstaged 两套视图：`git status --short`、`git diff --name-status`、`git diff --stat`、`git diff --cached --name-status`、`git diff --cached --stat`，再对高风险文件运行定向 `git diff -- <path>` 或 `git diff --cached -- <path>`。
+- 当用户说 `git diff` 时，将其视为只读 diff 边界与影响审查指令：核心是先从用户目标和最近任务推断预期改动范围与预期影响范围，再用 staged / unstaged / base-head diff 对照实际变化，判断是否越界、是否引入预期外文件/模块/生成物/共享面影响；不修改文件、不暂存、不提交。
+- 准备提交、暂存、amend、PR、合并或用户要求“只提交本次改动”前，必须先做完整 diff 审查；不要只看 `git status`。普通交付若不触发 git 动作，先按风险执行 `git status --short`、`git diff --name-status`、`git diff --stat` 和必要定向 diff；高风险或边界不清时再展开 staged / unstaged / cached 全套审查。
 - 当工作区干净但当前分支相对 upstream 或目标分支存在未推送提交、刚执行 merge/rebase，或用户要求审查“本次改动/改动边界”时，`git diff` 不能只停在 staged / unstaged；必须补充 base/head diff 审查：确认基准分支或 merge-base，列出提交、文件和 stat，并把变化分成目标分支合入、本轮必要实现、测试/文档/生成物、已有分支改动和无关漂移，明确说明是否超出用户任务边界。
 - diff 审查要按来源分层：本轮必要实现、测试/文档/配置、生成产物、工具缓存或临时文件、用户已有改动、无关漂移。提交前只暂存本轮必要内容；无关改动保持原样，不擅自回滚。生成缓存、包管理缓存和临时输出不得混入提交。
 - `reports/company/projects/` 默认不得进入 git 提交；只有报告对应开源项目，且经过明确 diff 审查确认不含私有信息时，才允许单独纳入提交。`reports/personal/agent/` 与 `reports/personal/projects/` 保留为普通可提交内容，但提交前仍需按 diff 审查确认没有敏感信息。
@@ -196,6 +213,7 @@
 
 ## Verification Semantics
 
+- 准备声明“完成”“修好”“通过”“可用”“已打通”、准备提交/PR/交付，或需要校准验证结论词时，按需读取 `skills/task-execution-lifecycle/references/completion-evidence-patterns.md`；入口规则只保留硬约束，证据矩阵和例外放在 reference。
 - 汇报验证结果时必须区分“UI 可打开 / route 被调用 / gateway wiring 正确 / 错误被暴露”和“端到端能力可用”。只有目标 workflow 返回成功业务结果并满足最小验收条件时，才能说“已打通”“可用”或“验证通过”。
 - 对前后端、gateway、runtime、tool、MCP、跨仓库或跨 agent 对接类任务，最终回复必须按链路分层说明验证状态：本地页面或入口状态、请求是否到达预期下游、下游 operation 是否支持、业务结果是否成功、仍阻塞在哪一层。
 - 如果 smoke 只证明错误态被正确展示，必须明确写成“错误暴露/缺口确认”，不能写成“接入可用”。遇到 4xx/5xx、`unsupported_operation`、mock/fallback/dry-run、空数据或被跳过步骤时，默认视为未打通，除非用户明确只要求验证错误处理。

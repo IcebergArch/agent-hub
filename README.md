@@ -32,7 +32,7 @@
 - 互动影游产品。
 - Agent infra / AgentOS 产品。
 
-当对话涉及以上方向时，默认读取 `skills/agent-team-router/SKILL.md`，按其中的 Agent Team Router 自动选择参与视角；用户不需要手动指定角色。
+当对话涉及以上方向且需要产品、架构、技术或角色判断时，默认读取 `skills/agent-team-router/SKILL.md`，按其中的 Agent Team Router 自动选择参与视角；路径明确的机械改动不额外路由。
 
 ## Collaboration Efficiency
 
@@ -46,7 +46,13 @@
 
 新任务进入执行前，Agent 应优先冻结 3-7 条不变量：目标仓库/模块、必须修改与禁止修改范围、核心数据源/owner、ID 与权限语义、优先级顺序、非目标、验收信号。若信息已足够，直接执行；若用户连续纠偏、提速或中断，立即切换到快速收敛模式：停止旧计划，只确认当前状态、最新约束和下一步最小动作。
 
-推荐节奏：5 分钟冻结约束，30 分钟做最小闭环，10 分钟审查 diff 边界，20 分钟补测试和验证。每 20-30 分钟给一次短状态更新，重点说明是否越界、是否阻塞、下一步是什么。
+推荐节奏：5 分钟冻结约束，30 分钟做最小闭环，10 分钟审查 diff 边界，20 分钟补测试和验证。轻量任务按实际风险缩短这些步骤；每 20-30 分钟给一次短状态更新，重点说明是否越界、是否阻塞、下一步是什么。
+
+用户在一个任务中引用本 README 一次后，后续沟通默认持续适用 hub 规则；Agent 应在必要时主动读取、引用 hub 内容。更新或重构 hub 只在用户明确要求、触发 `rule update`、存在定时/自动化触发，或出现反复且可复用的高风险流程缺口时执行；不得让这些后台质量动作阻塞主任务推进。
+
+实现类任务按 `skills/task-execution-lifecycle/SKILL.md` 分级收口：轻量任务只做定向读取、最小修改、最窄验证和 diff 边界；标准任务冻结关键不变量后完成可验证闭环；高风险任务才升级到完整 review、外部参考、main 同步、commit/PR 准备或报告沉淀。
+
+Agent Hub 的常驻升级任务之一是持续吸收 Superpowers 等优秀 Agent 方法论。“常驻”指后续在用户明确要求升级、触发 `rule update`、或设置了定时提醒/自动化后执行；不代表当前对话持续自动续跑或等待。后续遇到外部技能库、插件、workflow 或工程实践时，默认按 `skills/methodology-harvest/SKILL.md` 先做来源核对、机制抽取和 Hub 适配，再落位到既有 Skill、Rule、Reference 或 Report。
 
 ## Required Curation Stage
 
@@ -64,10 +70,9 @@
 │   └── cursor.md
 ├── skills/
 │   ├── README.md
-│   ├── agent-team-router/
-│   ├── paper-record/
-│   ├── project-content-curation/
-│   └── refactor-hub/
+│   └── <skill-slug>/
+│       ├── SKILL.md
+│       └── references/
 └── reports/
     ├── index.md
     ├── company/
