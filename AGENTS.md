@@ -23,7 +23,7 @@
 5. 如果任务属于某个项目，按归属优先查看 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/` 下已有沉淀；如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
 6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team`，且需要产品、架构、技术或角色判断时，读取 `skills/agent-team-router/SKILL.md`；路径明确的机械改动不额外路由。
 7. 当用户要求整理项目内容、规则、Skills、报告或删除内容时，读取 `skills/project-content-curation/SKILL.md`，先完成内容分类，再执行迁移、保留或删除。
-8. 当用户说 `project refactor`、`rule update`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
+8. 当用户说 `project refactor`、`receive`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
 9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
 10. 当用户发布非机械的实现、重构、UI、架构、协议、数据、工具链或跨模块任务时，读取 `skills/task-execution-lifecycle/SKILL.md`；小修、单点文档和路径明确的机械改动走轻量执行预算，不额外加载长 reference。
 11. 当用户要求吸收 Superpowers、外部 Agent framework、插件、技能库、工程方法论或优秀实践到 Hub 时，读取 `skills/methodology-harvest/SKILL.md`；优先抽取机制并落到既有 Skill/Rule/Report，不照搬外部目录、品牌口吻或不适配当前工具的强制门禁。
@@ -146,10 +146,10 @@
 
 ## Rule Maintenance
 
-- P0：用户使用 `rule update` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Report 还是不沉淀，并完成对应修改与验证。
-- P0：用户把某类 Hub 升级、方法论吸收或规则复查描述为“常驻”时，只把它记录为后续触发条件；只有用户再次明确要求、触发 `rule update`，或存在已设置的定时提醒/自动化时才执行，不在当前线程无限续跑或持续等待。
-- P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `rule update`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
-- P0：普通交互不自动触发 `rule update`。只做轻量判断：本轮是否出现明确用户要求、已设置的定时/自动化触发、反复出现的流程缺口、高风险设计原则，或会影响后续安全/权限/接口/验证的稳定约束；不满足这些条件时，不修改规则库。
+- P0：用户使用 `receive` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Report 还是不沉淀，并完成对应修改与验证。
+- P0：用户把某类 Hub 升级、方法论吸收或规则复查描述为“常驻”时，只把它记录为后续触发条件；只有用户再次明确要求、触发 `receive`，或存在已设置的定时提醒/自动化时才执行，不在当前线程无限续跑或持续等待。
+- P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `receive`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
+- P0：普通交互不自动触发 `receive`。只做轻量判断：本轮是否出现明确用户要求、已设置的定时/自动化触发、反复出现的流程缺口、高风险设计原则，或会影响后续安全/权限/接口/验证的稳定约束；不满足这些条件时，不修改规则库。
 - P0：完成架构设计、coding 分层设计、系统设计、UI/交互设计、数据体系设计或其他高风险设计后，可以执行自我提升判断；默认先作为候选经验或报告线索，只有用户要求、问题反复出现、或原则明显跨任务复用且影响高风险边界时，才更新 `skills/design-principle-library/SKILL.md` 或相关专门 Skill。
 - P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的原则、流程和检查项。
 - P0：每次规则维护或内容清理收尾前，必须执行内容整理阶段：把新增或存量内容判断为 Skill、Rule、Report、Keep 或 Delete；该抽成 Skill 的抽成 Skill，该保留为规则的保留为规则，该删除的验证后删除。
@@ -162,7 +162,7 @@
 
 ## Hub Refactor
 
-- 当用户说 `project refactor`、`rule update`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Report、Keep、Delete 落位。
+- 当用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Report、Keep、Delete 落位。
 - `refactor hub` 的目标是优化 agent-hub 的长期可用性，不是把对话过程原样归档；只沉淀稳定、可复用、可触发的流程和约束。
 
 ## Project Content Curation

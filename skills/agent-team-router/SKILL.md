@@ -136,7 +136,7 @@ output_style:
 - 早期联调、mock 或本地验证中，如果用户已经明确数量、范围和验收目标，优先做直接、低成本、可跑通的实现；不要为了“未来可能泛化”提前抽 registry、hub、插件框架或复杂生命周期。后续确有扩展需求时再抽象。
 - `Security_Governance_AGENT` 必须检查权限、审批、密钥和审计风险。
 - `Data_AI_Architect_AGENT`、`FinOps_Governance_AGENT`、`Product_Workflow_AGENT` 等角色按议题加入，不默认扩大讨论面。
-- 当设计或实现被用户连续纠偏，或完成高风险设计闭环后，自动执行 `skills/design-principle-library/SKILL.md` 的自我提升检查；把可复用原则更新到对应 Skill/Rule，不能只靠用户后续手动触发 `rule update`。
+- 当设计或实现被用户连续纠偏，或完成高风险设计闭环后，自动执行 `skills/design-principle-library/SKILL.md` 的自我提升检查；把可复用原则更新到对应 Skill/Rule，不能只靠用户后续手动触发 `receive`。
 - 最终输出必须包含综合结论，不只罗列角色观点；存在分歧时说明取舍。
 
 ## Agent Creation And Merge Protocol

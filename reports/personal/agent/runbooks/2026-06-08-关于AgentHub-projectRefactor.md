@@ -17,7 +17,7 @@
 | `project refactor` | 整理当前项目或 hub 的指令、报告、规则、Skills 和目录结构，按归属落位 | 本清单、`skills/refactor-hub/SKILL.md`、`skills/project-content-curation/SKILL.md` |
 | `git update` | 更新主分支并把最新主分支合入当前分支；保护本地改动，必要时解决冲突和验证 | 本清单的 Git Update 详细流程、`AGENTS.md` 的短触发规则 |
 | `git diff` | 只读审查 staged / unstaged diff，按来源分层汇报，不修改文件 | `AGENTS.md` 的 Pre-commit Diff Review |
-| `rule update` | 从当前对话抽取可复用规则、技能或报告，更新 agent-hub | `skills/refactor-hub/SKILL.md` |
+| `receive` | 从当前对话抽取可复用规则、技能或报告，更新 agent-hub | `skills/refactor-hub/SKILL.md` |
 | `paper record` | 将当前聊天冻结为思考研究报告并更新 reports 索引 | `skills/paper-record/SKILL.md` |
 
 ## 入口读取
@@ -62,7 +62,7 @@
 ## 触发 Skill
 
 - 用户说 `paper record`：执行 `skills/paper-record/SKILL.md`，只做当前聊天归档和索引更新。
-- 用户说 `project refactor`、`rule update`、`refactor hub`、优化 hub 或要求抽取可复用规则：执行 `skills/refactor-hub/SKILL.md`。
+- 用户说 `project refactor`、`receive`、`refactor hub`、优化 hub 或要求抽取可复用规则：执行 `skills/refactor-hub/SKILL.md`。
 - 用户要求整理项目内容、规则、Skills、报告或删除内容：执行 `skills/project-content-curation/SKILL.md`。
 - 任务涉及 API、route、operation、tool surface 或跨仓库契约：执行 `skills/interface-contract-audit/SKILL.md`。
 - 任务涉及 AgentOS、Agent infra、AI 技术、Product UI/功能/架构、音画同步或互动影游：执行 `skills/agent-team-router/SKILL.md`。

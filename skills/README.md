@@ -19,7 +19,7 @@ skills/
 - `bug-reproduction`：处理 bug、报错、测试失败或行为异常时，先复现症状，再定位根因、最小修复并回归验证。
 - `code-review`：审查 diff、PR、提交前改动和测试缺口时，优先找真实 bug、回归风险和共享接口问题。
 - `codebase-navigation`：理解陌生仓库、模块、入口、调用链、数据流或目录结构时，先建立真实代码地图。
-- `design-principle-library`：完成或复盘架构、coding 分层、系统、UI/交互、数据体系、工具协议等设计后，抽取可复用原则、反模式和检查清单，减少依赖用户手动 rule update。
+- `design-principle-library`：完成或复盘架构、coding 分层、系统、UI/交互、数据体系、工具协议等设计后，抽取可复用原则、反模式和检查清单，减少依赖用户手动 `receive`。
 - `docs-refresh`：写或更新 README、运行手册、迁移指南、架构说明、用户指南和 FAQ 时使用。
 - `implementation-plan`：实现前拆方案、评估改动范围、列 touch points、制定工程步骤和验证计划时使用。
 - `methodology-harvest`：吸收 Superpowers、外部 agent framework、插件、技能库或工程方法论到 Agent Hub 时使用。
@@ -27,7 +27,7 @@ skills/
 - `interface-contract-audit`：涉及 API/Gateway/route/operation/tool surface 或跨仓库对接契约时，先盘点完整接口面、真实消费者和真实能力，再决定 supported/unsupported/deprecated/internal。
 - `prompt-improvement`：优化 prompt、system/developer instructions、agent 指令、输出格式、few-shot 示例或减少幻觉/跑偏时使用。
 - `project-content-curation`：整理项目内容、规则、Skills、报告或删除内容时，先分类为 Skill、Rule、Report、Keep 或 Delete，再迁移、保留或清理。
-- `refactor-hub`：用户说 `project refactor`、`rule update`、`refactor hub` 或要求从当前对话抽取可复用规则/技能/注意点时，先回看对话和现有 hub，再分析并落位可优化部分。
+- `refactor-hub`：用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则/技能/注意点时，先回看对话和现有 hub，再分析并落位可优化部分。
 - `requirements-brief`：把产品、功能、工具、自动化或工作流想法整理成需求简报、PRD、验收标准和非目标边界。
 - `source-grounded-research`：结合业界资料、联网调研、事实核对、竞品/技术/论文/官方文档整理，并输出带来源的结论。
 - `task-execution-lifecycle`：发布非机械实现、重构、UI、架构、协议、数据、工具链或跨模块任务后，按轻量、标准、高风险三档完成目标定位、验证、review 和交付收口。

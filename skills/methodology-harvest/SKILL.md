@@ -10,7 +10,7 @@ description: 当用户要求吸收 Superpowers、外部 agent framework、插件
 ## Trigger
 
 - 用户说“吸收/学习/借鉴 Superpowers”“升级 hub”“把优秀 agent 工作流沉淀进来”。
-- 用户把外部方法论吸收描述为“常驻升级任务”，或在 `rule update`、定时提醒、自动化触发时要求复查/更新这类吸收成果；常驻表示未来触发，不表示当前轮持续自动运行。
+- 用户把外部方法论吸收描述为“常驻升级任务”，或在 `receive`、定时提醒、自动化触发时要求复查/更新这类吸收成果；常驻表示未来触发，不表示当前轮持续自动运行。
 - 对比外部 agent framework、plugin、skill library、prompt/workflow 方法论。
 - 完成一次方法论调研后，需要长期沉淀为 Hub 的 Skill、Rule、Report 或索引。
 

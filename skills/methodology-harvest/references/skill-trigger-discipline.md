@@ -24,7 +24,7 @@ Hub 规则：
 
 开始任务、切换任务、收到用户纠偏或准备收尾时，快速问：
 
-1. 用户是否点名了 Skill、插件、Hub、rule update、paper record 或项目内容整理？
+1. 用户是否点名了 Skill、插件、Hub、receive、paper record 或项目内容整理？
 2. 任务类型是否明显匹配某个 Hub skill：bug、review、plan、test、requirements、interface contract、research、execution lifecycle？
 3. 是否涉及 AgentOS / Agent infra / Product UI / AI 技术研究，需要 agent team routing？
 4. 是否要吸收外部方法论、插件、技能库或优秀实践，需要 methodology harvest？

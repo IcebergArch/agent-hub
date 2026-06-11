@@ -1,7 +1,7 @@
 ---
 name: refactor-hub
 description: >-
-  当用户说 project refactor、rule update、refactor hub、优化 hub、整理 agent-hub 或要求从当前对话中抽取可复用规则/技能/报告时使用；
+  当用户说 project refactor、receive、refactor hub、优化 hub、整理 agent-hub 或要求从当前对话中抽取可复用规则/技能/报告时使用；
   先回看当前对话消息和现有 hub 内容，分析可优化点，再按 Skill、Rule、Report、Keep、Delete 分类落位。
 ---
 
@@ -15,7 +15,7 @@ description: >-
 
 - `refactor hub`
 - `project refactor`
-- `rule update`
+- `receive`
 - `优化 hub`、`整理 hub`、`更新 hub 指令`
 - 要求“翻阅/回看/复盘当前对话”，并抽取可复用规则、技能、注意点或工作方法
 - 要求复盘、优化或纠正某类指令执行流程，例如 `git update`、`git diff`、验证、提交、发布或调试流程，并希望后续长期遵守
