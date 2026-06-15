@@ -61,8 +61,10 @@
 - 用户偏好中文协作语境时，方案、总结和长期文档默认使用中文；保留代码标识、命令、路径和接口名的原文。
 - 用户要求本地调试时，优先提供可直接运行的 Markdown shell block，写明 `cd` 路径、必要环境变量、窄范围测试和全量验证命令。
 - 用户要求“给我文件内容”“我贴到公共文档上”或类似可复制正文时，正文内容是核心交付；先直接给可复制内容，再处理临时文件清理、规则收尾或背景验证。除非临时文件会造成安全、提交或用户工作区风险，不要让删除、回滚等收尾动作挡在核心答案前。
+- 用户要求整理 merge comment、PR 描述或合并说明时，默认用中文短 bullet，按实际信息量决定条数，并按模块/链路级能力概括；粒度应略细于一句话总结、粗于文件级改动清单。不要主动写验证、清理、明确未改或过程复盘，除非用户明确要求。
 - 当用户中断当前回合、连续发送 `quickly`/`hurry`/“快点”等提速指令，或新消息明显覆盖旧请求时，立即切换到快速收敛模式：停止延续旧计划，先确认当前未完成/已部分修改状态，再只执行最新请求所需的最小动作；回复保持短结论、当前风险和下一步，不展开长方案。
 - 当同一任务中用户多次纠正架构语义、范围边界或优先级顺序时，下一次实现前必须先把已确认的不变量列成 3-7 条检查清单，并据此审查改动范围；若仍缺关键排序、owner 或数据源语义，只问一个最小问题，不能继续按旧假设扩写实现。
+- 当用户明确说“不要改不该改的内容”“保持 diff 干净”或质疑改动越界时，立即停止扩展实现，先检查 `git status --short`、`git diff --name-status`、`git diff --cached --name-status`，分清 staged、unstaged、untracked、用户已有改动与本轮改动；只做必要的索引/格式收敛，不继续新增功能或跨 owner 调整。
 
 ## Paper Record
 
@@ -119,10 +121,12 @@
 - 没有真实能力或当前目标不需要的接口，默认移除或返回明确 unsupported，并补 negative contract test 防止伪接口回归；最终回复要列出完整 supported/unsupported 面，而不是只汇报本轮点名项。
 - 对 tool/gateway/runtime 这类模型披露链路，必须区分管理目录视图和模型可调用视图：上游选择工具时以显式 `toolIds` 或授权引用作为唯一选择源，不用 `IncludeDefault*`、`IncludeRuntime*`、`IncludeBackend*` 等布尔开关向模型注入默认工具。管理页需要全量目录时，使用 catalog/list/detail surface 或内部查询承载，不污染 runtime build DTO。
 - 对 tool call 执行链路，schema/build 和 execute 必须闭合在同一个 tool gateway/surface 语义下：runtime loop 只负责编排模型消息、调用 gateway 和回塞结果，不按 tool name 直接 switch 执行具体工具。若底层资源 client 仍由 runtime、backend、workspace 或 sandbox 模块拥有，应通过 adapter 注入 tools runner，而不是从 runtime core 绕过 tools 管理、审计、参数校验和回执归一化。
+- 对 runtime 内部控制、middleware 自动补齐、渐进式加载等辅助动作，默认视为执行链路增强，不纳入业务 tool catalog、DB 管理面或一站式管理台；只有被明确提升为稳定、可授权、可审计的模型工具契约后，才进入 tool registry。
 
 ## Design Planning
 
 - 当未来演进方向尚未确定归属时，只沉淀兼容性边界、稳定契约和可组合性要求；不要提前在当前模块中加入未定责的接口、目录、生命周期或实现机制。
+- 暂时没有真实调用方、配置入口、验收场景或明确 owner 的扩展点不保留；后续快速迭代需要时再按真实用例补回。每次调整收尾都要删除只服务“未来可能”的 option、hook、factory、adapter、mock 或兼容分支，让 diff 只表达本次目标。
 - 做模块设计时优先保持模块独立、原子、可单独验证；面向未来的扩展点应通过公开协议、元数据、回执和测试约束表达，避免让当前模块依赖尚未存在的外部架构。
 - 不为单个前置检查或单条调用链过早拆出跨域 service、guard 或 platform package。若能力只服务某个 owner 的 CRUD/生命周期，优先由 owner service 暴露窄方法；只有关系本身有独立生命周期、多个 owner 共同维护或需要替换为统一 access/relationship 层时，才抽 facade/guard。
 - 设计被上层系统调用的执行模块时，必须明确故障隔离边界：内部 panic、超时、阻塞、资源耗尽、依赖降级和部分失败要收敛成标准错误或回执，不能穿透并干扰上层系统。
@@ -131,6 +135,9 @@
 - 设计工具、Agent loop、runtime 或 store 相关能力时，优先建设真实链路：模型可见 schema、调度入口、执行回执、状态/事件落点和验证测试必须连成闭环；mock 只能作为请求级、fixture 级或测试级替身。
 - 当能力需要未来接入外部 runtime 或 store 时，当前实现应通过稳定接口、回执和事件表达衔接点，而不是把未来 store 细节提前写死。
 - Runtime 中的配置引用与真实加载状态必须区分：preset/profile 可保留 resource IDs 作为配置输入，但只有 loader/middleware 真正解析并装载内容后才能称为 loaded。删除或找不到的旧引用不应反查到真实资源；同时应在 run metadata、event、trace 或调用明细中记录 requested / resolved / unresolved 诊断，方便排查“配置了但未加载”的能力。
+- 当增强能力可能从 middleware、adapter、runtime loop、gateway 或 store 沉淀为公共策略时，先标注 experimental layer、目标 owner、迁移门槛和回退方式；未确认 owner 前保持为可替换增强，不把它下沉到其它 owner 的核心 loop 或公共配置。
+- 在 composition root 或依赖装配点新增能力时，优先遵循现有 option/list 风格；复杂 factory、别名和跨层构造先收敛为本地窄 helper 或 adapter，避免把实现细节塞进装配列表。
+- 设计结构化配置面时，按 owner 和 provider/store 语义分层：选择字段只暴露稳定业务语义，具体参数放在同名配置块下；不得把底层实现名、临时 adapter 名或相邻模块的 backend 名直接作为当前模块的配置枚举。若当前实现需要映射到内部 provider、proxy、backend 或 client 类型，映射留在 composition root/adapter 内，并用配置样例、测试和搜索验证旧实现名没有泄漏到外部配置面。
 - 当仓库已有 SQL 模板、query 目录、ORM mapper 或代码生成链路时，新增/调整持久化查询应优先修改事实源模板并重新生成 client；服务层只调用生成查询或窄 repository 方法，不散落多行内嵌 SQL。例外仅限没有模板链路的极小一次性查询；收尾时必须检查生成文件来源、运行生成命令或等价验证，并搜索确认本轮没有把可复用查询耦合进业务 service。
 
 ## External Reference Refresh
@@ -191,6 +198,8 @@
 - 准备提交、暂存、amend、PR、合并或用户要求“只提交本次改动”前，必须先做完整 diff 审查；不要只看 `git status`。普通交付若不触发 git 动作，先按风险执行 `git status --short`、`git diff --name-status`、`git diff --stat` 和必要定向 diff；高风险或边界不清时再展开 staged / unstaged / cached 全套审查。
 - 当工作区干净但当前分支相对 upstream 或目标分支存在未推送提交、刚执行 merge/rebase，或用户要求审查“本次改动/改动边界”时，`git diff` 不能只停在 staged / unstaged；必须补充 base/head diff 审查：确认基准分支或 merge-base，列出提交、文件和 stat，并把变化分成目标分支合入、本轮必要实现、测试/文档/生成物、已有分支改动和无关漂移，明确说明是否超出用户任务边界。
 - diff 审查要按来源分层：本轮必要实现、测试/文档/配置、生成产物、工具缓存或临时文件、用户已有改动、无关漂移。提交前只暂存本轮必要内容；无关改动保持原样，不擅自回滚。生成缓存、包管理缓存和临时输出不得混入提交。
+- 当用本地反向补丁清理已提交或已合入分支里的越界改动时，必须同时报告工作区 diff 和相对目标分支的 effective diff；不要把本地 dirty 文件直接等同于 PR 仍会变化，也不要只看 effective diff 而忽略待提交的清理补丁。
+- 如果本轮操作意外造成 staged、unstaged、untracked 混杂，先说明将进行 index-only 整理，再只对自己本轮文件做 unstage/restage 等索引收敛；不得触碰用户已有 staged 改动或借机修改工作区内容。
 - `reports/company/projects/` 默认不得进入 git 提交；只有报告对应开源项目，且经过明确 diff 审查确认不含私有信息时，才允许单独纳入提交。`reports/personal/agent/` 与 `reports/personal/projects/` 保留为普通可提交内容，但提交前仍需按 diff 审查确认没有敏感信息。
 - 提交或改写远端最新提交前，必须检查最终提交树而不只检查工作区：用 `git ls-tree -r --name-only HEAD` 或 staged 等价检查确认没有 `.DS_Store`、`reports/company/projects/`、旧报告路径或被忽略的本地内容进入提交；若刚执行 amend，推送前再次确认 `HEAD` 与预期一致。
 - 对 IDL、API client、schema、golden、snapshot、lockfile 等生成产物，必须追溯到事实源和生成命令：确认是否由规范脚本生成、是否手改了生成文件、是否把事实源之外的历史漂移一起带入。若生成产物变化远大于本轮目标，必须检查对应事实源 diff 和消费者调用点，说明哪些变化是本轮必需、哪些是已存在但本次补齐、哪些属于无关干扰。

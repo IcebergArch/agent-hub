@@ -21,6 +21,8 @@ description: 当用户设计 AI agent 工具、MCP/server 工具、function call
    - 工具只暴露一个清晰动作。
    - 写清工具解决什么任务，不解决什么任务。
    - 不把管理目录视图和模型可调用工具混在一起。
+   - 先区分管理操作、模型可调用动作和 runtime/middleware 内部辅助动作；三者可以复用 owner service 或 adapter，但不共享同一个 tool surface。
+   - 先画清角色拓扑：tool host / MCP server 实例、provider registry、gateway/proxy/policy、runner/scheduler、runtime loop 和下游 provider/server 分别是谁的 owner；当前模块只实现自己负责的段，跨 owner 需求写成对接契约或 follow-up。
 
 2. **Design Inputs**
    - 参数名贴近模型自然理解。
@@ -31,6 +33,7 @@ description: 当用户设计 AI agent 工具、MCP/server 工具、function call
    - 返回结构化结果。
    - 包含 `status`、`message`、`resourceRef` 或 `receipt`、必要诊断。
    - 对异步或长任务返回 task/session/receipt，不伪装成同步成功。
+   - 异步工具的 retry、等待、轮询、回调恢复和 long-running policy 默认属于 runner/scheduler/runtime 的职责；tool host / MCP server 只暴露可执行能力、任务状态、回执字段和回调元数据，除非它就是被明确授权的调度 owner。
 
 4. **Design Errors**
    - 区分 validation、permission、not_found、conflict、unsupported、rate_limit、downstream_failure。
@@ -73,3 +76,6 @@ description: 当用户设计 AI agent 工具、MCP/server 工具、function call
 - 工具描述要像给初级工程师写 docstring 一样明确。
 - schema/build 和 execute 语义必须闭合；不要在 runtime loop 里按 tool name 绕过 gateway。
 - 没有真实后端能力的工具要返回明确 unsupported，不能用 mock 假装成功。
+- 资源 CRUD、导入、更新和内容存取默认走 owner service 或管理 API；不要为了复用工具执行器而让管理台调用模型 tool runner。
+- middleware/runtime 为模型补充的内部辅助动作只有在明确成为稳定授权工具后，才进入 tool catalog 或 registry。
+- 中立 registry、具体 tool server、执行 runner 和上游 agent 是不同角色；模块命名、目录位置、API 和验证链路都要反映真实上下游关系，不能因为当前接入方便把中立或实例角色塞进错误 owner。
