@@ -79,3 +79,4 @@ description: 当用户设计 AI agent 工具、MCP/server 工具、function call
 - 资源 CRUD、导入、更新和内容存取默认走 owner service 或管理 API；不要为了复用工具执行器而让管理台调用模型 tool runner。
 - middleware/runtime 为模型补充的内部辅助动作只有在明确成为稳定授权工具后，才进入 tool catalog 或 registry。
 - 中立 registry、具体 tool server、执行 runner 和上游 agent 是不同角色；模块命名、目录位置、API 和验证链路都要反映真实上下游关系，不能因为当前接入方便把中立或实例角色塞进错误 owner。
+- 工具名、tool call 协议、执行回执和 provider/backend port 属于稳定 domain contract；catalog 负责定义披露、目录视图和 build/list/schema，provider/adapter 只依赖 domain contract，不反向依赖 catalog view 或 execution internals。

@@ -11,6 +11,11 @@
 
 ## Personal Projects
 
+### Maxwell-AI
+
+- [2026-06-15 - 本地常驻运行上下文](personal/projects/maxwell-ai/runbooks/2026-06-15-关于maxwell-ai-localRuntimeContext.md)
+- [2026-06-15 - 音视频生成 Agent 系统 RAG 测试背景](personal/projects/maxwell-ai/analysis/2026-06-15-关于音视频生成Agent系统-ragTestBackground.md)
+
 ### Auto-Info
 
 - [2026-06-04 - UI / 链路 / 产品功能重构方案](personal/projects/auto-info/refactor/2026-06-04-关于auto-info-uiLinkProductRefactor.md)
