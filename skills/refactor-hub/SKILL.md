@@ -2,7 +2,7 @@
 name: refactor-hub
 description: >-
   当用户说 project refactor、receive、refactor hub、优化 hub、整理 agent-hub 或要求从当前对话中抽取可复用规则/技能/报告时使用；
-  先回看当前对话消息和现有 hub 内容，分析可优化点，再按 Skill、Rule、Report、Keep、Delete 分类落位。
+  先回看当前对话消息和现有 hub 内容，分析可优化点，再按 Skill、Rule、Reference、Report、Keep、Delete 分类落位。
 ---
 
 # Refactor Hub
@@ -34,7 +34,7 @@ description: >-
 1. **Conversation Review**：先回看当前对话中用户的明确要求、纠偏点、反复强调的偏好和已做过的变更；如果上下文已压缩，只使用可见摘要和当前消息，不编造缺失细节。
 2. **Hub Inventory**：读取 agent-hub 的入口文件和相关技能，确认现有规则是否已经覆盖；不要不读现有内容就新增重复规则。
 3. **Gap Analysis**：把对话暴露的问题归类：触发词缺失、流程顺序缺失、命名审计缺失、验证缺失、文档边界缺失、文件过大、技能缺失、报告归档缺失、提交边界缺失或过期内容。特别检查 `README.md`、`AGENTS.md`、工具适配文件和 Skill 是否混入了具体项目、公司项目或业务域专属设计规则。
-4. **Classify**：按 `project-content-curation` 的标准分类为 Skill、Rule、Report、Keep 或 Delete。可重复流程优先抽成 Skill；稳定约束写规则；项目结论写 reports；一次性过程不沉淀。
+4. **Classify**：按 `project-content-curation` 的标准分类为 Skill、Rule、Reference、Report、Keep 或 Delete。可重复流程优先抽成 Skill；长检查表和执行细则优先进入对应 Skill reference；稳定约束写规则；项目结论写 reports；一次性过程不沉淀。
 5. **Extract And Merge**：优先更新现有 Skill 或规则；只有现有位置承载不清时才新增 Skill。新增内容必须说明触发条件、步骤、输出和验证。若可复用经验来自单个项目，先抽象为流程、边界或检查项；无法抽象的项目内容只放入对应 reports，不写入 hub 通用入口。
 6. **Sync Entrypoints**：同步 `AGENTS.md` loading order、`README.md` 目录图、`skills/README.md` 技能索引和任何旧触发词引用。
 7. **Validate**：搜索新旧触发词、技能名、目录名和入口引用；确认没有重复、断链、旧称残留或空泛规则。
@@ -44,7 +44,7 @@ description: >-
 最终回复应包含：
 
 - 从当前对话抽取了哪些 hub 优化点。
-- 新增或调整了哪些 Skill、Rule、Report、入口说明。
+- 新增或调整了哪些 Skill、Rule、Reference、Report、入口说明。
 - 哪些内容没有沉淀，以及原因。
 - 已执行的引用搜索或验证命令；如果无法完整验证，说明缺口。
 

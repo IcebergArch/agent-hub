@@ -23,7 +23,7 @@
 5. 如果任务属于某个项目，按归属优先查看 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/` 下已有沉淀；如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
 6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team`，且需要产品、架构、技术或角色判断时，读取 `skills/agent-team-router/SKILL.md`；路径明确的机械改动不额外路由。
 7. 当用户要求整理项目内容、规则、Skills、报告或删除内容时，读取 `skills/project-content-curation/SKILL.md`，先完成内容分类，再执行迁移、保留或删除。
-8. 当用户说 `project refactor`、`receive`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Rule / Skill / Report / Keep / Delete 分类并落位到规则库。
+8. 当用户说 `project refactor`、`receive`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Skill / Rule / Reference / Report / Keep / Delete 分类并落位到规则库。
 9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
 10. 当用户发布非机械的实现、重构、UI、架构、协议、数据、工具链或跨模块任务时，读取 `skills/task-execution-lifecycle/SKILL.md`；小修、单点文档和路径明确的机械改动走轻量执行预算，不额外加载长 reference。
 11. 当用户要求吸收 Superpowers、外部 Agent framework、插件、技能库、工程方法论或优秀实践到 Hub 时，读取 `skills/methodology-harvest/SKILL.md`；优先抽取机制并落到既有 Skill/Rule/Report，不照搬外部目录、品牌口吻或不适配当前工具的强制门禁。
@@ -61,7 +61,7 @@
 - 用户偏好中文协作语境时，方案、总结和长期文档默认使用中文；保留代码标识、命令、路径和接口名的原文。
 - 用户要求本地调试时，优先提供可直接运行的 Markdown shell block，写明 `cd` 路径、必要环境变量、窄范围测试和全量验证命令。
 - 用户要求“给我文件内容”“我贴到公共文档上”或类似可复制正文时，正文内容是核心交付；先直接给可复制内容，再处理临时文件清理、规则收尾或背景验证。除非临时文件会造成安全、提交或用户工作区风险，不要让删除、回滚等收尾动作挡在核心答案前。
-- 用户要求整理 merge comment、PR 描述或合并说明时，默认用中文短 bullet，按实际信息量决定条数，并按模块/链路级能力概括；粒度应略细于一句话总结、粗于文件级改动清单。不要主动写验证、清理、明确未改或过程复盘，除非用户明确要求。
+- 用户要求整理 merge comment、PR 描述或合并说明时，先用 base-head 或用户指定 diff 核对实际改动范围，再用中文短 bullet 描述本次 diff 真实变化；格式接近人工 merge note：每条以动作开头，按功能链路和模块聚合，避免文件级罗列，也不要泛化成产品愿景。粒度略细于一句话总结、粗于文件级改动清单；不要主动写验证、清理、明确未改、过程复盘或过细的 bug 内部原因，除非用户明确要求。
 - 当用户中断当前回合、连续发送 `quickly`/`hurry`/“快点”等提速指令，或新消息明显覆盖旧请求时，立即切换到快速收敛模式：停止延续旧计划，先确认当前未完成/已部分修改状态，再只执行最新请求所需的最小动作；回复保持短结论、当前风险和下一步，不展开长方案。
 - 当同一任务中用户多次纠正架构语义、范围边界或优先级顺序时，下一次实现前必须先把已确认的不变量列成 3-7 条检查清单，并据此审查改动范围；若仍缺关键排序、owner 或数据源语义，只问一个最小问题，不能继续按旧假设扩写实现。
 - 当用户指出“多余”“别发挥”“不要兼容”“不要做太多”或类似范围收缩信号时，立即停止新增实现，先检查本轮 diff 和 owner 边界；撤回自己刚刚引入的非必要、跨 owner 或未被用户明确认可的扩展，只保留用户点名目标所需的最小改动。后续不得继续补通用能力、兼容层、重试/恢复链路或扩接口，除非用户重新明确授权。
@@ -155,31 +155,21 @@
 
 ## Rule Maintenance
 
-- P0：用户使用 `receive` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Report 还是不沉淀，并完成对应修改与验证。
+- P0：用户使用 `receive` 时，将其视为明确的规则库维护指令；必须读取 `skills/refactor-hub/SKILL.md`，判断应更新全局规则、工具适配规则、Skill、Reference、Report 还是不沉淀，并完成对应修改与验证。
 - P0：用户把某类 Hub 升级、方法论吸收或规则复查描述为“常驻”时，只把它记录为后续触发条件；只有用户再次明确要求、触发 `receive`，或存在已设置的定时提醒/自动化时才执行，不在当前线程无限续跑或持续等待。
 - P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `receive`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
 - P0：普通交互不自动触发 `receive`。只做轻量判断：本轮是否出现明确用户要求、已设置的定时/自动化触发、反复出现的流程缺口、高风险设计原则，或会影响后续安全/权限/接口/验证的稳定约束；不满足这些条件时，不修改规则库。
 - P0：完成架构设计、coding 分层设计、系统设计、UI/交互设计、数据体系设计或其他高风险设计后，可以执行自我提升判断；默认先作为候选经验或报告线索，只有用户要求、问题反复出现、或原则明显跨任务复用且影响高风险边界时，才更新 `skills/design-principle-library/SKILL.md` 或相关专门 Skill。
-- P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的原则、流程和检查项。
-- P0：每次规则维护或内容清理收尾前，必须执行内容整理阶段：把新增或存量内容判断为 Skill、Rule、Report、Keep 或 Delete；该抽成 Skill 的抽成 Skill，该保留为规则的保留为规则，该删除的验证后删除。
-- 后续处理问题、方案或落地任务后，只在出现明确触发条件时沉淀规则；普通一次性经验、低风险偏好或未验证猜测不写入规则库。
-- 更新规则前先读取现有规则，保留已有规则的有效内容和语义，不因整理而丢失约束。
-- 新增规则优先归入现有小节；只有现有分类无法清晰承载时，才新增小节。
-- 对存量规则和新增规则做归纳整理：合并重复项，拆开混杂项，删除空泛表述，保持规则短、清晰、可执行。
-- 通用规则写入 `AGENTS.md`；工具专属规则写入 `agents/<tool>.md`；个人讨论沉淀写入 `reports/personal/agent/`；个人项目沉淀写入 `reports/personal/projects/<project-slug>/`；公司项目沉淀写入 `reports/company/projects/<project-slug>/`。
-- 如果审查后没有可抽象的通用规则，不要为了更新而写入空泛规则；最终回复中说明已经审查且未发现需要新增或调整的规则。
+- P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的触发条件、边界、流程和检查项。
+- P0：每次规则维护、内容清理或规则体系 review 前，必须执行内容整理阶段，并按 `skills/project-content-curation/SKILL.md` 与 `skills/project-content-curation/references/rule-system-strategy.md` 判断 Skill、Rule、Reference、Report、Keep 或 Delete；入口文件只保留短触发和硬约束，长流程、矩阵、示例和历史证据下沉到 Skill reference 或 reports。
+- 更新规则前先读取现有 owner，保留有效语义；新增规则优先合并到现有小节或 Skill，拆开混杂规则，删除空泛和不可验证表述。若审查后没有可抽象的通用规则，最终说明已审查但不新增。
+- 内容归属默认：通用硬约束写 `AGENTS.md`；工具差异写 `agents/<tool>.md`；可重复流程写 `skills/<skill-slug>/SKILL.md`；长细则写 `skills/<skill-slug>/references/`；个人/项目/公司结论和证据写对应 `reports/`。
 
-## Hub Refactor
+## Hub Refactor And Content Curation
 
-- 当用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Report、Keep、Delete 落位。
+- 当用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则、技能、注意点、工作方法时，必须执行 `skills/refactor-hub/SKILL.md`：先回看当前对话消息，再读取现有 hub 内容，分析缺口后按 Skill、Rule、Reference、Report、Keep、Delete 落位。
 - `refactor hub` 的目标是优化 agent-hub 的长期可用性，不是把对话过程原样归档；只沉淀稳定、可复用、可触发的流程和约束。
-
-## Project Content Curation
-
-- 当任务目标是整理项目、规则、技能、报告、入口文件或长期上下文时，必须先执行 `skills/project-content-curation/SKILL.md`，不要只做局部文字补丁。
-- 分类标准：可重复触发、带步骤和输出形态的流程写入 `skills/<skill-slug>/SKILL.md`；跨工具稳定约束写入 `AGENTS.md`；工具专属差异写入 `agents/<tool>.md` 或轻量工具规则；项目结论和证据写入 `reports/`；本地系统文件、IDE 状态、重复旧入口、临时日志和未引用废弃内容验证后删除。
-- 内容迁移后必须更新入口说明、目录图、技能索引和工具触发规则；删除前必须搜索旧路径、旧标题和旧触发词，确认没有仍需保留的引用。
-- 最终回复必须说明抽成了哪些 Skill、保留了哪些规则、删除了哪些内容，以及没有删除但刻意保留的兼容入口。
+- 当任务目标是整理项目内容、规则策略、系统内部规则体系、Skills、报告、入口文件或长期上下文时，必须先执行 `skills/project-content-curation/SKILL.md`，不要只做局部文字补丁。
 
 ## Change Cleanup Review
 

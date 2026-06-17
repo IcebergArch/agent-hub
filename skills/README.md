@@ -26,7 +26,7 @@ skills/
 - `paper-record`：用户说 **paper record** 时，将其作为聊天归档收尾动作，把当前对话整合为思考研究报告并写入 `reports/`。
 - `interface-contract-audit`：涉及 API/Gateway/route/operation/tool surface 或跨仓库对接契约时，先盘点完整接口面、真实消费者和真实能力，再决定 supported/unsupported/deprecated/internal。
 - `prompt-improvement`：优化 prompt、system/developer instructions、agent 指令、输出格式、few-shot 示例或减少幻觉/跑偏时使用。
-- `project-content-curation`：整理项目内容、规则、Skills、报告或删除内容时，先分类为 Skill、Rule、Report、Keep 或 Delete，再迁移、保留或清理。
+- `project-content-curation`：整理项目内容、规则策略、系统内部规则体系、Skills、报告或删除内容时，先分类为 Skill、Rule、Reference、Report、Keep 或 Delete，再迁移、保留或清理。
 - `refactor-hub`：用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则/技能/注意点时，先回看对话和现有 hub，再分析并落位可优化部分。
 - `requirements-brief`：把产品、功能、工具、自动化或工作流想法整理成需求简报、PRD、验收标准和非目标边界。
 - `source-grounded-research`：结合业界资料、联网调研、事实核对、竞品/技术/论文/官方文档整理，并输出带来源的结论。
@@ -48,3 +48,4 @@ skills/
 - 新增或显著修改 Skill 前，先按需读取 `methodology-harvest/references/skill-authoring-patterns.md`，检查触发描述、渐进加载、压力测试和反跑偏机制。
 - 新增或显著修改 Skill 后，按 `methodology-harvest/references/skill-authoring-patterns.md` 的 `Skill Change Deployment Gate` 逐项检查索引、触发、引用、压力测试说明和 diff 边界；不要批量写多个 Skill 后才回头验证。
 - 导入或改写外部 Skill 时，按需读取 `methodology-harvest/references/external-skill-portability.md`，先把外部工具名、agent manifest、prompt、script 和视觉 helper 映射为 Hub 可执行能力或 no-copy/watch 决策。
+- Review、整合、清理或完善系统内部规则体系时，优先使用 `project-content-curation/references/rule-system-strategy.md` 判断入口、Skill、reference、report 和工具适配文件的承载边界。

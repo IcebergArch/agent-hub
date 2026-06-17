@@ -85,7 +85,8 @@ Agent Hub 的常驻升级任务之一是持续吸收 Superpowers 等优秀 Agent
     │   │   ├── chat/
     │   │   └── runbooks/
     │   └── projects/
-    │       └── auto-info/
+    │       ├── auto-info/
+    │       └── maxwell-ai/
     └── README.md
 ```
 
