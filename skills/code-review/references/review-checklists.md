@@ -11,7 +11,7 @@
 1. **Scope capture**：确认审查对象、base/head、staged/unstaged、用户要求和非目标。
 2. **Report skepticism**：把实现者报告、subagent 状态、PR 描述和总结都当成 claims，不当成事实来源。
 3. **Spec compliance**：逐条核对需求、计划和实现，找 missing、extra、misunderstood。
-4. **Code quality**：在规格通过后审架构、边界、错误处理、测试、可维护性。
+4. **Code quality**：在规格通过后审架构、边界、错误处理、测试、可维护性。一个 reviewer 可以同时给 spec 和 quality verdict，但 spec verdict 不通过时先处理规格问题。
 5. **Evidence check**：验证命令、测试覆盖和 diff 边界是否支持“可交付”结论。
 6. **Feedback handling**：对外部反馈先技术核验，再采纳、调整或反驳。
 
@@ -28,6 +28,8 @@
 - Constraints：用户硬边界、兼容要求、不要触碰的模块、外部依赖或权限限制。
 
 没有 base/head 时，用 `git diff --name-status`、`git diff --stat`、定向 diff 和文件清单代替；没有 subagent 时，也按这个 brief 做自审。
+
+长 diff、长任务说明或 subagent 交接优先写成 review package 文件，再把路径交给 reviewer。reviewer 应只读审查对象和证据，不修改工作树；主 Agent 不能在 brief 里要求 reviewer 忽略某类发现、预设严重度或替实现 rationale 辩护。
 
 ## Fresh Perspective Review Gate
 
@@ -105,6 +107,8 @@ Verdict: <proved | contradicted | incomplete | insufficient>
 
 没有问题时，明确说“规格符合，未发现 missing / extra / misunderstood”，并说明看过的证据范围。
 
+如果只凭 diff 无法确认某项要求，例如 runtime wiring、UI workflow、权限语义、生成链路或外部系统行为，标成 `can't verify from diff` / `insufficient evidence for runtime behavior`，并列出需要补的证据；不要把“diff 没看出问题”写成已通过。
+
 ## Code Quality Review
 
 只有规格符合后再做质量审查。
@@ -162,6 +166,7 @@ Verdict 规则：
 - `ready` 不能靠优点、局部测试或 reviewer confidence 得出；必须有对应证据。
 - 如果问题来自计划/spec，本轮实现 review 的 verdict 应指向 `blocked` 或 `insufficient evidence`，并标明 `Plan issue`。
 - 如果只做只读 diff 审查，verdict 要说明范围，例如 `ready for current diff scope` 或 `insufficient evidence for runtime behavior`。
+- `can't verify from diff` 是证据缺口，不是通过语；需要主 Agent 补调用点、运行时、测试、页面/API smoke 或 source owner 证据。
 
 ## Final Integration Review
 

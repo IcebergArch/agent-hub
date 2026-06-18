@@ -54,6 +54,8 @@
 
 Agent Hub 的常驻升级任务之一是持续吸收 Superpowers 等优秀 Agent 方法论。“常驻”指后续在用户明确要求升级、触发 `receive`、或设置了定时提醒/自动化后执行；不代表当前对话持续自动续跑或等待。后续遇到外部技能库、插件、workflow 或工程实践时，默认按 `skills/methodology-harvest/SKILL.md` 先做来源核对、机制抽取和 Hub 适配，再落位到既有 Skill、Rule、Reference 或 Report。
 
+Agent Hub 的另一项长期能力是 repo 内自升级：当任务内出现稳定、可复用、跨设备也应成立的流程缺口或设计经验时，优先通过 `skills/self-evolution-engine/SKILL.md` 判断是否需要沉淀。这个能力必须由仓库内的 Rule、Skill、Reference 和 Report 触发与恢复，而不是依赖某台设备上的 memory、automation 或插件缓存状态。
+
 ## Required Curation Stage
 
 当用户要求整理项目内容、规则、Skills、报告或删除内容时，必须先执行内容整理阶段：分析存量内容，将可复用流程抽成 Skill，将稳定约束保留为规则，将项目结论放入 reports，将本地噪声、重复旧入口和未引用废弃内容验证后删除。

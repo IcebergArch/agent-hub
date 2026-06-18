@@ -29,6 +29,7 @@ skills/
 - `project-content-curation`：整理项目内容、规则策略、系统内部规则体系、Skills、报告或删除内容时，先分类为 Skill、Rule、Reference、Report、Keep 或 Delete，再迁移、保留或清理。
 - `refactor-hub`：用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则/技能/注意点时，先回看对话和现有 hub，再分析并落位可优化部分。
 - `requirements-brief`：把产品、功能、工具、自动化或工作流想法整理成需求简报、PRD、验收标准和非目标边界。
+- `self-evolution-engine`：当用户要求 Hub 具备自迭代/自优化/自升级能力，或任务内出现应沉淀为 repo-portable 机制的稳定缺口时，判断是否升级以及落位到哪个 owner。
 - `source-grounded-research`：结合业界资料、联网调研、事实核对、竞品/技术/论文/官方文档整理，并输出带来源的结论。
 - `task-execution-lifecycle`：发布非机械实现、重构、UI、架构、协议、数据、工具链或跨模块任务后，按轻量、标准、高风险三档完成目标定位、验证、review 和交付收口。
 - `test-strategy`：设计测试、补回归覆盖、端到端验收、质量门槛和防误报验证方案时使用。
@@ -48,4 +49,5 @@ skills/
 - 新增或显著修改 Skill 前，先按需读取 `methodology-harvest/references/skill-authoring-patterns.md`，检查触发描述、渐进加载、压力测试和反跑偏机制。
 - 新增或显著修改 Skill 后，按 `methodology-harvest/references/skill-authoring-patterns.md` 的 `Skill Change Deployment Gate` 逐项检查索引、触发、引用、压力测试说明和 diff 边界；不要批量写多个 Skill 后才回头验证。
 - 导入或改写外部 Skill 时，按需读取 `methodology-harvest/references/external-skill-portability.md`，先把外部工具名、agent manifest、prompt、script 和视觉 helper 映射为 Hub 可执行能力或 no-copy/watch 决策。
+- 当用户要求“自迭代 / 自优化 / 自升级 / 自我提升 / 换设备后也能继续触发”时，优先读取 `self-evolution-engine`，先过 repo-portable gate，再决定路由到 `refactor-hub`、`project-content-curation`、`design-principle-library` 或 `methodology-harvest`。
 - Review、整合、清理或完善系统内部规则体系时，优先使用 `project-content-curation/references/rule-system-strategy.md` 判断入口、Skill、reference、report 和工具适配文件的承载边界。

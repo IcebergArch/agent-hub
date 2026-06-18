@@ -44,6 +44,7 @@ Hub 规则：
 | diff / PR / feedback | `code-review` | `task-execution-lifecycle` |
 | API / tool surface | `interface-contract-audit` | `agent-tool-design` |
 | 外部方法论吸收 | `methodology-harvest` | 目标领域 Skill |
+| Hub 自迭代 / 自优化 / 自升级 | `self-evolution-engine` | `refactor-hub`、`project-content-curation`、`design-principle-library` 或 `methodology-harvest` |
 | 规则/内容整理 | `project-content-curation` 或 `refactor-hub` | `design-principle-library` |
 
 如果一个 Skill 已经覆盖本轮工作方式，不要再加载近义 Skill，除非出现新的任务阶段。

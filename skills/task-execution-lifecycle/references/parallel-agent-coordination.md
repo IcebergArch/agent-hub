@@ -36,6 +36,7 @@
 - 任务越清晰、越孤立、越可测试，越可以使用轻量能力。
 - 任务涉及 owner、权限、安全、数据一致性、公共接口、runtime、tool gateway 或跨 agent 合约时，不降级判断能力。
 - review、spec compliance 和最终整合 review 默认需要比机械实现更强的判断能力；不能让实现者自审替代独立 review。
+- 平台支持显式选择模型、agent、工具或 review 方式时，brief 里写出本任务需要的能力级别；平台不支持时，用“是否派 subagent / 是否加 senior checklist / 是否缩小 scope / 是否串行”等等价方式表达。
 - 如果子 agent/tool 返回 `BLOCKED` 且 blocker 是推理能力不足，升级能力；如果 blocker 是任务太大，先拆任务；如果 blocker 是上下文不足，补 brief。
 - 当前平台没有显式模型选择能力时，把本规则映射为：选择更合适的工具、是否派 subagent、是否增加 senior review checklist、是否缩小 scope 或改成串行。
 
@@ -75,6 +76,10 @@
 - 相关文件：
 - 相关命令：
 - 当前假设：
+- Global constraints：
+- Consumes：
+- Produces：
+- Capability / tool level：
 
 ## Expected Work
 
@@ -93,12 +98,14 @@
 
 不要让子 agent “自己去看计划全文”或“凭上下文理解”。主 Agent 负责裁剪上下文。
 
+长任务或需要 review 的任务，优先把 task brief、关键 diff、验证输出或 review package 放入文件，再把路径交给执行者/reviewer。直接粘贴长 diff 容易淹没上下文，也会让后续 reviewer 只能凭记忆重建事实。
+
 ## Coordination Rules
 
 - 主 Agent 保留 owner：拆任务、分发、回答问题、合并结果、最终验证。
 - 子 agent 不继承主会话隐含约束；关键约束必须写进 brief。
 - 并行任务返回后，先看文件重叠，再看行为是否冲突。
-- spec compliance 先于 code quality；不能用“代码写得好”掩盖任务做错。
+- spec compliance 先于 code quality；一次 review 可以同时返回 spec 与 quality verdict，但 spec verdict 不通过时不能用“代码写得好”掩盖任务做错。
 - 子 agent 自测不能替代主 Agent 的最终 diff 审查和整体验证。
 
 ## Delegated Task Boundary Gate
@@ -151,11 +158,12 @@
 
 对 subagent 实现结果使用闭环，不用一次 review 代替完成：
 
-1. Spec compliance review 先于 code quality review。
+1. Spec compliance review 先于 code quality review；同一个 reviewer 可以一次返回两个 verdict，但行动顺序仍是先处理 spec。
 2. 规格缺口、越界实现或误解需求存在时，先让实现修正并重新做 spec review。
 3. 只有 spec review 通过后，才进入代码质量、可维护性和体验质量审查。
-4. 质量 review 发现 Critical/Important 时，修复后必须 re-review；不能把 reviewer 发现的问题标成“后续再说”后继续下一任务。
-5. 主 Agent 负责最终统一验证；子 agent 的 self-review 和测试输出只是输入证据。
+4. reviewer 返回 `can't verify from diff` 或等价结论时，主 Agent 负责补 runtime、调用点、测试或 source evidence；不能把它当成 pass，也不能机械当成 fail。
+5. 质量 review 发现 Critical/Important 时，修复后必须 re-review；不能把 reviewer 发现的问题标成“后续再说”后继续下一任务。
+6. 主 Agent 负责最终统一验证；子 agent 的 self-review 和测试输出只是输入证据。
 
 ## Final Integration Review Gate
 

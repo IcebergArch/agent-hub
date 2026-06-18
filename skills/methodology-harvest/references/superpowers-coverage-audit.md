@@ -1,19 +1,21 @@
 # Superpowers Coverage Audit
 
 日期：2026-06-18
-来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/<cache-id>`；本轮核对实例为 `43313cc9`
-版本：`5.1.3`
+来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/<cache-id>`；本轮核对实例为 `015c0dff`；外部官方来源为 `https://github.com/obra/superpowers`
+版本：本地安装为 `5.1.3`；官方 `main` 的 `.codex-plugin/plugin.json` 为 `6.0.2`
 用途：作为 `superpowers-pattern-map.md` 的覆盖审计账本，确认 14 个 Superpowers skills 与主要资源类别都已有 Hub-native 处理结论。
 
 ## Current Drift Note
 
 2026-06-18 周检确认：
 
-- 当前安装目录的 cache-id 已从历史记录中的 `c6ea566d` 轮换为 `43313cc9`。
+- 当前安装目录的 cache-id 已从历史记录中的 `c6ea566d`、同日早前观测到的 `43313cc9` 继续轮换为 `015c0dff`。
 - `.codex-plugin/plugin.json` 中的版本仍为 `5.1.3`。
 - `skills/*/SKILL.md` 仍为 14 个，名称集合未变化。
+- 官方仓库 `main` 的 `.codex-plugin/plugin.json` 已是 `6.0.2`，`RELEASE-NOTES.md` 记录 2026-06-16 的 v6.0.0-v6.0.2 更新。
+- 官方 `skills/` 目录仍为 14 个 skill，名称集合未变化；本轮没有新增 Hub skill owner。
 
-因此本轮结论是“来源证据需要刷新，但机制覆盖无需扩写”。
+因此本轮结论是“本地安装尚未升级，但官方上游已有 v6 机制漂移”。Hub 需要刷新来源证据，并把 v6 的稳定机制映射到既有 reference；不新增 Skill owner，不复制外部 prompt、脚本、品牌资产或安装说明。
 
 ## Audit Rule
 
@@ -50,7 +52,7 @@
 | Skill entrypoints | `skills/*/SKILL.md` | Mechanisms mapped in `superpowers-pattern-map.md`; long behavior moved into domain references | adopted |
 | Tool mapping references | `using-superpowers/references/codex-tools.md`、`copilot-tools.md`、`gemini-tools.md` | 抽成能力语义迁移规则，不复制具体平台配置 | adapted |
 | Agent manifests | `skills/*/agents/openai.yaml` | 不复制 manifest；可发现性由 Hub frontmatter、`skills/README.md` 和工具适配文件承载 | no-copy |
-| Review prompts and reception workflow | `requesting-code-review/code-reviewer.md`、`receiving-code-review/SKILL.md`、`subagent-driven-development/*-prompt.md` | Prompt原文不复制；抽成规格符合性、Implementation Report Skepticism Gate、Feedback Source Priority Gate、代码质量、证据要求、反馈核验、技术性 pushback、错误 pushback 修正、Plan issue 出口和 PR thread 处理 checklist | adapted |
+| Review prompts and reception workflow | `requesting-code-review/code-reviewer.md`、`receiving-code-review/SKILL.md`、v6 `subagent-driven-development/task-reviewer-prompt.md` | Prompt原文不复制；抽成规格符合性、代码质量、`can't verify from diff`、Implementation Report Skepticism Gate、Feedback Source Priority Gate、证据要求、反馈核验、技术性 pushback、错误 pushback 修正、Plan issue 出口和 PR thread 处理 checklist | adapted |
 | Plan/spec reviewer prompts | `brainstorming/spec-document-reviewer-prompt.md`、`writing-plans/plan-document-reviewer-prompt.md` | 抽成计划自检、no-placeholder、文件职责和验证命令要求 | adapted |
 | Debugging references | `root-cause-tracing.md`、`condition-based-waiting*.md`、`defense-in-depth.md` | 抽成根因追踪、Condition-Based Waiting Gate、污染源定位、no-root-cause 证据门和多层防御模式表 | adopted |
 | Debugging scripts | `systematic-debugging/find-polluter.sh` | 不复制脚本；保留污染源追踪方法，按项目语言重写 | adapted |
@@ -60,6 +62,7 @@
 | Pressure tests and creation logs | `systematic-debugging/test-*.md`、`CREATION-LOG.md`、`writing-skills/examples/CLAUDE_MD_TESTING.md` | 抽成压力类型、反跑偏机制和 Skill authoring checklist；长场景原文不复制 | adapted |
 | Graph / visualization tooling | `writing-skills/graphviz-conventions.dot`、`render-graphs.js` | 不复制 Graphviz 脚本；Hub 默认使用 Mermaid、Markdown 或当前工具视觉能力 | adapted |
 | Plugin metadata | `.codex-plugin/plugin.json` | 只用于版本与来源证据，不成为 Hub 运行入口 | no-copy |
+| Release notes | `RELEASE-NOTES.md` | 只抽取稳定机制变化和版本证据，不复制发布文案 | adapted |
 | Brand assets | `assets/app-icon.png`、`assets/superpowers-small.svg` | 品牌资产不进入 Hub | no-copy |
 | Install/community/license docs | README 安装段、community/license 信息 | 不复制；只记录 repository/version/source scope | no-copy |
 
@@ -113,6 +116,7 @@
 | Brief/spec readiness review checks completeness, consistency, clarity, scope and YAGNI before implementation planning, while separating blockers from advisory polish | `requirements-brief/SKILL.md`、`requirements-brief/references/idea-shaping-patterns.md`、`design-principle-library/SKILL.md` | adopted |
 | New or reshaped units need clear purpose, interface, dependencies and testability before planning | `requirements-brief/SKILL.md`、`requirements-brief/references/idea-shaping-patterns.md`、`implementation-plan/references/plan-review-checklist.md` | adopted |
 | Plans must be executable by a fresh worker without hidden conversation context | `implementation-plan/SKILL.md`、`execution-control-patterns.md` | adopted |
+| Plans for delegated work need explicit global constraints and per-task interfaces, so downstream workers and reviewers receive stable boundaries | `implementation-plan/references/plan-review-checklist.md`、`execution-control-patterns.md` | adopted |
 | Plan review checks completeness, spec alignment, task decomposition and buildability, while separating blockers from advisory recommendations | `implementation-plan/references/plan-review-checklist.md`、`execution-control-patterns.md` | adopted |
 | Plan execution keeps a progress ledger and resumes only after reconciling current diff, evidence and task state | `task-execution-lifecycle/references/execution-control-patterns.md` | adopted |
 | Plan execution rejects hidden context and unconfirmed git/destructive actions | `execution-control-patterns.md` | adopted |
@@ -121,8 +125,13 @@
 | Subagent questions are treated as context/scope/plan feedback and require brief updates, task split or minimal user clarification before continuing | `task-execution-lifecycle/SKILL.md`、`parallel-agent-coordination.md`、`design-principle-library/SKILL.md` | adopted |
 | Subagent statuses require distinct handling: `DONE_WITH_CONCERNS` / `NEEDS_CONTEXT` / `BLOCKED` | `parallel-agent-coordination.md` | adopted |
 | Spec compliance review must pass before code quality review | `parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adopted |
+| v6 task review can be one reviewer returning both spec-compliance and quality verdicts; spec verdict still gates quality action | `parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adopted |
+| Review may return `can't verify from diff`; controller must gather runtime/source evidence instead of treating it as pass or fail | `code-review/references/review-checklists.md`、`completion-evidence-patterns.md` | adopted |
+| Task text and review diff should be packaged as files or explicit context instead of relying on pasted session history | `parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adapted |
+| Every delegated task/review should state intended capability/model/tool level when the platform exposes that choice; otherwise record equivalent capability choice | `parallel-agent-coordination.md` | adapted |
 | Multi-task/subagent work requires a final integration review after per-task reviews | `task-execution-lifecycle/SKILL.md`、`parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adopted |
 | Skill authoring uses trigger description, progressive loading and pressure tests | `skill-authoring-patterns.md`、`skill-pressure-test-template.md` | adopted |
+| Skill guidance form should match the failure mode; cheap micro-tests can check wording before changing durable rules | `skill-authoring-patterns.md`、`skill-pressure-test-template.md` | adapted |
 | Skill discovery covers real user phrases, symptoms, error/status terms, object types, tools/files and synonyms without over-triggering | `skill-authoring-patterns.md`、`skills/README.md` | adopted |
 | Skill pressure tests distinguish RED baseline, GREEN re-test, REFACTOR loophole closing and META clarity checks | `skill-pressure-test-template.md`、`skill-authoring-patterns.md` | adopted |
 | Skill references stay directly reachable from `SKILL.md`; long references need a top-level map and stale/time-sensitive content needs refresh conditions | `skill-authoring-patterns.md` | adopted |
@@ -150,9 +159,9 @@
 
 ```sh
 find /Users/shatang/.codex/plugins/cache/openai-curated/superpowers -path '*/skills/*/SKILL.md' -print | sort
-rg -n "superpowers-coverage-audit|Mechanism Detail Coverage|skill-authoring-patterns|skill-trigger-discipline|external-skill-portability|Trigger Discovery Coverage|Skill False Positive Exit Gate|false positive exit|谨慎读取 Skill|Delegated Task Boundary|Delegated Question Gate|Subagent questions|子 agent 提问|Skill Compliance Mode|Verification Output Match Gate|Requirements Trace Gate|Requirement \\| Evidence \\| Verdict|requirements trace|Hypothesis Ledger Gate|Reference Pattern Comparison Gate|working/broken|read completely|完整阅读参考|Red Failure Reason Gate|TDD Exception Gate|TDD exceptions|RED failure|RED baseline|Observation|Hypothesis|falsified|0 tests|skipped|no-op|用户 WHAT|Implementation Report Skepticism Gate|Review Verdict Gate|ready with risk|insufficient evidence|Feedback Source Priority Gate|source conflict|source-conflict|Plan issue|Unit Boundary Design Gate|Unit Boundary Review|purpose/interface/dependencies/testability|Spec Readiness Gate|brief/spec readiness|completeness, consistency, clarity, scope|Condition-Based Waiting Gate|Async Wait Discipline|flaky|timeout|hang|Failed Verification Finish Stop Gate|Positive Language Gate|No Root Cause Evidence Gate|root cause unresolved|Sectioned Design Approval Gate|Structured Finish Options Gate|Subagent Status Gate|Capability Selection Gate|Incident Mitigation|Refactor Proof|Exploration Contamination Gate|Testability Feedback Gate|Plan Review Gate|Default Branch Work Gate|Feedback Intake Gate|Technical Pushback|Correcting Your Own Pushback|Final Integration Review|Branch Finish Gate|Worktree Cleanup Provenance|Skill Change Deployment Gate|Scope Decomposition Gate|Repeated Failure Architecture Gate|Clean Baseline Gate|Plan Progress And Resume Ledger|Reference Topology|Scripts And Tool Assumptions|Loaded Surface Token Budget Gate|Cross-Tool Compatibility Gate|上下文预算|跨工具兼容" skills reports
+rg -n "6\\.0\\.2|5\\.1\\.3|015c0dff|Global Constraints|per-task Interfaces|can't verify from diff|task-reviewer|review package|Capability / tool level|Form To Failure|Micro-Test Wording|superpowers-coverage-audit|superpowers-pattern-map" skills reports
 git diff --check
-rg -n '[ \t]+$' AGENTS.md README.md .cursor/rules/000-core.mdc reports skills
+rg -n '[ \t]+$' AGENTS.md README.md agents/codex.md skills/README.md skills/code-review/references/review-checklists.md skills/implementation-plan/references/plan-review-checklist.md skills/methodology-harvest/references/skill-authoring-patterns.md skills/methodology-harvest/references/skill-trigger-discipline.md skills/methodology-harvest/references/superpowers-coverage-audit.md skills/methodology-harvest/references/superpowers-pattern-map.md skills/task-execution-lifecycle/references/parallel-agent-coordination.md reports/personal/agent/analysis/2026-06-18-关于AgentHub-superpowersWeeklyRefresh.md skills/self-evolution-engine
 git diff --cached --name-status
 git status --short --untracked-files=all reports/company/projects
 ```

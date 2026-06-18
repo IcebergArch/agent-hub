@@ -31,6 +31,15 @@
 
 阻塞问题必须先修计划，再执行。建议项可以记录到风险或 follow-up，不阻止开始。
 
+## Delegation Contract
+
+计划会交给另一个 agent、线程、subagent 或未来自己执行时，除了任务列表，还要显式写清两层契约：
+
+- **Global Constraints**：所有任务共享的硬边界，例如目标范围、非目标、版本/依赖限制、命名和文案约束、权限/数据语义、禁止触碰的模块、必须保留的兼容窗口。
+- **Per-task Interfaces**：每个任务消费什么、产出什么、改哪些文件、依赖哪个前置结果、如何被下游任务或 reviewer 观察。
+
+缺 Global Constraints 会让下游执行者按隐含记忆扩写范围；缺 per-task Interfaces 会让相邻任务在字段、类型、状态、入口或验证口径上互相猜。两者任一缺失，且任务存在跨模块、跨 agent 或多阶段依赖时，视为 Plan Review Gate 的 blocking issue。
+
 ## Review Steps
 
 1. 读计划和原始 spec/用户目标；没有 spec 时，从当前对话、issue、README 或代码入口重建验收标准。
@@ -40,7 +49,8 @@
 5. 检查任务粒度：每个任务是否能在短循环内完成并留下证据。
 6. 检查命令和期望结果：命令路径、环境、失败/成功输出是否足以验证目标。
 7. 检查风险门：共享接口、生成产物、数据迁移、权限、安全、UI workflow 和外部依赖是否有负向验证或回滚说明。
-8. 分出 `Blocking Issues` 和 `Advisory Recommendations`；不要因为偏好不同阻塞计划。
+8. 如果计划会被委派执行，检查 Global Constraints 和 per-task Interfaces 是否足够让新上下文执行者不依赖主会话记忆。
+9. 分出 `Blocking Issues` 和 `Advisory Recommendations`；不要因为偏好不同阻塞计划。
 
 ## Output Format
 

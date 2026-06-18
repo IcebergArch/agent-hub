@@ -27,6 +27,7 @@
 9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
 10. 当用户发布非机械的实现、重构、UI、架构、协议、数据、工具链或跨模块任务时，读取 `skills/task-execution-lifecycle/SKILL.md`；小修、单点文档和路径明确的机械改动走轻量执行预算，不额外加载长 reference。
 11. 当用户要求吸收 Superpowers、外部 Agent framework、插件、技能库、工程方法论或优秀实践到 Hub 时，读取 `skills/methodology-harvest/SKILL.md`；优先抽取机制并落到既有 Skill/Rule/Report，不照搬外部目录、品牌口吻或不适配当前工具的强制门禁。
+12. 当用户要求 Hub 具备自迭代、自优化、自升级、自我提升、持续升级，或明确要求“换到新设备再次使用 Hub 也能触发同样机制”时，读取 `skills/self-evolution-engine/SKILL.md`；先过 repo-portable gate，再决定落到 `refactor-hub`、`project-content-curation`、`design-principle-library`、`methodology-harvest` 或其它现有 owner，不把机制绑到本机 memory、automation 或临时缓存。
 
 ## Execution Budget
 
@@ -159,6 +160,7 @@
 - P0：用户把某类 Hub 升级、方法论吸收或规则复查描述为“常驻”时，只把它记录为后续触发条件；只有用户再次明确要求、触发 `receive`，或存在已设置的定时提醒/自动化时才执行，不在当前线程无限续跑或持续等待。
 - P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `receive`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
 - P0：普通交互不自动触发 `receive`。只做轻量判断：本轮是否出现明确用户要求、已设置的定时/自动化触发、反复出现的流程缺口、高风险设计原则，或会影响后续安全/权限/接口/验证的稳定约束；不满足这些条件时，不修改规则库。
+- P0：当用户要求“Hub 能自迭代/自优化/自升级，且换设备后仍能触发”时，必须把能力写成 repo-portable 机制：触发条件、owner、reference 和验证依赖仓库内容即可恢复，不得把 automation memory、本机缓存路径、安装态或宿主线程状态写成默认前提。
 - P0：完成架构设计、coding 分层设计、系统设计、UI/交互设计、数据体系设计或其他高风险设计后，可以执行自我提升判断；默认先作为候选经验或报告线索，只有用户要求、问题反复出现、或原则明显跨任务复用且影响高风险边界时，才更新 `skills/design-principle-library/SKILL.md` 或相关专门 Skill。
 - P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的触发条件、边界、流程和检查项。
 - P0：每次规则维护、内容清理或规则体系 review 前，必须执行内容整理阶段，并按 `skills/project-content-curation/SKILL.md` 与 `skills/project-content-curation/references/rule-system-strategy.md` 判断 Skill、Rule、Reference、Report、Keep 或 Delete；入口文件只保留短触发和硬约束，长流程、矩阵、示例和历史证据下沉到 Skill reference 或 reports。
