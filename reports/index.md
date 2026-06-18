@@ -2,6 +2,7 @@
 
 ## Personal Agent
 
+- [2026-06-18 - Agent Hub Superpowers 周检刷新](personal/agent/analysis/2026-06-18-关于AgentHub-superpowersWeeklyRefresh.md)
 - [2026-06-17 - VS Code IDEA-like 本机配置快照](personal/agent/runbooks/2026-06-17-关于VSCode-ideaLikeConfig.md)
 - [2026-06-11 - Agent Hub 吸收 Superpowers 方法论](personal/agent/analysis/2026-06-11-关于AgentHub-superpowersMethodologyHarvest.md)
 - [2026-06-08 - Project Refactor](personal/agent/runbooks/2026-06-08-关于AgentHub-projectRefactor.md)

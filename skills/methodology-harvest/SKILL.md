@@ -19,7 +19,7 @@ description: 当用户要求吸收 Superpowers、外部 agent framework、插件
 1. 先读 Hub 当前入口：`AGENTS.md`、`README.md`、`agents/<tool>.md`、`skills/README.md`。
 2. 定位外部来源：优先读用户指定路径、已安装插件源码、官方文档或可信 release；需要“最新”时再联网核对官方来源。
 3. 只读入口、代表性技能和必要 references；不要整库灌入上下文。
-4. 明确来源日期、路径和版本状态；临时缓存路径只能作为事实来源，不写成永久依赖。
+4. 明确来源日期、路径和版本状态；临时缓存路径只能作为事实来源，不写成永久依赖。记录安装来源时优先写稳定父目录或路径模式，再补本轮观测到的 cache-id/版本，避免长期 reference 被单次缓存轮换写死。
 
 ## Classification
 

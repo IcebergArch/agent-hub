@@ -1,11 +1,13 @@
 # Superpowers Pattern Map
 
-日期：2026-06-11
-来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/c6ea566d`
-版本：`5.1.3`（来自 `.codex-plugin/plugin.json`）
+日期：2026-06-18
+来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/<cache-id>`；本轮核对实例为 `43313cc9`
+版本：`5.1.3`（来自当前安装目录下的 `.codex-plugin/plugin.json`）
 用途：作为 `methodology-harvest` 吸收 Superpowers 设计时的默认映射表。
 
 覆盖审计：`superpowers-coverage-audit.md` 记录 14 个 Superpowers skills 与主要 prompt/script/assets 资源类别的处理状态；刷新版本时先更新审计账本，再调整本映射。
+
+2026-06-18 周检结论：当前安装来源的 cache-id 已从历史记录中的 `c6ea566d` 轮换为 `43313cc9`，但版本仍为 `5.1.3`，14 个 skill 清单未变化，因此本映射只刷新来源证据，不新增机制落位。
 
 ## Adoption Principle
 

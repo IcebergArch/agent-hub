@@ -1,9 +1,19 @@
 # Superpowers Coverage Audit
 
-日期：2026-06-11
-来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/c6ea566d`
+日期：2026-06-18
+来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/<cache-id>`；本轮核对实例为 `43313cc9`
 版本：`5.1.3`
 用途：作为 `superpowers-pattern-map.md` 的覆盖审计账本，确认 14 个 Superpowers skills 与主要资源类别都已有 Hub-native 处理结论。
+
+## Current Drift Note
+
+2026-06-18 周检确认：
+
+- 当前安装目录的 cache-id 已从历史记录中的 `c6ea566d` 轮换为 `43313cc9`。
+- `.codex-plugin/plugin.json` 中的版本仍为 `5.1.3`。
+- `skills/*/SKILL.md` 仍为 14 个，名称集合未变化。
+
+因此本轮结论是“来源证据需要刷新，但机制覆盖无需扩写”。
 
 ## Audit Rule
 
@@ -139,7 +149,7 @@
 本轮已执行或应在收尾重复执行的验证：
 
 ```sh
-find /Users/shatang/.codex/plugins/cache/openai-curated/superpowers/c6ea566d/skills -maxdepth 2 -name SKILL.md -print | sort
+find /Users/shatang/.codex/plugins/cache/openai-curated/superpowers -path '*/skills/*/SKILL.md' -print | sort
 rg -n "superpowers-coverage-audit|Mechanism Detail Coverage|skill-authoring-patterns|skill-trigger-discipline|external-skill-portability|Trigger Discovery Coverage|Skill False Positive Exit Gate|false positive exit|谨慎读取 Skill|Delegated Task Boundary|Delegated Question Gate|Subagent questions|子 agent 提问|Skill Compliance Mode|Verification Output Match Gate|Requirements Trace Gate|Requirement \\| Evidence \\| Verdict|requirements trace|Hypothesis Ledger Gate|Reference Pattern Comparison Gate|working/broken|read completely|完整阅读参考|Red Failure Reason Gate|TDD Exception Gate|TDD exceptions|RED failure|RED baseline|Observation|Hypothesis|falsified|0 tests|skipped|no-op|用户 WHAT|Implementation Report Skepticism Gate|Review Verdict Gate|ready with risk|insufficient evidence|Feedback Source Priority Gate|source conflict|source-conflict|Plan issue|Unit Boundary Design Gate|Unit Boundary Review|purpose/interface/dependencies/testability|Spec Readiness Gate|brief/spec readiness|completeness, consistency, clarity, scope|Condition-Based Waiting Gate|Async Wait Discipline|flaky|timeout|hang|Failed Verification Finish Stop Gate|Positive Language Gate|No Root Cause Evidence Gate|root cause unresolved|Sectioned Design Approval Gate|Structured Finish Options Gate|Subagent Status Gate|Capability Selection Gate|Incident Mitigation|Refactor Proof|Exploration Contamination Gate|Testability Feedback Gate|Plan Review Gate|Default Branch Work Gate|Feedback Intake Gate|Technical Pushback|Correcting Your Own Pushback|Final Integration Review|Branch Finish Gate|Worktree Cleanup Provenance|Skill Change Deployment Gate|Scope Decomposition Gate|Repeated Failure Architecture Gate|Clean Baseline Gate|Plan Progress And Resume Ledger|Reference Topology|Scripts And Tool Assumptions|Loaded Surface Token Budget Gate|Cross-Tool Compatibility Gate|上下文预算|跨工具兼容" skills reports
 git diff --check
 rg -n '[ \t]+$' AGENTS.md README.md .cursor/rules/000-core.mdc reports skills
