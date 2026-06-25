@@ -103,6 +103,7 @@
 ## Coordination Rules
 
 - 主 Agent 保留 owner：拆任务、分发、回答问题、合并结果、最终验证。
+- 用户明确要求“启一个子 agent”“分工”“并行处理”时，先识别可独立推进的清理、审查、调研或验证任务并派发；主 Agent 不在原地等待非关键路径子任务，而是继续推进当前最重要的交付链路。
 - 子 agent 不继承主会话隐含约束；关键约束必须写进 brief。
 - 并行任务返回后，先看文件重叠，再看行为是否冲突。
 - spec compliance 先于 code quality；一次 review 可以同时返回 spec 与 quality verdict，但 spec verdict 不通过时不能用“代码写得好”掩盖任务做错。

@@ -48,6 +48,17 @@ description: 当用户设计 AI agent 工具、MCP/server 工具、function call
    - 记录调用者、输入摘要、资源引用、结果、耗时和错误码。
    - 为常见用户请求写 tool-use eval：是否选对工具、参数是否对、错误后是否恢复。
 
+## MCP Collaboration Boundary
+
+设计第三方 MCP、业务 MCP server 或 MCP provider 对接时，先按下面边界收敛：
+
+- **Platform / agent-server owns**：provider registry、工具授权与披露、平台 SDK/API、数据访问/同步契约、callback 接收、artifact/resource ref 解释、审计和 runtime 编排边界。
+- **MCP server owns**：自身 tool schema、provider-specific payload 适配、工具执行、短期 task/status、对下游模型或媒体服务的 client、返回给平台的结构化结果和 artifact/resource refs。
+- **Runtime owns**：模型消息编排、tool call 调度、事件/状态推进和恢复策略；不按具体 MCP tool name switch 业务执行，也不暴露 runtime 内部 route 给 MCP 读取数据。
+- **Allowed interaction**：平台通过 MCP provider/gateway 调 MCP；MCP 通过平台 SDK/API 读取平台数据，通过 callback 或 artifact/resource refs 交回结果。
+- **Disallowed shortcuts**：跨服务依赖共享本地路径、脚本、本机端口、挂载目录、runtime 内部 API、测试 fixture 或一次性兼容分支。它们最多是部署实现或测试夹具，不能写成正式协作契约。
+- **Config boundary**：SDK token、MCP callback token、provider API key 和公网/内网 endpoint 分别按 owner 命名；可以由运维复用同一 secret 值，但配置字段不能借用错误 owner 的名字。
+
 ## Output
 
 默认输出：

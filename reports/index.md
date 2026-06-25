@@ -1,32 +1,27 @@
 # Reports Index
 
-## Personal Agent
+本索引是发现入口，不是全量报告清单。Agent 默认先读取项目 `README.md` 或相关 Skill，再按场景读取具体报告；一次性、阶段性和历史证据文件保留在目录中，但不在根索引高频展示。
 
-- [2026-06-18 - Agent Hub Superpowers 周检刷新](personal/agent/analysis/2026-06-18-关于AgentHub-superpowersWeeklyRefresh.md)
-- [2026-06-17 - VS Code IDEA-like 本机配置快照](personal/agent/runbooks/2026-06-17-关于VSCode-ideaLikeConfig.md)
-- [2026-06-11 - Agent Hub 吸收 Superpowers 方法论](personal/agent/analysis/2026-06-11-关于AgentHub-superpowersMethodologyHarvest.md)
-- [2026-06-08 - Project Refactor](personal/agent/runbooks/2026-06-08-关于AgentHub-projectRefactor.md)
-- [2026-06-06 - DeepAgents / Codex / Agno Tools 来源边界与清单整理（对话整理）](personal/agent/chat/2026-06-06-关于AgentOS-toolEcosystemSourceBoundary.md)
-- [2026-06-03 - 强AI时代的后语言接口、技术收敛与物质结构重构（对话整理）](personal/agent/chat/2026-06-03-关于AI发展-strongAIPostLanguageSubstrate.md)
-- [2026-06-03 - 人机对齐 GAP、双目标债务与 AgentOS（对话整理）](personal/agent/chat/2026-06-03-关于AgentOS-humanLlmAlignmentGap.md)
-- [2026-06-03 - AgentOS runtime architecture analysis](personal/agent/analysis/2026-06-03-关于AgentOS-runtimeArchitecture.md)
+## Project Entrypoints
 
-## Personal Projects
+### Personal Projects
 
-### Maxwell-AI
+- [Maxwell-AI](personal/projects/maxwell-ai/README.md)
+- [Auto-Info](personal/projects/auto-info/README.md)
 
-- [2026-06-15 - 本地常驻运行上下文](personal/projects/maxwell-ai/runbooks/2026-06-15-关于maxwell-ai-localRuntimeContext.md)
-- [2026-06-15 - 音视频生成 Agent 系统 RAG 测试背景](personal/projects/maxwell-ai/analysis/2026-06-15-关于音视频生成Agent系统-ragTestBackground.md)
+### Company Projects
 
-### Auto-Info
+公司项目报告位于 `reports/company/projects/`，默认本地隔离且不进入 git；根索引不列具体公司项目条目。
 
-- [2026-06-17 - 全栈重设计：议题为中心的情报操作系统](personal/projects/auto-info/refactor/2026-06-17-关于auto-info-topicCentricRedesign.md)
-- [2026-06-16 - 可复用前端设计模式：CSS 变量主题化 + 派生透镜层](personal/projects/auto-info/analysis/2026-06-16-关于前端设计-themingAndDerivedLensPatterns.md)
-- [2026-06-16 - 呈现层重构：氛围主题系统 + 三问透镜](personal/projects/auto-info/refactor/2026-06-16-关于auto-info-themeSystemAndThreeQuestionLens.md)
-- [2026-06-04 - UI / 链路 / 产品功能重构方案](personal/projects/auto-info/refactor/2026-06-04-关于auto-info-uiLinkProductRefactor.md)
-- [2026-06-04 - Track 1 界面交互审查与令牌修复](personal/projects/auto-info/review/2026-06-04-关于auto-info-track1UiTokenReview.md)
-- [2026-06-04 - Track 3 系统清理 + Track 2 spec 收敛执行记录](personal/projects/auto-info/refactor/2026-06-04-关于auto-info-track23SpecCleanupExecution.md)
+## Agent Hub References
 
-## Company Projects
+- [Project Refactor 常用指令摘要](personal/agent/runbooks/2026-06-08-关于AgentHub-projectRefactor.md)
+- [Agent Hub 吸收 Superpowers 方法论](personal/agent/analysis/2026-06-11-关于AgentHub-superpowersMethodologyHarvest.md)
+- [产品宣传视频创作经验吸收](personal/agent/analysis/2026-06-24-关于视频创作-productLaunchFilmPatterns.md)
 
-公司项目报告位于 `reports/company/projects/`，默认本地隔离且不进入 git；根索引不列具体项目条目。
+## Loading Notes
+
+- 项目固定事实、owner、定位和加载策略进入项目 `README.md`。
+- 当前仍会影响决策的专项报告由项目 `README.md` 按场景索引。
+- 阶段性方案、一次性 review、历史聊天归档和证据驻留默认不列入根索引；需要时用 `rg` 按项目、日期、主题或关键词搜索。
+- 附件、fixtures、PDF、docx 等素材不默认加载，只在知识库导入、RAG smoke、文档处理或用户明确点名时读取。

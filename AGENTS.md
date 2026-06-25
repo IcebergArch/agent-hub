@@ -12,6 +12,12 @@
 
 除非用户明确要求，不新增 `knowledge/`、`templates/`、`attachments/`、`archive/` 等目录。
 
+## Hub Maintenance Principles
+
+- **实事求是** 是 Agent Hub 后续维护的最高纲要之一：先尊重真实用户需求、真实上下文、真实证据、真实能力边界和真实产物状态，再决定抽象、归档、迁移、删除或新增规则。
+- Hub 维护不得为了泛化而泛化。新增 Skill、Rule、Reference 或 Report 前，先确认它来自可复用的真实场景；不同场景需要不同纲要时，应分场景表达，不把复杂工作压成一条空泛原则。
+- 规则抽象必须保留可执行触发、保护的不变量、适用边界和验证方式；如果只能记录一次性事实、单个项目细节或未验证猜测，应放入对应 report 或不沉淀。
+
 ## Loading Order
 
 1. 读取本文件。
@@ -20,14 +26,15 @@
    - Codex: `agents/codex.md`
    - Cursor: `agents/cursor.md`
 4. 如果任务触发某个技能，读取 `skills/<skill-slug>/SKILL.md`。
-5. 如果任务属于某个项目，按归属优先查看 `reports/personal/projects/<project-slug>/` 或 `reports/company/projects/<project-slug>/` 下已有沉淀；如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
-6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team`，且需要产品、架构、技术或角色判断时，读取 `skills/agent-team-router/SKILL.md`；路径明确的机械改动不额外路由。
+5. 如果任务属于某个项目，按归属优先读取 `reports/personal/projects/<project-slug>/README.md` 或 `reports/company/projects/<project-slug>/README.md` 作为项目固定上下文；`analysis/`、`runbooks/` 等报告只在任务需要历史证据、专项方案或用户明确要求时按需加载，不作为默认必读上下文。如果是个人单独与 Agent 探讨、设计或研究，优先查看 `reports/personal/agent/`。
+6. 当任务涉及 AgentOS、Agent infra、AI 技术/协议/组件/架构研究、Product UI/功能/架构、音画同步产品、互动影游产品，或用户提到 `Agent Team`、`IT Agent Team`，且需要产品、架构、技术或角色判断时，读取 `skills/agent-team-router/SKILL.md`；默认只读短路由入口，`references/` 只在命中角色维护、操作型 UI 或 MCP/tool 连通细节时读取；路径明确的机械改动不额外路由。
 7. 当用户要求整理项目内容、规则、Skills、报告或删除内容时，读取 `skills/project-content-curation/SKILL.md`，先完成内容分类，再执行迁移、保留或删除。
 8. 当用户说 `project refactor`、`receive`、`refactor hub`、优化 hub，或要求从当前对话抽取可复用规则/技能/注意点时，读取 `skills/refactor-hub/SKILL.md`；先回看当前对话消息和现有 hub 内容，再按 Skill / Rule / Reference / Report / Keep / Delete 分类并落位到规则库。
 9. 当任务涉及新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，或进行跨仓库、跨 agent 对接契约收敛时，读取 `skills/interface-contract-audit/SKILL.md`，先盘点完整接口面和真实消费者，再实现或清理。
-10. 当用户发布非机械的实现、重构、UI、架构、协议、数据、工具链或跨模块任务时，读取 `skills/task-execution-lifecycle/SKILL.md`；小修、单点文档和路径明确的机械改动走轻量执行预算，不额外加载长 reference。
+10. 当用户发布非机械的实现、重构、UI、架构、协议、数据、工具链或跨模块任务时，读取 `skills/task-execution-lifecycle/SKILL.md`；小修、单点文档和路径明确的机械改动走轻量执行预算，不额外加载长 reference 或无关路由。
 11. 当用户要求吸收 Superpowers、外部 Agent framework、插件、技能库、工程方法论或优秀实践到 Hub 时，读取 `skills/methodology-harvest/SKILL.md`；优先抽取机制并落到既有 Skill/Rule/Report，不照搬外部目录、品牌口吻或不适配当前工具的强制门禁。
-12. 当用户要求 Hub 具备自迭代、自优化、自升级、自我提升、持续升级，或明确要求“换到新设备再次使用 Hub 也能触发同样机制”时，读取 `skills/self-evolution-engine/SKILL.md`；先过 repo-portable gate，再决定落到 `refactor-hub`、`project-content-curation`、`design-principle-library`、`methodology-harvest` 或其它现有 owner，不把机制绑到本机 memory、automation 或临时缓存。
+12. 当用户要求制作、优化、拉片、规划或评审产品宣传片、教程视频、发布视频、品牌短片、纪录片式案例、概念片、AI 工作流视频、storyboard、shot list、timeline、字幕/overlay 或视频生成 workflow 时，读取 `skills/video-creation/SKILL.md`；最高纲要是实事求是，按真实类型、风格和场景选择叙事、镜头语言、光线、声音和结构，视频平台能力必须先过 gate 和产物校验。
+13. 当用户要求 Hub 具备自迭代、自优化、自升级、自我提升、持续升级，或任务中出现结构性自升级信号（跨场景稳定约束、现有规则被绕过、owner/边界反复混淆、验证门禁缺失、用户不应次次重述的长期要求）时，读取 `skills/self-evolution-engine/SKILL.md`；先过 repo-portable gate，再决定落到 `refactor-hub`、`project-content-curation`、`design-principle-library`、`methodology-harvest` 或其它现有 owner，不把机制绑到本机 memory、automation、临时缓存或触发词表。
 
 ## Execution Budget
 
@@ -35,6 +42,7 @@
 - 轻量路径适用于 typo、小文档、单文件小修、已知范围的机械调整和只读解释：读取入口与直接相关文件，冻结显而易见的不变量，执行定向修改，跑 `git diff --check`、引用搜索或最窄命令即可；不做外部研究、报告沉淀、main 更新或完整分支收尾。
 - 标准路径适用于普通实现、bugfix、UI 调整和局部重构：读取对应 Skill，冻结 3-7 条关键不变量，按最小闭环实现，做定向验证和 diff 边界审查。
 - 高风险路径只在接口/权限/安全/DB/生成物/runtime/tool/gateway/跨仓库/跨 agent、反复失败、准备提交/PR/合并、用户明确要求研究或质量审查时升级：按需加载 reference、外部资料、测试 Agent 视角和更宽验证。
+- 每次处理完问题后必须做收尾三检：review 本轮改动范围和影响范围；确认没有扰乱既有架构、owner 和领域划分；用 `git diff` / `git diff --check` 或等价范围检查确认 diff 干净、聚焦且无预期外改动。
 - 如果某个 Skill 被关键词误触发，读取后可用一句话记录不适用原因并退出；不要因为已经读取就强行执行完整流程。
 - 规则更新、自我提升、报告归档和长期沉淀是触发式质量动作；除非用户当前目标就是整理 Hub，否则不得抢占主任务时间预算。
 
@@ -61,10 +69,13 @@
 - 用户明确限定信息来源时，将其视为硬边界；例如要求“联网”“不要参考本地”时，本地文件只能用于读取仓库规则或定位问题，不能作为事实来源或论证依据，最终回复应说明实际采用的来源范围。
 - 用户偏好中文协作语境时，方案、总结和长期文档默认使用中文；保留代码标识、命令、路径和接口名的原文。
 - 用户要求本地调试时，优先提供可直接运行的 Markdown shell block，写明 `cd` 路径、必要环境变量、窄范围测试和全量验证命令。
-- 用户要求“给我文件内容”“我贴到公共文档上”或类似可复制正文时，正文内容是核心交付；先直接给可复制内容，再处理临时文件清理、规则收尾或背景验证。除非临时文件会造成安全、提交或用户工作区风险，不要让删除、回滚等收尾动作挡在核心答案前。
+- 用户要求“给我文件内容”“我贴到公共文档上”“最终文案”“完整 prompt”“新窗口测试文案”或类似可复制正文时，正文内容是核心交付；先直接给一整段可复制内容，包含必要上下文、素材说明、约束和验收，不让用户拆段拼装；再处理临时文件清理、规则收尾或背景验证。除非临时文件会造成安全、提交或用户工作区风险，不要让删除、回滚等收尾动作挡在核心答案前。
+- 对页面 case、演示验证、Chat/MCP 工作流或多素材生成任务，动手前必须冻结 case context：当前页面/URL、业务或空间、thread、agent/preset、素材来源、运行时可见存储、工具 schema/批量能力、最终产物和验收信号。用户切换窗口、业务、agent、thread、素材，或说“不是 / 在这里 / 空间错了 / 三方 MCP / 多图 / 不要改”时，立即重新冻结上下文，不沿用旧假设继续执行。
+- 对页面 case、演示验证、Chat/MCP 工作流、视频出片或多素材生成任务，默认先视为 **Run Case**：仓库代码、schema、config、平台资源和公开契约写操作默认锁住；只有确认当前目标已经转为 **Build Capability**、列出 owner/影响面/最小 diff/真实验证链路，且该转向来自用户目标或明确能力阻塞时，才允许写入。不得因为 case 效果差、工具返回不理想或参数不好猜，就擅自改代码让一次 case 过。
 - 用户要求整理 merge comment、PR 描述或合并说明时，先用 base-head 或用户指定 diff 核对实际改动范围，再用中文短 bullet 描述本次 diff 真实变化；格式接近人工 merge note：每条以动作开头，按功能链路和模块聚合，避免文件级罗列，也不要泛化成产品愿景。粒度略细于一句话总结、粗于文件级改动清单；不要主动写验证、清理、明确未改、过程复盘或过细的 bug 内部原因，除非用户明确要求。
 - 当用户中断当前回合、连续发送 `quickly`/`hurry`/“快点”等提速指令，或新消息明显覆盖旧请求时，立即切换到快速收敛模式：停止延续旧计划，先确认当前未完成/已部分修改状态，再只执行最新请求所需的最小动作；回复保持短结论、当前风险和下一步，不展开长方案。
 - 当同一任务中用户多次纠正架构语义、范围边界或优先级顺序时，下一次实现前必须先把已确认的不变量列成 3-7 条检查清单，并据此审查改动范围；若仍缺关键排序、owner 或数据源语义，只问一个最小问题，不能继续按旧假设扩写实现。
+- 当用户指出“文档已有 / 为什么又忘 / 不要浮于表面 / 从根本上解决”或同类执行失败时，必须停止当前表层补救，先定位未被执行的硬不变量、失败发生的流程门禁和需要补的验证证据；后续动作必须修正根因并防止同类回归，不能只解释原因、补一次命令、换一个页面或做局部绕路。
 - 当用户指出“多余”“别发挥”“不要兼容”“不要做太多”或类似范围收缩信号时，立即停止新增实现，先检查本轮 diff 和 owner 边界；撤回自己刚刚引入的非必要、跨 owner 或未被用户明确认可的扩展，只保留用户点名目标所需的最小改动。后续不得继续补通用能力、兼容层、重试/恢复链路或扩接口，除非用户重新明确授权。
 - 当用户明确说“不要改不该改的内容”“保持 diff 干净”或质疑改动越界时，立即停止扩展实现，先检查 `git status --short`、`git diff --name-status`、`git diff --cached --name-status`，分清 staged、unstaged、untracked、用户已有改动与本轮改动；只做必要的索引/格式收敛，不继续新增功能或跨 owner 调整。
 - 对接口、路由、方法、DTO、按钮或危险操作命名时，名称必须表达真实前置约束和行为边界；例如只删除空目录的能力必须命名为 `delete-empty-directory` / `DeleteEmptyDirectory`，不能泛化成 `delete-directory`。实现前后都要搜索同链路命名，确保 API、backend、client、测试和 UI 文案一致。
@@ -112,6 +123,7 @@
 - 删除前的依赖/绑定检测应抽象为 access/relationship 查询能力，不散落在 HTTP handler、UI 或临时业务扫描里。若现有 access 表暂时只表达可见关系，先用单一 guard/facade 封装当前绑定索引；后续关系维护迁入 access 表时，外部删除契约保持不变。
 - Registry/DB 是发现、权限、状态、索引、版本、source pointer 和轻量缓存层；真实内容事实源属于 backend、artifact store、NAS 或其它 source owner。写入顺序优先是 source 成功后刷新 registry，读取顺序优先是 registry 定位后按需加载 source；无 registry 时才允许受限 source 扫描作为兜底。
 - Skill/tool/resource 的 manifest 是运行时能力契约，不是数据库身份。渐进式加载应先披露稳定 metadata，再在触发后加载主说明，最后按需读取 references/scripts/files，避免把完整 catalog 或用户临时命名一次性塞进模型上下文。
+- 平台级 Skill、Prompt、Tool 和 Resource 必须稳定、通用且内容完整；临时验证、路径引用、占位清单或未迁移能力不得包装成默认可用系统资源。
 - 用户可见名称可以重名、重命名、迁移或作为 alias 废弃；canonical ref 和 system ID 不随展示名变化。删除重建即使同名也应产生新 ID，并让审计、缓存和权限关系可区分。
 - 已存在的 seed、fixture、生产数据或跨表引用 ID 不得只因“语义更好看”而迁移、重写或换号；ID 迁移必须是显式数据迁移需求，先评估引用面、回滚策略和兼容窗口。可修正 scope、access、meta、状态或索引关系时，不顺手改动原 ID。
 
@@ -119,11 +131,14 @@
 
 - 当新增、删除、改名或暴露 API/Gateway/surface operation 时，必须先盘点完整接口面，而不是只处理用户点名的单个 operation：列出当前全部 operation/route/method、真实消费者、真实后端能力、生命周期 owner 和目标状态（supported / unsupported / deprecated / internal）。
 - 这类任务必须触发 `skills/interface-contract-audit/SKILL.md`；全局规则只保留硬约束，具体盘点步骤、测试要求和输出格式按 skill 执行。
+- 新增跨服务接口、SDK surface、tool/MCP 对接或 runtime/gateway 链路前，必须先做 owner checkpoint：public surface、application owner、data/source owner、consumer 四项命名和落位一致后才实现；如果现有目录或 route 方便但 owner 不匹配，先停下换 owner，不能先实现再事后解释。
+- MCP 协作默认只有两条公开通道：平台通过 MCP provider/gateway 调用 MCP tool；MCP 通过平台 SDK/API、callback 和 artifact/resource refs 回到平台。不得把共享本地路径、脚本、本机访问、runtime 内部 route 或按 tool name 直连执行当作跨服务契约。
 - 对接前后端、跨仓库或多 agent 模块时，必须核对真实消费者代码、测试和文档；如果消费者由另一个 agent/thread 维护，应读取或询问该线程，再收敛契约。旧 scenario、隐藏管理页、fixture 或历史兼容入口不能自动升级为 clean API 合约。
 - 收口或删除旧链路时，不默认保留“以后可能会用”的兼容分支；除非用户明确要求迁移窗口或向后兼容，否则本领域 ownership 内的 route/schema/generated client/docs/tests/UI 入口要一起清理。反过来，不能把其他模块、相邻 fixture、mock option、静态素材或既有产品占位顺手删掉；是否“别人模块”以 owner、入口和消费者归属判断，不以文件相邻判断。
 - 没有真实能力或当前目标不需要的接口，默认移除或返回明确 unsupported，并补 negative contract test 防止伪接口回归；最终回复要列出完整 supported/unsupported 面，而不是只汇报本轮点名项。
 - 对 tool/gateway/runtime 这类模型披露链路，必须区分管理目录视图和模型可调用视图：上游选择工具时以显式 `toolIds` 或授权引用作为唯一选择源，不用 `IncludeDefault*`、`IncludeRuntime*`、`IncludeBackend*` 等布尔开关向模型注入默认工具。管理页需要全量目录时，使用 catalog/list/detail surface 或内部查询承载，不污染 runtime build DTO。
 - 对 tool call 执行链路，schema/build 和 execute 必须闭合在同一个 tool gateway/surface 语义下：runtime loop 只负责编排模型消息、调用 gateway 和回塞结果，不按 tool name 直接 switch 执行具体工具。若底层资源 client 仍由 runtime、backend、workspace 或 sandbox 模块拥有，应通过 adapter 注入 tools runner，而不是从 runtime core 绕过 tools 管理、审计、参数校验和回执归一化。
+- 对第三方 MCP、外部 tool schema 或用户明确要求保持的工具契约，默认把公开 schema 当硬边界；case 验证先按既有批量/多输入能力、配置和 prompt 约束排查，不为跑通一次 case 临时改 schema、把多输入降级成单输入、或把兼容分支写进公共契约。确认为本仓 adapter/config wiring 缺陷时，先说明 owner 和最小改动，改完必须用真实页面或真实调用链验证，并清理临时脚本。
 - 对 runtime 内部控制、middleware 自动补齐、渐进式加载等辅助动作，默认视为执行链路增强，不纳入业务 tool catalog、DB 管理面或一站式管理台；只有被明确提升为稳定、可授权、可审计的模型工具契约后，才进入 tool registry。
 
 ## Design Planning
@@ -160,10 +175,14 @@
 - P0：用户把某类 Hub 升级、方法论吸收或规则复查描述为“常驻”时，只把它记录为后续触发条件；只有用户再次明确要求、触发 `receive`，或存在已设置的定时提醒/自动化时才执行，不在当前线程无限续跑或持续等待。
 - P0：当用户要求复盘、优化或纠正某类指令执行流程（例如 `git update`、`git diff`、验证、提交流程）时，即使没有逐字说出 `receive`，也应纳入规则维护触发范围：先判断是否为可复用流程缺口，再更新对应规则或 Skill，而不是只在当前回复中口头总结。
 - P0：普通交互不自动触发 `receive`。只做轻量判断：本轮是否出现明确用户要求、已设置的定时/自动化触发、反复出现的流程缺口、高风险设计原则，或会影响后续安全/权限/接口/验证的稳定约束；不满足这些条件时，不修改规则库。
+- P0：Hub 自升级不是触发词或句式列表。判断依据是结构性信号：同一约束会跨任务复用、现有规则没有绑定到实际决策点、owner/模式/验收边界被反复混淆、用户被迫重复稳定要求、或验证无法证明规则会生效。候选成立后按 `skills/self-evolution-engine/SKILL.md` 和 `skills/project-content-curation/SKILL.md` 选 owner；不成立时明确不沉淀。
+- P0：自升级评估必须绑定动作点，而不是事后口头总结：任务定位后检查是否缺 owner/模式规则，准备写文件或改配置/schema/API 前检查当前动作是否被目标允许，收尾或失败复盘时检查本轮是否暴露跨场景不变量。无法绑定动作点的内容默认不进入高频规则。
 - P0：当用户要求“Hub 能自迭代/自优化/自升级，且换设备后仍能触发”时，必须把能力写成 repo-portable 机制：触发条件、owner、reference 和验证依赖仓库内容即可恢复，不得把 automation memory、本机缓存路径、安装态或宿主线程状态写成默认前提。
 - P0：完成架构设计、coding 分层设计、系统设计、UI/交互设计、数据体系设计或其他高风险设计后，可以执行自我提升判断；默认先作为候选经验或报告线索，只有用户要求、问题反复出现、或原则明显跨任务复用且影响高风险边界时，才更新 `skills/design-principle-library/SKILL.md` 或相关专门 Skill。
 - P0：规则沉淀不得包含项目名、业务方案、一次性上下文或具体实现决策；只保留可跨任务复用的触发条件、边界、流程和检查项。
-- P0：每次规则维护、内容清理或规则体系 review 前，必须执行内容整理阶段，并按 `skills/project-content-curation/SKILL.md` 与 `skills/project-content-curation/references/rule-system-strategy.md` 判断 Skill、Rule、Reference、Report、Keep 或 Delete；入口文件只保留短触发和硬约束，长流程、矩阵、示例和历史证据下沉到 Skill reference 或 reports。
+- P0：每次规则维护、内容清理或规则体系 review 前，必须执行内容整理阶段，并按 `skills/project-content-curation/SKILL.md`、`skills/project-content-curation/references/hub-architecture.md` 与 `skills/project-content-curation/references/rule-system-strategy.md` 判断当前改动是沿架构落位、升级架构还是清理旧层，再分类为 Skill、Rule、Reference、Report、Keep 或 Delete；入口文件只保留短触发和硬约束，长流程、矩阵、示例和历史证据下沉到 Skill reference 或 reports。
+- P0：Hub Skill 体系维护的核心指标是高效加载、准确触发、快速迭代和持续收敛；维护动作必须优先合并、精简、拆分或下沉旧内容，避免追加式堆积导致混乱、低效和低质。
+- P0：个人与公司报告都有生命周期。项目入口只索引当前仍会影响决策的高频事实和场景报告；一次性、阶段性、后续低概率复用的报告降级为冷历史，默认不加载、不进根索引，只通过搜索或用户点名读取。
 - 更新规则前先读取现有 owner，保留有效语义；新增规则优先合并到现有小节或 Skill，拆开混杂规则，删除空泛和不可验证表述。若审查后没有可抽象的通用规则，最终说明已审查但不新增。
 - 内容归属默认：通用硬约束写 `AGENTS.md`；工具差异写 `agents/<tool>.md`；可重复流程写 `skills/<skill-slug>/SKILL.md`；长细则写 `skills/<skill-slug>/references/`；个人/项目/公司结论和证据写对应 `reports/`。
 

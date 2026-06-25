@@ -1,21 +1,22 @@
 # Superpowers Coverage Audit
 
-日期：2026-06-18
-来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/<cache-id>`；本轮核对实例为 `015c0dff`；外部官方来源为 `https://github.com/obra/superpowers`
-版本：本地安装为 `5.1.3`；官方 `main` 的 `.codex-plugin/plugin.json` 为 `6.0.2`
+日期：2026-06-25
+来源：本地已安装 Superpowers 插件 `/Users/shatang/.codex/plugins/cache/openai-curated/superpowers/<cache-id>`；本轮核对实例为 `7fd3161c`；外部官方来源为 `https://github.com/obra/superpowers`
+版本：本地安装为 `5.1.3`；官方 `main` 的 `.codex-plugin/plugin.json` 为 `6.0.3`
 用途：作为 `superpowers-pattern-map.md` 的覆盖审计账本，确认 14 个 Superpowers skills 与主要资源类别都已有 Hub-native 处理结论。
 
 ## Current Drift Note
 
-2026-06-18 周检确认：
+2026-06-25 周检确认：
 
-- 当前安装目录的 cache-id 已从历史记录中的 `c6ea566d`、同日早前观测到的 `43313cc9` 继续轮换为 `015c0dff`。
+- 当前安装目录的 cache-id 已继续轮换为 `7fd3161c`。
 - `.codex-plugin/plugin.json` 中的版本仍为 `5.1.3`。
 - `skills/*/SKILL.md` 仍为 14 个，名称集合未变化。
-- 官方仓库 `main` 的 `.codex-plugin/plugin.json` 已是 `6.0.2`，`RELEASE-NOTES.md` 记录 2026-06-16 的 v6.0.0-v6.0.2 更新。
+- 官方仓库 `main` 的 `.codex-plugin/plugin.json` 已是 `6.0.3`，`RELEASE-NOTES.md` 新增 2026-06-18 的 v6.0.3 条目。
 - 官方 `skills/` 目录仍为 14 个 skill，名称集合未变化；本轮没有新增 Hub skill owner。
+- 官方新增的稳定机制是：subagent-driven-development 把 task brief、review diff、implementer report 和 progress ledger 从 `.git/` 挪到工作树内的自忽略 scratch 目录，避免 agent 写受保护路径。
 
-因此本轮结论是“本地安装尚未升级，但官方上游已有 v6 机制漂移”。Hub 需要刷新来源证据，并把 v6 的稳定机制映射到既有 reference；不新增 Skill owner，不复制外部 prompt、脚本、品牌资产或安装说明。
+因此本轮结论是“本地安装仍未升级，但官方上游已从 v6.0.2 漂移到 v6.0.3”。Hub 需要刷新来源证据，并把 scratch artifact placement 这条稳定机制映射到既有 reference；不新增 Skill owner，不复制外部 prompt、脚本、品牌资产或安装说明。
 
 ## Audit Rule
 
@@ -60,6 +61,7 @@
 | Visual companion | `brainstorming/visual-companion.md`、`brainstorming/scripts/*` | 不复制运行时脚本；保留“看比读更清楚才用视觉辅助”的判断 | adapted |
 | Skill authoring references | `testing-skills-with-subagents.md`、`persuasion-principles.md`、`anthropic-best-practices.md` | 抽成 Skill 触发描述、Trigger Discovery Coverage、渐进加载、reference 拓扑、压力测试证据链、脚本/工具假设、Loaded Surface Token Budget Gate、Cross-Tool Compatibility Gate 和自由度控制 | adopted |
 | Pressure tests and creation logs | `systematic-debugging/test-*.md`、`CREATION-LOG.md`、`writing-skills/examples/CLAUDE_MD_TESTING.md` | 抽成压力类型、反跑偏机制和 Skill authoring checklist；长场景原文不复制 | adapted |
+| Scratch workspace files | `subagent-driven-development` 的 `task-brief`、`review-package`、implementer report、progress ledger | 采用“文件化交接可以保留，但 scratch 文件必须落在工作树内的自忽略目录，不写进 `.git/`”的稳定约束；不复制 helper 脚本和目录实现 | adapted |
 | Graph / visualization tooling | `writing-skills/graphviz-conventions.dot`、`render-graphs.js` | 不复制 Graphviz 脚本；Hub 默认使用 Mermaid、Markdown 或当前工具视觉能力 | adapted |
 | Plugin metadata | `.codex-plugin/plugin.json` | 只用于版本与来源证据，不成为 Hub 运行入口 | no-copy |
 | Release notes | `RELEASE-NOTES.md` | 只抽取稳定机制变化和版本证据，不复制发布文案 | adapted |
@@ -128,6 +130,7 @@
 | v6 task review can be one reviewer returning both spec-compliance and quality verdicts; spec verdict still gates quality action | `parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adopted |
 | Review may return `can't verify from diff`; controller must gather runtime/source evidence instead of treating it as pass or fail | `code-review/references/review-checklists.md`、`completion-evidence-patterns.md` | adopted |
 | Task text and review diff should be packaged as files or explicit context instead of relying on pasted session history | `parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adapted |
+| File-based task/review scratch artifacts live in a self-ignoring worktree-local directory, not under protected `.git/`; if cleanup can delete them, the recovery path must be explicit | `external-skill-portability.md` | adapted |
 | Every delegated task/review should state intended capability/model/tool level when the platform exposes that choice; otherwise record equivalent capability choice | `parallel-agent-coordination.md` | adapted |
 | Multi-task/subagent work requires a final integration review after per-task reviews | `task-execution-lifecycle/SKILL.md`、`parallel-agent-coordination.md`、`code-review/references/review-checklists.md` | adopted |
 | Skill authoring uses trigger description, progressive loading and pressure tests | `skill-authoring-patterns.md`、`skill-pressure-test-template.md` | adopted |
@@ -159,9 +162,9 @@
 
 ```sh
 find /Users/shatang/.codex/plugins/cache/openai-curated/superpowers -path '*/skills/*/SKILL.md' -print | sort
-rg -n "6\\.0\\.2|5\\.1\\.3|015c0dff|Global Constraints|per-task Interfaces|can't verify from diff|task-reviewer|review package|Capability / tool level|Form To Failure|Micro-Test Wording|superpowers-coverage-audit|superpowers-pattern-map" skills reports
+rg -n "6\\.0\\.3|5\\.1\\.3|7fd3161c|scratch artifact|self-ignoring|Global Constraints|per-task Interfaces|can't verify from diff|task-reviewer|review package|Capability / tool level|Form To Failure|Micro-Test Wording|superpowers-coverage-audit|superpowers-pattern-map" skills reports
 git diff --check
-rg -n '[ \t]+$' AGENTS.md README.md agents/codex.md skills/README.md skills/code-review/references/review-checklists.md skills/implementation-plan/references/plan-review-checklist.md skills/methodology-harvest/references/skill-authoring-patterns.md skills/methodology-harvest/references/skill-trigger-discipline.md skills/methodology-harvest/references/superpowers-coverage-audit.md skills/methodology-harvest/references/superpowers-pattern-map.md skills/task-execution-lifecycle/references/parallel-agent-coordination.md reports/personal/agent/analysis/2026-06-18-关于AgentHub-superpowersWeeklyRefresh.md skills/self-evolution-engine
+rg -n '[ \t]+$' AGENTS.md README.md agents/codex.md skills/README.md skills/code-review/references/review-checklists.md skills/implementation-plan/references/plan-review-checklist.md skills/methodology-harvest/references/external-skill-portability.md skills/methodology-harvest/references/skill-authoring-patterns.md skills/methodology-harvest/references/skill-trigger-discipline.md skills/methodology-harvest/references/superpowers-coverage-audit.md skills/methodology-harvest/references/superpowers-pattern-map.md reports/personal/agent/analysis/2026-06-25-关于AgentHub-superpowersWeeklyRefresh.md skills/self-evolution-engine
 git diff --cached --name-status
 git status --short --untracked-files=all reports/company/projects
 ```

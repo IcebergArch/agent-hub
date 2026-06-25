@@ -12,9 +12,21 @@ skills/
 
 只有 `SKILL.md` 是必须的。`scripts/` 和 `references/` 只在该技能确实需要时才创建。
 
+## Maintenance Doctrine
+
+Hub Skill 体系维护的目标是让 Agent 更快读到正确内容、更少误触发、更容易升级。维护不是不断追加条目，而是持续做触发收敛、内容分层、旧内容降级和重复规则合并。
+
+每次新增或显著修改 Skill 前，先检查：
+
+- 是否已有 owner 可以承载，能合并就不新增。
+- 触发词是否准确，是否会让普通任务误加载长流程。
+- 正文是否只保留触发、步骤、输出和门禁；长例子、矩阵、历史证据是否应进 `references/` 或 `reports/`。
+- 旧内容是否需要删除、下沉、拆分或标记为冷历史，而不是继续追加。
+- 修改是否提升加载效率、执行准确度或维护质量；如果只是记录一次经验，优先写报告或不沉淀。
+
 已登记技能：
 
-- `agent-team-router`：涉及 AgentOS、Agent infra、AI 技术研究、Product UI/功能/架构、音画同步或互动影游产品时，自动选择最小必要 Agent Team 视角。
+- `agent-team-router`：涉及 AgentOS、Agent infra、AI 技术研究、Product UI/功能/架构、音画同步或互动影游产品时，自动选择最小必要 Agent Team 视角；角色目录、UI 质量门槛和 MCP/tool 连通模式按需读取 `references/`。
 - `agent-tool-design`：设计 AI agent 工具、MCP/function calling/tool gateway、工具 schema、执行回执、权限和 eval 时使用。
 - `bug-reproduction`：处理 bug、报错、测试失败或行为异常时，先复现症状，再定位根因、最小修复并回归验证。
 - `code-review`：审查 diff、PR、提交前改动和测试缺口时，优先找真实 bug、回归风险和共享接口问题。
@@ -33,6 +45,7 @@ skills/
 - `source-grounded-research`：结合业界资料、联网调研、事实核对、竞品/技术/论文/官方文档整理，并输出带来源的结论。
 - `task-execution-lifecycle`：发布非机械实现、重构、UI、架构、协议、数据、工具链或跨模块任务后，按轻量、标准、高风险三档完成目标定位、验证、review 和交付收口。
 - `test-strategy`：设计测试、补回归覆盖、端到端验收、质量门槛和防误报验证方案时使用。
+- `video-creation`：制作、优化、拉片、规划或评审产品宣传片、教程视频、发布视频、品牌短片、纪录片式案例、概念片、AI 工作流视频、storyboard、shot list、timeline、字幕/overlay 和视频生成 workflow 时使用；最高纲要是实事求是，按真实类型、风格和场景选择叙事、镜头语言、光线、声音和结构。
 
 命名建议：
 
@@ -41,6 +54,7 @@ skills/
 - `description` 和 Trigger 要覆盖真实用户表达、症状词、错误/状态词、对象类型、文件/工具和近义词；如果关键词过宽，要在 Trigger 或“不用在这些场景”里写排除条件。
 - `SKILL.md` 正文先写触发场景，再写步骤，再写输出格式；长示例、模式表、脚本说明放到技能内部 `references/`。
 - 频繁触发的 Skill 和入口文件要控制上下文预算：只放触发、硬约束、输出形态和 reference 指针；长样例、全量命令说明、历史论证和模式表放到 references 或 reports。
+- Skill 维护默认是重构式升级：新增规则前先找重复、误触发、过期段落和可下沉内容；避免把 Skill 写成追加日志。
 - 公共 Skill/Rule 默认要让 Codex、Cursor 都能读取和执行；依赖某个宿主工具、MCP、浏览器、subagent 或 UI 指令的内容放到 `agents/<tool>.md`，或在公共 Skill 写成能力语义、fallback 或 watch。
 - 技能内部引用资源时使用相对路径，方便 Codex、Cursor 都能读取。
 - 任务可能触发多个技能时，按需读取 `methodology-harvest/references/skill-trigger-discipline.md`，优先选择最小必要技能集合，不靠记忆或 description 代替当前正文。
