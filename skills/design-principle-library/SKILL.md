@@ -37,6 +37,7 @@ description: 当完成或复盘架构设计、coding 分层设计、系统设计
 
 4. **Update Destination**
    - Product UI / 交互：优先更新 `skills/agent-team-router/SKILL.md` 的 UX/Product gate。
+   - Product UI / 交互涉及配色、视觉层级、loading、状态反馈、动效、表单、可访问性，或用户说“太快/太慢/抢眼/不舒服/不清楚”时，读取 `references/product-ui-ux-psychology-patterns.md`。
    - 接口、协议、工具调用：优先更新 `skills/interface-contract-audit/` 或 `skills/agent-tool-design/`。
    - 实现计划和分层：优先更新 `skills/implementation-plan/`、`skills/codebase-navigation/` 或 `AGENTS.md`。
    - 测试和验证：优先更新 `skills/test-strategy/`。
@@ -60,6 +61,8 @@ description: 当完成或复盘架构设计、coding 分层设计、系统设计
 ## Principle Seeds
 
 - 设计不是视觉或结构的后置美化；先判断对象、任务、状态、动作和反馈归属，再选择布局。
+- Product UI 顶层先定设计哲学和体验气质；配色、样式、交互和动效只是具体场景里的执行选择与搭配，不能反过来主导产品判断。
+- 长时媒体或生成任务默认要建立等待预期：低权重说明大致耗时、仍在进行和完成后如何更新；不能只给无语义 loading。
 - 管理态和创建/onboarding 态默认分离；常态页面承载对象管理，创建流程只在 modal、drawer、wizard 或独立 route 中出现。
 - 状态颜色必须服务语义；当前定位、成功、失败、危险、草稿、离线不能混用同一强调色。
 - 动作视觉重量必须低于其作用域：页面级主动作可以强，局部刷新/检查/重试应贴近对象且轻量。
