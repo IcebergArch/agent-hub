@@ -1,7 +1,7 @@
 # Completion Evidence Patterns
 
 日期：2026-06-11
-来源：吸收 Superpowers `verification-before-completion` 的完成前验证机制后整理。
+来源：吸收外部完成前验证机制后整理。
 用途：作为 `task-execution-lifecycle` 的按需参考；用于声明完成、修好、通过、可用、已打通、准备 commit/PR 或交付前。
 
 ## Core Rule

@@ -1,7 +1,7 @@
 # Plan Review Checklist
 
 日期：2026-06-11
-来源：吸收 Superpowers `writing-plans/plan-document-reviewer-prompt.md` 的计划审查机制后整理。
+来源：吸收外部计划审查机制后整理。
 用途：作为 `implementation-plan` 的按需参考；用于多步骤计划、高风险计划、跨模块计划或交给其他 agent/线程执行前的 readiness review。
 
 ## Core Rule

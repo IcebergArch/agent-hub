@@ -1,67 +1,54 @@
 # Skills
 
-每个技能一个目录：
+每个 Skill 是一张短执行卡：触发、少数可组合 SOP、输出和硬门禁。长检查表、示例、矩阵、脚本说明放到同目录 `references/`，不塞进 `SKILL.md`。
 
 ```text
-skills/
-  <skill-slug>/
-    SKILL.md
-    scripts/
-    references/
+skills/<skill-slug>/
+  SKILL.md
+  references/   # optional
+  scripts/      # optional
 ```
 
-只有 `SKILL.md` 是必须的。`scripts/` 和 `references/` 只在该技能确实需要时才创建。
+## Owner Map
 
-## Maintenance Doctrine
+| Owner | Skill | Primary Use |
+| --- | --- | --- |
+| Task execution | `task-execution-lifecycle` | 实现、重构、UI、架构、协议、数据、工具链任务的执行闭环 |
+| Requirements | `requirements-brief` | 模糊想法、产品/功能/workflow 需求和验收标准 |
+| Planning | `implementation-plan` | 需求已明确后，拆工程方案、touch points 和验证计划 |
+| Navigation | `codebase-navigation` | 理解陌生代码、入口、调用链、数据流 |
+| Bugfix | `bug-reproduction` | 报错、测试失败、flaky、timeout、root cause 和回归验证 |
+| Review | `code-review` | diff/PR/提交前风险、反馈处理、卡住时换视角 |
+| Testing | `test-strategy` | 测试设计、回归覆盖、E2E 验收、防误报 |
+| Docs | `docs-refresh` | README、runbook、迁移指南、架构说明、用户指南 |
+| Research | `source-grounded-research` | 联网调研、官方文档、论文、竞品、带来源结论 |
+| Prompt | `prompt-improvement` | prompt / agent instructions / 输出格式 / few-shot 优化 |
+| Tool design | `agent-tool-design` | Agent tool、MCP、function calling、schema、回执、权限 |
+| Contract audit | `interface-contract-audit` | API/Gateway/route/tool surface、SDK、跨服务契约 |
+| Product roles | `agent-team-router` | AgentOS、Agent infra、Product UI、音画同步、互动影游的角色视角 |
+| Video | `video-creation` | 视频策划、拉片、shot list、timeline、AI 视频 workflow |
+| Hub curation | `project-content-curation` | 内容分类、迁移、保留、删除、helper/report 边界 |
+| Hub refactor | `refactor-hub` | 从当前对话回流可复用规则、Skill 或注意点 |
+| Self evolution | `self-evolution-engine` | 判断稳定经验是否应升级为 repo-portable 机制 |
+| Design principles | `design-principle-library` | 高风险设计复盘后的原则沉淀路由 |
+| Methodology | `methodology-harvest` | 吸收外部 agent framework / plugin / skill library / 工程方法论 |
+| Archive | `paper-record` | `paper record` 聊天归档收尾 |
 
-Hub Skill 体系维护的目标是让 Agent 更快读到正确内容、更少误触发、更容易升级。维护不是不断追加条目，而是持续做触发收敛、内容分层、旧内容降级和重复规则合并。
+## Boundary Rules
 
-每次新增或显著修改 Skill 前，先检查：
+- `requirements-brief` 定义要做什么；`implementation-plan` 定义怎么做；`task-execution-lifecycle` 负责执行闭环。
+- `agent-tool-design` 设计模型可调用工具；`interface-contract-audit` 审计对外契约面和真实消费者。
+- `project-content-curation` 做内容归类；`refactor-hub` 做对话经验回流；`self-evolution-engine` 只判断是否值得升级为长期机制。
+- `design-principle-library` 不存放各领域长原则；它把原则路由回专门 Skill/reference。
+- `source-grounded-research` 做事实调研；`methodology-harvest` 只处理外部方法论吸收到 Hub。
+- 外部组件迁移表、版本审计、缓存路径和一次性对照账本不属于 Skill 运行面；需要暂存时放 `/Users/shatang/Documents/temp/`，需要长期引用时写成正式报告或 Hub-native 规则。
 
-- 是否已有 owner 可以承载，能合并就不新增。
-- 触发词是否准确，是否会让普通任务误加载长流程。
-- 正文是否只保留触发、步骤、输出和门禁；长例子、矩阵、历史证据是否应进 `references/` 或 `reports/`。
-- 旧内容是否需要删除、下沉、拆分或标记为冷历史，而不是继续追加。
-- 修改是否提升加载效率、执行准确度或维护质量；如果只是记录一次经验，优先写报告或不沉淀。
+## Maintenance Rules
 
-已登记技能：
-
-- `agent-team-router`：涉及 AgentOS、Agent infra、AI 技术研究、Product UI/功能/架构、音画同步或互动影游产品时，自动选择最小必要 Agent Team 视角；角色目录、UI 质量门槛和 MCP/tool 连通模式按需读取 `references/`。
-- `agent-tool-design`：设计 AI agent 工具、MCP/function calling/tool gateway、工具 schema、执行回执、权限和 eval 时使用。
-- `bug-reproduction`：处理 bug、报错、测试失败或行为异常时，先复现症状，再定位根因、最小修复并回归验证。
-- `code-review`：审查 diff、PR、提交前改动和测试缺口时，优先找真实 bug、回归风险和共享接口问题。
-- `codebase-navigation`：理解陌生仓库、模块、入口、调用链、数据流或目录结构时，先建立真实代码地图。
-- `design-principle-library`：完成或复盘架构、coding 分层、系统、UI/交互、数据体系、工具协议等设计后，抽取可复用原则、反模式和检查清单，减少依赖用户手动 `receive`。
-- `docs-refresh`：写或更新 README、运行手册、迁移指南、架构说明、用户指南和 FAQ 时使用。
-- `implementation-plan`：实现前拆方案、评估改动范围、列 touch points、制定工程步骤和验证计划时使用。
-- `methodology-harvest`：吸收 Superpowers、外部 agent framework、插件、技能库或工程方法论到 Agent Hub 时使用。
-- `paper-record`：用户说 **paper record** 时，将其作为聊天归档收尾动作，把当前对话整合为思考研究报告并写入 `reports/`。
-- `interface-contract-audit`：涉及 API/Gateway/route/operation/tool surface 或跨仓库对接契约时，先盘点完整接口面、真实消费者和真实能力，再决定 supported/unsupported/deprecated/internal。
-- `prompt-improvement`：优化 prompt、system/developer instructions、agent 指令、输出格式、few-shot 示例或减少幻觉/跑偏时使用。
-- `project-content-curation`：整理项目内容、规则策略、系统内部规则体系、Skills、报告或删除内容时，先分类为 Skill、Rule、Reference、Report、Keep 或 Delete，再迁移、保留或清理。
-- `refactor-hub`：用户说 `project refactor`、`receive`、`refactor hub` 或要求从当前对话抽取可复用规则/技能/注意点时，先回看对话和现有 hub，再分析并落位可优化部分。
-- `requirements-brief`：把产品、功能、工具、自动化或工作流想法整理成需求简报、PRD、验收标准和非目标边界。
-- `self-evolution-engine`：当用户要求 Hub 具备自迭代/自优化/自升级能力，或任务内出现应沉淀为 repo-portable 机制的稳定缺口时，判断是否升级以及落位到哪个 owner。
-- `source-grounded-research`：结合业界资料、联网调研、事实核对、竞品/技术/论文/官方文档整理，并输出带来源的结论。
-- `task-execution-lifecycle`：发布非机械实现、重构、UI、架构、协议、数据、工具链或跨模块任务后，按轻量、标准、高风险三档完成目标定位、验证、review 和交付收口。
-- `test-strategy`：设计测试、补回归覆盖、端到端验收、质量门槛和防误报验证方案时使用。
-- `video-creation`：制作、优化、拉片、规划或评审产品宣传片、教程视频、发布视频、品牌短片、纪录片式案例、概念片、AI 工作流视频、storyboard、shot list、timeline、字幕/overlay 和视频生成 workflow 时使用；最高纲要是实事求是，按真实类型、风格和场景选择叙事、镜头语言、光线、声音和结构。
-
-命名建议：
-
-- 技能目录用小写短横线，例如 `runner-analysis`。
-- `SKILL.md` frontmatter 的 `description` 只写触发条件，不概括完整流程，避免 Agent 只读描述就跳过正文。
-- `description` 和 Trigger 要覆盖真实用户表达、症状词、错误/状态词、对象类型、文件/工具和近义词；如果关键词过宽，要在 Trigger 或“不用在这些场景”里写排除条件。
-- `SKILL.md` 正文先写触发场景，再写步骤，再写输出格式；长示例、模式表、脚本说明放到技能内部 `references/`。
-- 频繁触发的 Skill 和入口文件要控制上下文预算：只放触发、硬约束、输出形态和 reference 指针；长样例、全量命令说明、历史论证和模式表放到 references 或 reports。
-- Skill 维护默认是重构式升级：新增规则前先找重复、误触发、过期段落和可下沉内容；避免把 Skill 写成追加日志。
-- 公共 Skill/Rule 默认要让 Codex、Cursor 都能读取和执行；依赖某个宿主工具、MCP、浏览器、subagent 或 UI 指令的内容放到 `agents/<tool>.md`，或在公共 Skill 写成能力语义、fallback 或 watch。
-- 技能内部引用资源时使用相对路径，方便 Codex、Cursor 都能读取。
-- 任务可能触发多个技能时，按需读取 `methodology-harvest/references/skill-trigger-discipline.md`，优先选择最小必要技能集合，不靠记忆或 description 代替当前正文。
-- 触发 Skill 后按其 compliance mode 执行：强门禁按 stop rule 和证据要求走，弹性模式按不变量适配，reference 只读相关小节。
-- 谨慎读取 Skill 后若发现不适用，按 `Skill False Positive Exit Gate` 简短记录原因并退出，不要因为已经读取就强行套流程。
-- 新增或显著修改 Skill 前，先按需读取 `methodology-harvest/references/skill-authoring-patterns.md`，检查触发描述、渐进加载、压力测试和反跑偏机制。
-- 新增或显著修改 Skill 后，按 `methodology-harvest/references/skill-authoring-patterns.md` 的 `Skill Change Deployment Gate` 逐项检查索引、触发、引用、压力测试说明和 diff 边界；不要批量写多个 Skill 后才回头验证。
-- 导入或改写外部 Skill 时，按需读取 `methodology-harvest/references/external-skill-portability.md`，先把外部工具名、agent manifest、prompt、script 和视觉 helper 映射为 Hub 可执行能力或 no-copy/watch 决策。
-- 当用户要求“自迭代 / 自优化 / 自升级 / 自我提升 / 换设备后也能继续触发”时，优先读取 `self-evolution-engine`，先过 repo-portable gate，再决定路由到 `refactor-hub`、`project-content-curation`、`design-principle-library` 或 `methodology-harvest`。
-- Review、整合、清理或完善系统内部规则体系时，优先使用 `project-content-curation/references/rule-system-strategy.md` 判断入口、Skill、reference、report 和工具适配文件的承载边界。
+- 新增 Skill 前先找现有 owner；能合并就不新增。
+- Skill 不是场景条件树；如果只是在 “A 场景下的 B 情况” 补规则，优先改成既有 SOP 的参数、stop rule 或 reference 示例。
+- 高频 `SKILL.md` 控制在短执行卡级别；长内容进入 `references/` 或文档工作区报告。
+- Reference 也应以地图、矩阵、检查表为主；超过约 150 行时优先压缩或拆出更明确的小 owner。
+- Skill 数量增长可以是探索期现象；长期应定期合并、删除或降级被模型能力、通用规则或更高阶 Skill 覆盖的低价值 Skill。
+- 删除或合并 Skill 前，搜索触发词、入口引用、reference 和工具发现约定。
+- 修改 Skill 后同步本索引、相关入口和旧触发词引用，并运行 `git diff --check` / 引用搜索。

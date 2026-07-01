@@ -1,6 +1,6 @@
 # Skill Pressure Test Template
 
-用途：为新的或高风险的 Hub Skill/Rule 设计压力场景，验证 Agent 在真实诱惑下是否仍会执行规则。它吸收的是 Superpowers 的“Skill 也要测试”思想，不复制外部测试流程。
+用途：为新的或高风险的 Hub Skill/Rule 设计压力场景，验证 Agent 在真实诱惑下是否仍会执行规则。它吸收的是“Skill 也要测试”的方法，不复制外部测试流程。
 
 ## When To Use
 

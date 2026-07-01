@@ -1,5 +1,4 @@
 .DS_Store
 
-# Company project reports stay local by default.
-# Force-add only when the project/report is explicitly open source and diff-reviewed.
-reports/company/projects/
+# Documents workspace lives outside this repo.
+documents/workspace/

@@ -1,83 +1,37 @@
 ---
 name: requirements-brief
-description: 当用户提出产品、功能、工具、自动化、工作流或改造想法，需要整理成可执行需求简报、PRD、验收标准或非目标边界时使用。
+description: 当用户提出产品、功能、工具、自动化、工作流或改造想法，需要整理成需求简报、PRD、验收标准或非目标边界时使用。
 ---
 
 # Requirements Brief
 
-用这个技能把模糊想法变成可执行需求。重点不是写长 PRD，而是让后续设计、实现、测试都知道“要解决什么、不做什么、如何算完成”。
+把模糊想法变成可执行需求。它回答“要解决什么、不做什么、如何算完成”。
 
 ## Trigger
 
-当用户说以下任一类需求时使用：
-
-- “帮我整理需求”“写个 PRD”“做个功能简报”“把想法落成需求”
-- “这个功能应该怎么定义”“帮我拆一下验收标准”
-- “我要做一个工具/页面/自动化/workflow”
+- “整理需求”“写 PRD”“功能简报”“把想法落成需求”。
+- “这个功能应该怎么定义”“拆验收标准”。
+- 要做工具、页面、自动化或 workflow，但目标还不清楚。
 
 ## Workflow
 
-1. **Capture Intent**
-   - 用一句话写清楚用户真正想达成的结果。
-   - 区分用户说的方案和底层目标；不要把第一版方案当成唯一解。
-
-2. **Identify Users And Jobs**
-   - 谁使用这个能力。
-   - 他们在什么场景下使用。
-   - 他们完成任务前后状态有什么变化。
-
-3. **Define Scope**
-   - `In scope`：必须交付的能力。
-   - `Out of scope`：本轮明确不做的能力。
-   - `Assumptions`：当前为了推进而采用的假设。
-   - 如果需求横跨多个独立产品面、子系统或用户任务，先拆成可独立验收的子问题；不要继续追问某个子系统细节来掩盖整体范围过大。
-
-4. **Map Workflow**
-   - 写出主路径：入口、输入、处理、反馈、产物。
-   - 写出至少 3 个异常路径：缺权限、缺数据、失败、取消、重复操作、超时等。
-
-5. **Write Acceptance Criteria**
-   - 使用可验证语言，不写“体验更好”“更智能”这种不可测表述。
-   - 至少覆盖成功路径、错误路径、边界输入和权限/状态变化。
-
-6. **Surface Decisions**
-   - 标出需要用户决策的问题。
-   - 不阻塞的问题先做合理假设，并在文档里写清楚。
-   - 对高模糊、高风险或多部分设计，按架构、对象/组件、数据流、错误态、验证等分段确认；不要用一次性大方案掩盖未确认章节。
-   - 对新增或重塑的核心对象、组件、模块、服务、工具和页面，先说明职责、接口、依赖和可验证性；说不清时先拆边界，再交给实现计划。
-
-7. **Review Before Planning**
-   - 需求 brief 进入实现计划前，先检查完整性、一致性、清晰度、scope 和 YAGNI。
-   - 只把会导致执行者建错、卡住、越界或无法验收的问题列为阻塞；措辞、章节顺序和可选 polish 不阻塞。
+1. **Capture Intent**：区分底层目标和第一版方案。
+2. **Identify Users And Jobs**：谁用、在哪用、完成前后状态如何变化。
+3. **Define Scope**：列 in-scope、out-of-scope、后续可选项。
+4. **Map Workflow**：写关键路径、输入、系统反馈、失败态和恢复路径。
+5. **Acceptance Criteria**：给可验证标准，覆盖成功、失败、边界和权限/数据要求。
+6. **Readiness Review**：高模糊或高风险需求按 reference 检查是否足够进入实现计划。
 
 ## References
 
-- `references/idea-shaping-patterns.md`：当想法较模糊、需要探索多个方案、涉及视觉/流程设计，或要先把创意收敛成可验收需求时读取。
+- `references/idea-shaping-patterns.md`：想法塑形、方案对比、readiness gate。
 
 ## Output
 
-默认输出：
-
-```markdown
-## Summary
-
-## Users And Jobs
-
-## Scope
-
-## Workflow
-
-## Acceptance Criteria
-
-## Non-goals
-
-## Open Questions
-```
+默认结构：Summary、Users And Jobs、Scope、Workflow、Acceptance Criteria、Non-goals、Open Questions。
 
 ## Quality Bar
 
-- 需求必须能指导实现，而不是只描述愿景。
-- 验收标准必须能被测试或人工检查。
-- 非目标要具体，避免范围不断膨胀。
-- 不把技术实现细节提前写死，除非用户已经明确约束。
-- brief/spec review 的阻塞标准是“会导致实现计划做错或无法验收”，不是文字是否漂亮。
+- 不把用户提出的第一版方案直接当唯一目标。
+- 验收标准必须能被测试、页面 smoke、API smoke 或人工验收验证。
+- 非目标要写清楚，防止实现时扩 scope。

@@ -1,74 +1,53 @@
 ---
 name: project-content-curation
-description: >-
-  当用户要求分析整理项目内容、规则策略、系统内部规则体系、Skills、报告、长期上下文或删除内容时使用；
-  先把内容分类为 Skill、Rule、Reference、Report、Keep 或 Delete，再执行抽取、保留、归档或清理。
+description: 当用户要求整理项目内容、规则体系、Skills、报告、长期上下文或删除内容时使用；先分类，再迁移、保留或清理。
 ---
 
 # Project Content Curation
 
-本技能用于整理 Agent 工作资产、规则仓库、长期上下文和类似项目。目标是让内容各归其位：该抽成 Skill 的抽成 Skill，该保留为规则的保留为规则，该成为报告的归档到 reports，该删除的验证后删除。
+内容归位 Skill。它负责判断一段内容该成为 Skill、Rule、Reference、Project Helper、Report、Keep 还是 Delete。
 
 ## Trigger
 
-用户要求整理项目内容、规则、规则策略、系统内部规则体系、Skills、报告、入口文件、长期上下文、删除废弃内容，或明确说“抽成 Skill / 保留为规则 / 删除”时，先执行本技能。
-
-本技能也是规则维护和内容清理的必要阶段；不要只做局部文字补丁。
+- 用户要求整理项目内容、规则、Skills、报告、入口文件、长期上下文。
+- 用户明确说抽成 Skill、保留为规则、归档、删除、清理废弃内容。
+- 规则维护、Hub 整理或内容清理前的分类阶段。
 
 ## Classification
 
-| Class | 放置位置 | 判断标准 |
+| Class | Destination | Use When |
 | --- | --- | --- |
-| Skill | `skills/<skill-slug>/SKILL.md` | 可重复触发、有明确工作流、输入输出形态、检查步骤或领域操作方法 |
-| Rule | `AGENTS.md`、`agents/<tool>.md`、轻量工具规则 | 稳定协作约束、目录策略、工具差异、权限要求、质量门槛 |
-| Reference | `skills/<skill-slug>/references/` | 某个 Skill 下的长检查表、矩阵、模式、执行细则、示例和反跑偏规则 |
-| Report | `reports/personal/agent/<kind>/`、`reports/personal/projects/<project-slug>/<kind>/` 或 `reports/company/projects/<project-slug>/<kind>/` | 个人单独与 Agent 探讨、设计或研究；个人项目或公司项目的结论、证据、设计取舍、审查记录、运行手册或对话沉淀 |
-| Keep | 原位置或兼容入口 | 入口索引、兼容 symlink、轻量触发规则、仍被工具自动发现的文件 |
-| Delete | 移除 | `.DS_Store`、IDE 状态、临时日志、重复旧入口、未引用废弃内容、未采纳草稿 |
+| Skill | `skills/<slug>/SKILL.md` | 可重复触发、有 workflow、输入输出和检查步骤 |
+| Rule | `AGENTS.md` / `agents/<tool>.md` | 跨任务硬约束、工具差异、权限或质量门槛 |
+| Reference | `skills/<slug>/references/` | 长 checklist、矩阵、模式、示例、执行细则 |
+| Project Helper | 文档工作区 `README.md` 指定位置 | 后续运行时高频项目背景和事实源 |
+| Report | 文档工作区报告位置 | 需要长期引用的一次性/阶段性证据、完整论证、审查记录 |
+| Temp | `/Users/shatang/Documents/temp/` | 过度产物、迁移账本、临时对照、缓存清单、当前任务有用但不应长期加载的材料 |
+| Keep | 原位置或兼容入口 | 仍被工具发现、仍有索引价值 |
+| Delete | 移除 | 临时日志、重复旧入口、无引用废弃内容、未采纳草稿 |
 
 ## Workflow
 
-1. **Scope**：确认用户指定的仓库、目录和硬边界；没有明确范围时，先从当前项目入口文件开始。
-2. **Inventory**：用 `rg --files`、`find` 和入口文档列出内容，不只看 README。
-3. **Read Entrypoints**：优先读 `AGENTS.md`、`README.md`、工具适配文件、`skills/README.md`、`reports/README.md` 和工具规则入口。
-4. **Classify Loading Level**：先判断内容的加载频率和入口层级：
-   - 高频必读事实：项目定位、owner、长期边界、默认加载策略，放项目 `README.md`。
-   - 场景触发信息：专项方案、runbook、协议、review，放对应 `kind/` 报告，并在项目 `README.md` 用场景索引指向。
-   - 一次性或阶段性历史：保留在报告目录中，不进入根索引和默认加载路径，只靠搜索或用户点名读取。
-   - 附件和 fixtures：只在文档处理、RAG smoke、知识导入等任务中点名读取。
-5. **Classify Lifecycle**：个人和公司报告都必须有生命周期判断：
-   - `active`：当前仍影响默认判断，可在项目 README 场景索引中出现。
-   - `scenario`：只在特定任务、关键词或用户点名时读取。
-   - `cold`：一次性、阶段性、历史证据或低概率复用内容，不进根索引。
-   - `deprecated/delete`：已被新结论替代或无引用噪声；删除前先做引用搜索。
-6. **Classify Ownership**：按上表把内容簇标记为 Skill、Rule、Reference、Report、Keep 或 Delete；业务方案不要写进规则。更新 `README.md`、`AGENTS.md`、工具适配文件或 Skill 前，先判断候选内容是否只来自具体项目、公司项目或单个业务域：若是，写入对应 reports；只有抽象成跨任务流程约束后才可进入规则入口。
-7. **Keep Entrypoints Small**：除报告文件外，内部入口、工具适配和 Skill 只保留触发条件、判断标准、短步骤和链接；长说明、完整命令序列、历史上下文、示例矩阵和细节论证迁入 reports 或技能内部按需引用资源。
-   - 当目标是 review / 整合 / 清理 / 完善规则体系时，读取 `references/rule-system-strategy.md`，先确认 `AGENTS.md`、`README.md`、`agents/`、`skills/`、`references/`、`reports/` 的承载边界，再动入口文件。
-8. **Extract Skills**：将可复用流程迁到 `skills/<skill-slug>/SKILL.md`，保留清晰 frontmatter、触发条件、步骤、输出和验证；不要创建无关 README 或过程文档。
-9. **Preserve Rules**：只把跨任务稳定约束写入规则；通用规则写 `AGENTS.md`，工具专属差异写 `agents/<tool>.md` 或轻量工具规则。
-10. **Prune**：删除前搜索旧路径、旧标题和旧触发词，确认没有生产入口、工具入口或兼容约定仍依赖它。
-11. **Sync Maps**：更新目录图、索引、触发说明、工具规则和兼容入口说明；公司项目报告默认不在根索引列具体条目，避免把本地隔离内容重新暴露为公共入口。根 `reports/index.md` 是精选发现入口，不是全量 catalog；一次性、阶段性或冷历史报告默认不列入根索引。
-12. **Validate**：重新搜索迁移前的旧引用、临时文件、重复段落和本地噪声；提交前额外检查最终提交树或 staged 清单，确认 `.DS_Store`、`reports/company/projects/` 和旧报告路径没有进入提交；必要时列出无法验证的缺口。
-
-## Output
-
-最终回复必须说明：
-
-- 抽成了哪些 Skill / Reference，以及触发条件或所属 Skill。
-- 保留或新增了哪些规则，以及为什么属于规则。
-- 删除了哪些内容，以及删除前做过什么引用检查。
-- 哪些内容刻意保留为兼容入口或索引。
-- 哪些报告被标记为 active / scenario / cold / deprecated，以及根索引或项目 README 是否同步。
-
-如果审查后没有可抽取、可保留或可删除的内容，也要说明已经执行分类审查。
-
-## Quality Bar
-
-- Skill 体系维护必须提升加载效率、触发准确度和执行质量；如果只是增加内容量，默认不通过。
-- 新增前先合并、下沉、删除或降级旧内容，避免 Skill 变成追加日志。
-- 报告和项目资料必须带生命周期判断；不要让一次性或阶段性文件长期占据高频入口。
-- 入口文件、Skill 和根索引都应短小、可扫描、可渐进加载。
+1. **Scope**：确认用户指定仓库、目录和硬边界。
+2. **Inventory**：用 `rg --files` / `find` 列内容，不只看 README。
+3. **Read Entrypoints**：读 `AGENTS.md`、`README.md`、adapter、`skills/README.md`、文档工作区 `README.md` 和相关 Skill。
+4. **Classify**：先判加载频率和生命周期，再判 owner；业务方案不进通用规则。
+5. **Move / Merge / Prune**：入口保持短；长细则进 reference；项目事实进 helper；长期证据进 report；临时证据进 Temp；删除前搜引用。
+6. **Sync Maps**：更新目录图、索引、触发说明和旧路径引用。
+7. **Validate**：搜旧称、临时文件、重复段落和本地噪声；跑 `git diff --check` 或等价检查。
 
 ## References
 
-- `references/rule-system-strategy.md`：当用户要求 review、整合、清理或完善系统内部规则策略、规则体系、入口规则和 Skill/Report 承载边界时读取。
+- `references/rule-system-strategy.md`：规则体系和承载边界。
+- `references/hub-architecture.md`：Hub 分层架构。
+
+## Output
+
+说明哪些内容归为 Skill / Rule / Reference / Project Helper / Report / Temp / Keep / Delete，哪些删除前做了引用检查，哪些没有移动及原因。
+
+## Quality Bar
+
+- 整理必须提升加载效率、触发准确度或维护质量。
+- 不把一次性报告塞进默认上下文。
+- 不把迁移账本、外部组件映射、缓存路径或临时对照表伪装成 Hub 长期资产。
+- 不新增目录或 owner 来承载低价值内容。

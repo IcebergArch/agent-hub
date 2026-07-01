@@ -6,12 +6,14 @@
 ## Architecture Laws
 
 1. **README 是核心总览**：只放 Hub 定位、最高法则、工作方向、路由和目录图。
-2. **AGENTS 是通用执行入口**：放跨工具硬约束、加载顺序、P0/P1 gate 和高频协作规则。
+2. **AGENTS 是通用执行入口**：放跨工具硬约束、加载顺序、核心 gate 和高频协作规则。
 3. **agents 是工具适配层**：只表达 Codex、Cursor 等宿主差异和工具能力映射。
 4. **skills 是 workflow 层**：每个 Skill 承载一个可重复触发的工作流，包含 trigger、步骤、输出和质量门槛。
 5. **references 是深水区**：长 checklist、矩阵、反模式、执行细则和架构说明放在相关 Skill 的 `references/`。
-6. **reports 是证据层**：保留项目、个人、公司维度的结论、证据、设计取舍和历史记录；不默认全量加载。
-7. **兼容入口不做事实源**：`.agents/skills` 等桥接入口只负责发现，真实维护源仍在 `skills/`。
+6. **文档工作区是正式外部承载层**：Agent Hub 只记录 `/Users/shatang/Documents/workspace/` 入口；helper、报告和项目文档的具体目录树由该目录 `README.md` 维护。
+7. **Documents temp 是临时承载层**：过度产物、迁移账本、一次性对照和缓存清单放 `/Users/shatang/Documents/temp/`；不默认加载，不当长期事实源。
+8. **报告是产物层**：保留报告、证据和历史记录；只作为写入和点名查找位置，不默认加载。
+9. **兼容入口不做事实源**：`.agents/skills` 等桥接入口只负责发现，真实维护源仍在 `skills/`。
 
 ## Layer Map
 
@@ -22,22 +24,24 @@
 | `agents/<tool>.md` | Tool adapter | 宿主能力、工具限制、fallback | 不复制通用规则 |
 | `skills/<slug>/SKILL.md` | Workflow owner | 触发、步骤、输出、质量门槛 | 一个 Skill 一个清晰 owner |
 | `skills/<slug>/references/` | Workflow depth | 长检查表、矩阵、架构蓝图、反例 | 只由对应 Skill 按需加载 |
-| `reports/` | Evidence and history | 项目事实、结论、复盘、设计取舍 | 有生命周期，不进默认入口 |
+| 文档工作区 helper | Project context | 当前项目关键事实、边界、事实源、运行时协作约束 | 只放短背景，不放完整报告 |
+| 文档工作区报告位置 | Artifact archive | 报告、复盘、完整论证、审查记录、对话沉淀 | 写入和点名查找，不做默认背景 |
+| `/Users/shatang/Documents/temp/` | Temporary material | 过度产物、迁移账本、一次性对照、缓存路径、临时审计 | 不默认加载，不作为长期文稿或 Hub 资产 |
 
 ## Evolution Protocol
 
 Hub 迭代前先回答四个问题：
 
-1. **这是架构内落位，还是架构升级？**  
+1. **这是架构内落位，还是架构升级？**
    能归入现有 layer 时优先归位；不能归入时，先说明缺的新 layer 或 owner。
 
-2. **这是通用机制，还是项目差异？**  
-   通用机制进入 `AGENTS.md` / Skill / reference；项目差异进入对应 project report 或 project README。
+2. **这是通用机制，还是项目差异？**
+   通用机制进入 `AGENTS.md` / Skill / reference；运行时常用的项目差异进入文档工作区 helper；完整论证或交付文档进入文档工作区报告位置；临时账本和过度产物进入 Documents temp。
 
-3. **这是入口规则，还是执行细则？**  
+3. **这是入口规则，还是执行细则？**
    高频触发和硬约束留入口；长流程、样例、矩阵下沉 reference。
 
-4. **这次修改会让加载更准，还是只让内容更多？**  
+4. **这次修改会让加载更准，还是只让内容更多？**
    如果只是增加内容量，默认不通过；优先合并、删除、下沉或重命名旧内容。
 
 ## Self-improvement Workflow
@@ -70,7 +74,7 @@ flowchart TD
 - **Golden prompt / handoff template**：用于视频、研究、PR 描述、case handoff 等高复用输出；模板归属对应 Skill。
 - **Validation snippet**：`rg` 搜索、diff check、UI smoke、media probe、SDK contract test 等可复用验证片段。
 
-新增这些资产前仍需过内容分类：如果只是当前项目证据，写 report；如果能指导未来执行，放 Skill/reference；如果是工具差异，放 `agents/`。
+新增这些资产前仍需过内容分类：如果是当前项目运行时必须知道的短背景，写入文档工作区 helper；如果只是完整证据或产物且需要长期引用，写入文档工作区报告位置；如果只是临时迁移账本、缓存路径或一次性对照，写入 Documents temp；如果能指导未来执行，放 Skill/reference；如果是工具差异，放 `agents/`。
 
 ## Architecture Upgrade Gate
 
@@ -79,7 +83,7 @@ flowchart TD
 - 现有 layer 无法表达新的稳定 owner。
 - 同类内容反复落错层，说明承载边界不清。
 - 某个入口过大，已经降低加载效率和触发准确度。
-- 多项目差异需要新的隔离方式，而 reports/project README 无法承载。
+- 多项目差异需要新的隔离方式，而文档工作区当前 helper 结构无法承载。
 - 工具适配或自动发现机制发生变化，兼容入口需要重新定义。
 
 架构升级必须同步：
@@ -93,6 +97,7 @@ flowchart TD
 
 - 把 README 写成百科或长协作说明。
 - 把一次事故直接写成通用规则。
+- 把临时迁移账本、外部组件版本审计或缓存路径写进 Skill 运行面。
 - 为了“完整”新增目录、Skill、reference 或报告类型。
 - 同一规则在 README、AGENTS、Skill、report 多处复制。
 - 项目专属事实进入通用入口。

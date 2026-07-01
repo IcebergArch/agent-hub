@@ -1,6 +1,6 @@
 # Methodology Harvest Evidence Template
 
-用途：吸收外部 Agent 方法论、插件、技能库或工程 workflow 时，把本模板复制到对应 `reports/personal/agent/analysis/` 报告中填写。模板是审计骨架，不是完成证据；空项必须保留为缺口或继续补齐。
+用途：吸收外部 Agent 方法论、插件、技能库或工程 workflow 时，把本模板复制到文档工作区 `README.md` 指定的报告位置中填写。模板是审计骨架，不是完成证据；空项必须保留为缺口或继续补齐。
 
 ## Source Scope
 
@@ -48,8 +48,8 @@
 | Skill index | `skills/README.md` |  |
 | Skill | `skills/<skill-slug>/SKILL.md` |  |
 | Reference | `skills/<skill-slug>/references/<file>.md` |  |
-| Report | `reports/personal/agent/analysis/<date>-关于<领域>-<topic>.md` |  |
-| Report index | `reports/index.md` |  |
+| Report | 文档工作区报告位置 |  |
+| Report index | 文档工作区报告索引 |  |
 
 ## Completion Evidence
 
@@ -66,9 +66,9 @@
 ## Verification Commands
 
 ```bash
-rg -n "<trigger>|<skill-name>|<report-title>" AGENTS.md README.md agents skills reports/index.md
+rg -n "<trigger>|<skill-name>|<report-title>" AGENTS.md README.md agents skills
 git diff --check
-rg -n "[ \t]+$" AGENTS.md README.md agents skills reports
+rg -n "[ \t]+$" AGENTS.md README.md agents skills
 git status --short --untracked-files=all
 ```
 
