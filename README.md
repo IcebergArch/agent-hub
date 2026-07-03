@@ -15,7 +15,7 @@
 - `AGENTS.md`：Codex、Cursor 共用的主入口、加载顺序和硬约束。
 - `agents/`：不同 Agent 工具的适配说明，例如 `agents/codex.md`、`agents/cursor.md`。
 - `skills/`：可复用 workflow，每个技能一个 `skills/<skill-slug>/SKILL.md`，长检查表放同技能 `references/`。
-- `/Users/shatang/Documents/workspace/`：长期文档工作区；Hub 只知道这个入口，helper、报告和项目文档的具体子目录以该目录下的 `README.md` 为准。
+- `/Users/shatang/Project/doc-hub/`：长期文档工作区；Hub 只知道这个入口，helper、报告和项目文档的具体子目录以该目录下的 `README.md` 为准。
 - `/Users/shatang/Documents/temp/`：临时材料区；过度产物、迁移账本、一次性对照和缓存清单放这里，不作为 Hub 或正式 workspace 的长期内容。
 - Hub 架构蓝图：`skills/project-content-curation/references/hub-architecture.md`。
 
@@ -42,7 +42,9 @@
 
 /Users/shatang/Documents/
 ├── temp/
-└── workspace/
+
+/Users/shatang/Project/
+└── doc-hub/
     └── README.md
 ```
 

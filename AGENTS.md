@@ -29,6 +29,7 @@
 3. 按当前工具读取一个适配文件：Codex 读 `agents/codex.md`，Cursor 读 `agents/cursor.md`。
 4. 命中任务信号后，再读取对应 `skills/<skill-slug>/SKILL.md`；reference 只在 Skill 明确需要或风险命中时读取。
 5. 需要项目背景、helper 更新或报告写入时，先读文档工作区 `README.md` 定位目录；报告目录不作为默认上下文来源。
+6. 任务涉及 doc-hub 下具体项目（`projects/<project>/`，例如 nextplay）的改动、调整或执行某个 SPEC 时，无需用户手动引用，默认先读 `SIMP_README.md` 定位当前应执行的任务；该文件只做路由，读完后按其指向继续，不代替上面 1-5 步。
 
 常用触发路由：
 
