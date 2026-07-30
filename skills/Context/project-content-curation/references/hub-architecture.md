@@ -1,0 +1,105 @@
+# Agent Hub Architecture
+
+日期：2026-06-25
+用途：作为 Agent Hub 后续迭代的架构蓝图。每次升级 Hub 时先沿这个架构落位；确实不适配时显式升级架构，而不是次次重来。
+
+## Architecture Laws
+
+1. **README 是核心总览**：只放 Hub 定位、最高法则、工作方向、路由和目录图。
+2. **AGENTS 是通用执行入口**：放跨工具硬约束、加载顺序、核心 gate 和高频协作规则。
+3. **agents 是工具适配层**：只表达 Codex、Cursor 等宿主差异和工具能力映射。
+4. **skills 是 workflow 层**：每个 Skill 承载一个可重复触发的组织经验工作流，统一目录为 `skills/<Category>/<skill-slug>/WORKFLOW.md`。
+5. **references 是深水区**：长 checklist、矩阵、反模式、执行细则和架构说明放在相关 Skill 的 `references/`。
+6. **文档工作区是正式数据承载层**：Agent Hub 只记录文档工作区 README 入口；任务查找、SPEC、STDD、helper、报告和项目文档的具体目录树由该文件维护。
+7. **Documents temp 是临时承载层**：过度产物、迁移账本、一次性对照和缓存清单放 `/Users/shatang/Documents/temp/`；不默认加载，不当长期事实源。
+8. **报告是产物层**：保留报告、证据和历史记录；只作为写入和点名查找位置，不默认加载。
+9. **插件入口收敛**：Hub 内部 `skills/` 不再通过 `.agents/` 暴露为一组独立命令；用户只通过 `/hub` 进入 agent-hub 插件，再由 loader 按需读取内部 workflow。
+
+## Layer Map
+
+| Layer | Owner | Content | Change Rule |
+| --- | --- | --- | --- |
+| `README.md` | Hub overview | 核心法则、方向、路由 | 只做减法或极短索引 |
+| `AGENTS.md` | Shared runtime policy | 加载顺序、硬约束、通用 gate | 只放高频规则和触发指针 |
+| `agents/<tool>.md` | Tool adapter | 宿主能力、工具限制、fallback | 不复制通用规则 |
+| `skills/<Category>/<skill-slug>/WORKFLOW.md` | Workflow owner | 统一模板、组织经验、决策原则、步骤和检查项 | 一个 Skill 一个清晰 owner |
+| `skills/<Category>/<skill-slug>/references/` | Workflow depth | 长检查表、矩阵、架构蓝图、反例 | 只由对应 Skill 按需加载 |
+| 文档工作区 helper | Project context | 当前项目关键事实、边界、事实源、运行时协作约束 | 只放短背景，不放完整报告 |
+| 文档工作区 SPEC / STDD | SPEC / execution record | 规格与执行记录 | 以文档工作区 README 命名规范为准 |
+| 文档工作区 reports | Artifact archive | 报告、复盘、完整论证、审查记录、对话沉淀 | 写入和点名查找，不做默认背景 |
+| `/Users/shatang/Documents/temp/` | Temporary material | 过度产物、迁移账本、一次性对照、缓存路径、临时审计 | 不默认加载，不作为长期文稿或 Hub 资产 |
+
+## Evolution Protocol
+
+Hub 迭代前先回答四个问题：
+
+1. **这是架构内落位，还是架构升级？**
+   能归入现有 layer 时优先归位；不能归入时，先说明缺的新 layer 或 owner。
+
+2. **这是通用机制，还是项目差异？**
+   通用机制进入 `AGENTS.md` / Skill / reference；运行时常用的项目差异进入文档工作区 helper；完整论证或交付文档进入文档工作区 reports；临时账本和过度产物进入 Documents temp。
+
+3. **这是入口规则，还是执行细则？**
+   高频触发和硬约束留入口；长流程、样例、矩阵下沉 reference。
+
+4. **这次修改会让加载更准，还是只让内容更多？**
+   如果只是增加内容量，默认不通过；优先合并、删除、下沉或重命名旧内容。
+
+## Self-improvement Workflow
+
+```mermaid
+flowchart TD
+    A["Task signal"] --> B{"Structural signal?"}
+    B -- "No" --> C["Do not update Hub"]
+    B -- "Yes" --> D["Classify signal"]
+    D --> E{"Existing owner fits?"}
+    E -- "Yes" --> F["Patch owner"]
+    E -- "No" --> G{"Architecture upgrade needed?"}
+    G -- "No" --> H["Write report or skip"]
+    G -- "Yes" --> I["Upgrade architecture map"]
+    F --> J["Replay scenario"]
+    I --> J
+    J --> K{"Would it stop or guide the next run?"}
+    K -- "No" --> L["Refine gate / owner / evidence"]
+    K -- "Yes" --> M["Validate search + diff"]
+```
+
+## Artifact Types For Better Learning
+
+文字规则不是唯一手段。为了让 Hub 越迭代越强，可以按需要沉淀这些资产：
+
+- **Decision matrix**：用于 owner、Run Case/Build Capability、Skill/Rule/Reference/Report 分类。
+- **Workflow diagram**：用于表达跨层执行顺序、gate 和回放链路。
+- **Coding example**：用于展示工具适配、schema closure、验证脚本或 prompt/template 的最小可运行样例；示例必须放在对应 Skill/reference，不放 README。
+- **Replay checklist**：用历史失败场景回放新规则是否能提前触发。
+- **Golden prompt / handoff template**：用于视频、研究、PR 描述、case handoff 等高复用输出；模板归属对应 Skill。
+- **Validation snippet**：`rg` 搜索、diff check、UI smoke、media probe、SDK contract test 等可复用验证片段。
+
+新增这些资产前仍需过内容分类：如果是当前项目运行时必须知道的短背景，写入文档工作区 helper；如果只是完整证据或产物且需要长期引用，写入文档工作区 reports；如果只是 SPEC / 执行记录，写入文档工作区对应位置；如果只是临时迁移账本、缓存路径或一次性对照，写入 Documents temp；如果能指导未来执行，放 Skill/reference；如果是工具差异，放 `agents/`。
+
+## Architecture Upgrade Gate
+
+只有满足以下至少一项，才升级 Hub 架构本身：
+
+- 现有 layer 无法表达新的稳定 owner。
+- 同类内容反复落错层，说明承载边界不清。
+- 某个入口过大，已经降低加载效率和触发准确度。
+- 多项目差异需要新的隔离方式，而文档工作区当前 helper 结构无法承载。
+- 工具适配或自动发现机制发生变化，兼容入口需要重新定义。
+
+架构升级必须同步：
+
+- 更新本文件的 layer map 或 evolution protocol。
+- 更新 `README.md` 的极短路由，若新增了一级目录或核心入口。
+- 更新 `AGENTS.md` loading order，若新增了默认可触发 owner。
+- 搜索旧称、旧路径和重复规则，避免新旧架构并存。
+
+## Anti-patterns
+
+- 把 README 写成百科或长协作说明。
+- 把一次事故直接写成通用规则。
+- 把临时迁移账本、外部组件版本审计或缓存路径写进 Skill 运行面。
+- 为了“完整”新增目录、Skill、reference 或报告类型。
+- 同一规则在 README、AGENTS、Skill、report 多处复制。
+- 项目专属事实进入通用入口。
+- 架构已经不合适却继续补丁式堆规则。
