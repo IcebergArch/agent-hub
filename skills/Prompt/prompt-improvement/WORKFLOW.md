@@ -27,15 +27,17 @@ description: 当用户要求优化 prompt、agent instructions 或统一输出�
 - Prompt 资产回答“团队希望如何输出”，不是复制通用提示词技巧。
 - 稳定规则在模板中，项目事实留给输入上下文。
 - 输出规范必须可检查，避免靠长篇解释弥补目标不清。
+- 先保住问题闭环和必要门禁，再压缩长度；用户认为内容过多时，优先合并重复表达和删除无效解释，不得删掉能阻止已知失败的关键判定、失败分类或恢复边界。
 
 # Workflow
 
 1. Identify Format：确认目标是 RFC、ADR、Issue、Design Doc、Commit Message、PR、Checklist 或 agent instructions。
 2. Extract Contract：写清输入、输出、边界、必须/禁止内容和完成标准。
-3. Normalize Shape：统一标题、字段、顺序、语气、长度和证据要求。
-4. Separate Context：把动态项目事实从长期模板中剥离。
-5. Add Checks：加入自检项、失败态和升级条件。
-6. Validate Samples：用 2-4 个代表输入检查格式稳定性。
+3. Preserve Minimum Contract：从失败样例反推最小有效规则集，确认每个关键门禁都直接保护目标或已知失败边界。
+4. Normalize Shape：统一标题、字段、顺序、语气、长度和证据要求，并在不损失最小有效规则集的前提下压缩重复。
+5. Separate Context：把动态项目事实从长期模板中剥离。
+6. Add Checks：加入自检项、失败态和升级条件。
+7. Validate Samples：用 2-4 个代表输入检查格式稳定性。
 
 # Checklist
 

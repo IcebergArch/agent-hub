@@ -10,7 +10,7 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 # When to Use
 
 - 非机械实现、重构、UI、架构、协议、数据或工具链任务。
-- 用户说开始做、继续、do it、`coding`、按计划执行。
+- 用户说开始做、继续、do it、`coding`、`fix`、按计划执行。
 - 任务进入验证、收口、提交、PR 或交付前。
 
 # When NOT to Use
@@ -26,7 +26,7 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 
 - SPEC/STDD/计划只是引导，执行前必须用当前页面、API、代码、配置和运行事实校验。
 - 只加载能改变本轮决策的 Skill 或 reference。
-- Fix 指定问题时，先找根本原因和复现/证据链；缺信息先主动查找，必要时再请求用户补充。
+- `fix` 先用复现、交叉验证和正/逆向推理确认根因，方案明确后才执行最小修复；按 `references/root-cause-fix-patterns.md` 闭环。
 - Run Case 与 Build Capability 分开：配置和页面能力能完成时，不擅自改服务层或公共契约。
 - 完成声明必须有 fresh evidence；错误暴露不能写成业务成功。
 
@@ -60,4 +60,5 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 - `references/case-execution-recovery.md`
 - `references/execution-control-patterns.md`
 - `references/parallel-agent-coordination.md`
+- `references/root-cause-fix-patterns.md`
 - `references/review-git-and-cleanup-gates.md`
