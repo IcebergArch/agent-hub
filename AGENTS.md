@@ -49,11 +49,30 @@
 | 新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，跨仓库/跨 agent 契约 | `skills/Engineering/interface-contract-audit/WORKFLOW.md` |
 | 文档工作区项目背景缺失、被删除、过期，或要求 Context Health Check / 重建 | `skills/Context/project-context-rebuild/WORKFLOW.md` |
 | 整理项目内容、规则、Skills、报告、长期上下文、删除内容 | `skills/Context/project-content-curation/WORKFLOW.md` |
-| `receive`、`refactor hub`、Hub 自迭代、外部方法吸收、知识沉淀或 Skill/Prompt/Helper/Workflow/Agent/Tool 升级 | `skills/Knowledge/knowledge-evolution/WORKFLOW.md` |
+| `/hub get`、`/hub update`、Hub 自迭代、外部方法吸收、知识沉淀或 Skill/Prompt/Helper/Workflow/Agent/Tool 升级 | `skills/Knowledge/knowledge-evolution/WORKFLOW.md` |
 | AgentOS、Agent infra、AI 技术/协议/架构、Product UI/功能/架构、音画同步、互动影游、`Agent Team` / `IT Agent Team` 且需要判断 | `skills/Domain/agent-team-router/WORKFLOW.md` |
 | 制作、优化、拉片、规划或评审视频、storyboard、shot list、timeline、字幕/overlay | `skills/Domain/video-creation/WORKFLOW.md` |
 
 如果某个 Skill 被误触发，读完正文后用一句话说明不适用并退出，不因为已经读取就套完整流程。
+
+## Hub Commands
+
+`/hub cmd` 从本表读取当前有效命令并返回命令名与简短用途；不列内部 Skill、普通自然语言触发条件或已废弃命令。
+
+| Command | Contract |
+| --- | --- |
+| `/hub cmd` | 列出当前登记的全部有效命令及简短用途。 |
+| `/hub spec [<需求>]` | 将用户输入整理为可独立执行的正式 SPEC，写入 doc-hub 的 pending 位置，不进入执行。 |
+| `/hub spec-idea,<level> [<想法>]` | 按 `simple / middle / complex`（简 / 中 / 繁）整理 IDEA SPEC，不进入执行。 |
+| `/hub fix [<问题>]` | 在目标范围内完成根因定位、最小修复和回归验证。 |
+| `/hub refactor` | 审查并调整当前改动，使 diff 最小、领域边界清晰、架构整洁。 |
+| `/hub coding [<任务>]` | 更新基线、实现、严格验证并完成 PR 收尾，不自动 merge。 |
+| `/hub pr` | 清理并验证当前任务改动，推送 work branch，创建或更新 PR。 |
+| `/hub git update` | 用 rebase 将当前分支同步到最新目标分支。 |
+| `/hub get` | 从当前信号提取可复用经验，判断是否沉淀及其唯一 owner。 |
+| `/hub update` | 审查并更新 Hub 的规则、Skill、reference、入口或结构。 |
+
+旧名 `/hub receive`、`/hub refactor hub` 已分别更名为 `/hub get`、`/hub update`，不保留别名。`/hub review`、`/hub diff review`、`/hub check`、`/hub git check`、`/hub push`、`/hub git merge` 已废弃。
 
 ## Execution Budget
 
@@ -83,6 +102,9 @@
 - 修改既有实现前，先冻结必须保留的现有效果与本次必须达成的目标；方案应显式权衡并同时守住两者，默认选择能闭环的最小高价值 diff，保持领域 owner、依赖方向和架构边界清晰，并分别验证目标达成与既有效果未回退。
 - 用户说 `fix`、`fix <问题>` 或明确要求修复某个问题时，视为授权在指定范围内连续完成 `复现 -> 定位 -> 交叉验证与正/逆向推理 -> 根因 -> 方案 -> 最小修复 -> 原始路径与回归验证`；根因必须能解释症状及其边界，证据不足时不得编造或先改症状，详细见 `skills/Core/task-execution-lifecycle/references/root-cause-fix-patterns.md`。
 - `fix` 默认授权诊断和执行修复，但不自动授权 commit、push、PR 或 merge；需要完整 PR 收尾时使用 `coding` 或另行明确授权。
+- 用户说 `/hub spec` 或 `/hub spec <需求>` 时，视为正式 SPEC 编写指令：以用户输入为需求源，先读文档工作区入口和当前项目的最小必要背景，再按 `requirements-brief` 收敛为可独立执行的 pending SPEC，并依文档工作区当前命名与生命周期规则写入指定位置。核心方向、项目归属或执行边界仍有阻塞歧义时只问一个最小问题；否则显式记录必要假设并直接完成。该指令不创建 STDD、不进入 execing、不修改业务仓库或开始执行；回复必须给出文件完整路径和仍待确认的问题。
+- 用户说 `spec-idea,<level>` 或 `spec-idea,<level> <想法>` 时，视为 SPEC IDEA 整理指令；`simple / middle / complex` 分别表示简 / 中 / 繁，具体深度以 `requirements-brief` 为准。先读文档工作区入口和当前项目的最小必要背景，再依文档工作区当前命名与生命周期规则写入对应项目的 IDEA 位置；级别只控制整理深度，不改变生命周期或授权边界。IDEA 不进入 pending/execing，不创建 STDD，不读改业务仓库或开始执行。只有项目归属或核心方向存在高风险歧义时才问一个最小问题，否则直接完成；回复必须给出文件完整路径和仍待确认的问题。
+- 用户说 `/hub refactor` 时，视为授权审查并直接调整当前改动：核对 staged、unstaged、untracked 及必要的 work branch 相对 target 差异，判断是否保持最小改动、领域 owner 与依赖方向清晰、架构整洁；删除或修正本任务内不合理、多余、临时或越界改动，保留用户已有无关改动，再做最窄有效验证和 diff 检查。该命令不授权暂存、提交、push、PR 或 merge。
 - 用户说“OK”“do it”“没问题”等确认时，默认进入执行模式；除非存在高风险歧义，不停留在方案描述。
 - 用户要求“只涉及”某范围时，最终检查变更清单；验证若只读越界内容，需要说明。
 - 用户偏好中文协作语境；方案、总结和长期文档默认中文，代码标识、命令、路径和接口名保留原文。
@@ -140,8 +162,9 @@
 
 ## Hub Maintenance
 
-- `receive` 是明确规则库维护指令：读取 `skills/Knowledge/knowledge-evolution/WORKFLOW.md`，判断是否沉淀以及沉淀到 Rule、Skill、Reference、Project Helper、Report、Temp、Prompt、Workflow、Agent、Tool 还是 Delete。
-- 用户指出 `receive` 漏抽、忽略高亮信号或 Hub 规则未生效时，必须先修正对应 Hub workflow 的抽取门禁，再补沉淀目标规则。
+- `/hub get` 是明确规则库提取指令：读取 `skills/Knowledge/knowledge-evolution/WORKFLOW.md`，判断当前信号是否值得沉淀，以及唯一 owner 应为 Rule、Skill、Reference、Project Helper、Report、Temp、Prompt、Workflow、Agent、Tool 还是 Delete。
+- `/hub update` 是明确 Hub 更新指令：先按 `skills/Context/project-content-curation/WORKFLOW.md` 审查内容归位、重复和入口负担，再按 `knowledge-evolution` 更新必要 owner、索引和引用；不把一次性项目事实写入 Hub。
+- 用户指出 `/hub get` 漏抽、忽略高亮信号或 Hub 规则未生效时，必须先修正对应 Hub workflow 的抽取门禁，再补沉淀目标规则。
 - 规则维护、内容清理或规则体系 review 前，先执行 `skills/Context/project-content-curation/WORKFLOW.md`，按 `hub-architecture.md` 和 `rule-system-strategy.md` 分类落位。
 - 普通交互不自动触发 Hub 更新。只有用户明确要求、已设置自动化触发、反复高风险缺口、跨场景稳定约束、owner/边界混淆或验证门禁缺失时，才沉淀。
 - Hub 自升级必须是 repo-portable 机制：触发条件、owner、reference 和验证依赖仓库内容即可恢复；不得依赖本机 memory、automation 缓存、安装态或宿主线程状态。
@@ -149,8 +172,7 @@
 
 ## Review, Git, Verification
 
-- 用户要求 review 时，按代码审查姿态：发现优先于总结，按严重度列 bug、风险、回归和测试缺口；没有发现问题也要说明残余风险。
-- `git diff` 用户指令废弃；只读边界审查用 `review` / `diff review`，不改文件、不暂存、不提交。
+- `/hub refactor` 按代码与架构审查姿态处理当前改动，但发现不合理、多余、临时或越界内容后直接在本任务范围内调整，而不是只报告问题；调整后重新检查 diff 边界、影响面、领域 owner、依赖方向和验证证据。
 - 用户说 `pr` 时，视为主动 PR 收尾指令：先更新本地 target 基线（默认 `origin/main -> main`），再切出或确认 local work branch；检查本地工作区和 work branch 相对 target 的全部变动，清理无效/临时 diff，保持架构和领域边界，验证后 push work branch，并生成 merge comment。
 - 用户说 `coding` 或 `coding <任务>` 时，视为授权在目标项目内执行 `git update -> 最小实现 -> 严格验证 -> PR 收尾`：实现必须保持最小 coherent diff、领域边界和架构整洁；测试同时使用项目内质量契约和可用的本地 `quality-orchestrator`，详细流程见 `task-execution-lifecycle` 的 Git/cleanup reference。
 - `coding` 默认授权创建或更新 work branch、单个任务提交和 PR，不单独授权实际 merge。PR 建立后等待审批；只有用户已明确授权合入，或仓库已有明确且适用的 auto-merge 规则时，才可在 required checks / approvals 全部满足后完成 merge。
@@ -159,15 +181,12 @@
 - 大改动必须拆成解耦、独立、可验证的小改动，尽早且频繁合入 main；每次合入前都要同步最新 main、解决冲突并完成验证，避免长期维护大型功能分支。
 - 准备提交、暂存、amend、PR、合并或“只提交本次改动”前，必须做完整 diff 审查；无关用户改动保持原样。
 - 用户说 `git update` 时，表示把当前分支 rebase 到最新目标分支，默认基线是 `origin/main` 或 `main`；先检查当前分支、目标分支和 dirty worktree，保护用户本地改动。
-- 用户说 `check` 或 `git check` 时，默认做合入前只读审查：确认 diff 边界、影响面、架构匹配、验证证据、提交形状和 main 可合入性；重点检查是否保持一次提交、改动收敛、不突破领域边界、不污染架构设计；发现风险先报，不自动改文件、不暂存、不提交、不推送。
-- 用户说 `push` 时，默认进入推送前门禁：先完成 `check`，再确认已 rebase 到最新 main、冲突已解决、单次合入提交已收敛、验证通过，最后只推 work branch，不直接改 main。
-- 用户说 `git merge` 时，视为完整合入收尾链路：依次执行 `git update`、`check`、推送 work branch，再进入 merge 待确认；任一步有 blocker 就停止，不跳步推进。
-- `git merge` 指令不包含实际 merge 授权：push 成功后必须报告 source/target、检查与验证结果并等待用户再次明确确认；只有用户确认由 Agent 合入后才执行 merge，用户也可自行操作。未确认时不得修改 target/main。
+- 实际 push 或 merge 只作为 `coding`、`pr` 的内部步骤或用户另行明确授权执行；不得把已废弃的独立 `/hub push`、`/hub git merge` 当作授权。修改 target/main 仍需单独明确授权或适用的 auto-merge 规则。
 - 清理已修改内容时，先按本轮必要实现、测试/文档、旧入口、mock/fallback、临时文件、无关改动分层；删除前必须搜索确认没有生产入口、路由、导入、运行链路或配置引用。
 - 业务空间、preset、prompt、skill、tool、provider 或配置数据清理属于高风险数据治理：执行前必须先判断目标是局部废弃、能力迁移、形式收敛还是整体退役，并列出 `keep / delete / migrate / restore` 清单和 dry-run 计数。只有用户明确要求整体退役/清空时，才允许把业务空间 active agent/preset 清零；若目标是“保留能力但收敛形式”，应迁移为合适数量的 Agent 加必要 prompt + skill 支撑，再删除旧分散对象；删除必须有可回滚方式，软删除后按本次目标核对保留/清空结果。
 - 声称“完成”“通过”“可用”“已打通”前必须有 fresh evidence；验证报告要区分入口可打开、请求到达、下游支持、业务成功、结果可见。
 - smoke 只证明错误态暴露时，写“错误暴露/缺口确认”，不能写“接入可用”。遇到 4xx/5xx、unsupported、mock/fallback/dry-run、空数据或跳过步骤，默认未打通。
-- 详细 cleanup、diff review、`coding`、`git update`、`check`、`push`、`git merge`、`pr` 和验证语言门禁见 `skills/Core/task-execution-lifecycle/references/review-git-and-cleanup-gates.md`。
+- 详细 cleanup、`/hub refactor`、`coding`、`git update`、`pr` 和验证语言门禁见 `skills/Core/task-execution-lifecycle/references/review-git-and-cleanup-gates.md`。
 
 ## Naming
 

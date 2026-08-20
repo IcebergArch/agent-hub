@@ -10,7 +10,7 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 # When to Use
 
 - 非机械实现、重构、UI、架构、协议、数据或工具链任务。
-- 用户说开始做、继续、do it、`coding`、`fix`、按计划执行。
+- 用户说开始做、继续、do it、`coding`、`fix`、`/hub refactor`、按计划执行。
 - 任务进入验证、收口、提交、PR 或交付前。
 
 # When NOT to Use
