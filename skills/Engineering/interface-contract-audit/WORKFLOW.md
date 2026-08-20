@@ -25,6 +25,7 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 # Decision Principles
 
 - 接口面必须完整，不以用户举例作为全量列表。
+- 新功能或未发布契约明确不做兼容时，按首次发布基线一次收口；不得因开发迭代残留 `v2`、`legacy`、`compat`、双读或双写语义。只有存在已发布消费者、存量数据或明确迁移窗口时，才保留高版本号或兼容层。
 - 新增或迁移可被其他主体发现的能力，必须证明目标消费者可见/可用，非目标消费者不可见/不可用。
 - Create/import/update/delete 区分 system-generated ID、canonical ref、用户可编辑字段、source hint 和幂等键。
 - 没真实能力时返回 unsupported，不补本地替代。
@@ -43,6 +44,7 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 # Checklist
 
 - 是否搜索旧 route、operation、client 方法、文档、测试、helper/type/变量名。
+- 未发布契约定版时，是否同时检查文件名、key namespace、consumer group、schema/type、常量、配置、文档、测试和 fixture，清除无真实前代的版本/兼容痕迹。
 - 是否有 allow/deny 两侧的 visibility 证据。
 - 是否没有把 mock、dry-run 或旧 fixture 升格成正式契约。
 

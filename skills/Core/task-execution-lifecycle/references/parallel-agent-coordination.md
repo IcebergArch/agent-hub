@@ -21,6 +21,17 @@
 5. 是否能为每个 agent 提供完整 brief，而不是依赖主会话历史？
 6. 子 agent 的动作是否不会增加用户成本、触发外部生成、启动后台任务或改变正在 smoke 的运行态？
 
+## Batch Dispatch Gate
+
+只有同时满足以下条件，才把多个小任务合并成一个 batched brief：
+
+1. 这些任务是同形问题，期望动作、验证方式和输出模板一致。
+2. 每个 item 仍能独立编号、独立追踪、独立验收，而不是只给一句“顺手都改了”。
+3. 批量后不会遮蔽单个 item 的失败、跳过、范围漂移或文件遗漏。
+4. 主 Agent 有能力在最终复核时逐项核对“brief 中列出的 item 是否全部进入 diff 或被明确说明未处理”。
+
+任一条件不满足，就拆回多个 brief。省 token 不能覆盖可追踪性。
+
 ## Capability Selection
 
 | 任务类型 | 默认能力 | 升级信号 |
@@ -69,6 +80,7 @@
 
 ## Context
 - 目标：
+- Spec / brief：
 - 已知错误/需求：
 - 相关文件：
 - 相关命令：
@@ -76,6 +88,7 @@
 - Global constraints：
 - Consumes：
 - Produces：
+- Batched items：
 - Capability / tool level：
 
 ## Expected Work
@@ -99,6 +112,7 @@
 - 子 agent 不继承主会话隐含约束；关键约束必须写进 brief。
 - 异步/子 Agent 不承接真实页面 smoke 的最终 owner。可委托的内容包括测试矩阵补齐、旁支自动化、日志/截图只读复核、失败原因候选和回归风险检查；不可委托的是当前页面、当前 thread 或当前用户可见 workflow 的最终操作、判断和完成声明。
 - 子任务只做 brief scope，不重跑全局规划或 Hub 方法论吸收。
+- implementer / reviewer 默认不得递归再派子 agent；只有主 Agent 可以决定继续拆分、批量或升级能力。
 - scope 外问题记录为 concern/follow-up，不直接修改。
 - 同一 task 的 fix round 默认恢复原 implementer；只有能力不足、scope 已重写或上下文明显失真时才换执行者。
 - spec compliance 先于 code quality。
@@ -110,7 +124,8 @@
 | --- | --- |
 | 缺背景、文件、命令、验收 | 补具体上下文，重派 |
 | scope、owner、权限、数据源不清 | 回主 Agent 判断，必要时问用户一个最小问题 |
-| 计划/spec 矛盾或漏项 | 修正计划/brief，再重派 |
+| 非破坏性计划/spec 冲突、歧义或漏项 | 主 Agent 先记录 ruling、补 brief；能继续就继续，不能继续再重派或问用户 |
+| destructive / irreversible 决策 | 停止当前子任务，回主 Agent 或用户确认 |
 | 任务过大 | 拆成更小 brief |
 | 不影响目标的实现细节 | 给默认决策并记录假设 |
 
@@ -143,6 +158,7 @@
 多任务结束后检查：
 
 - 整体需求是否完成。
+- batched brief 中每个 item 是否都进入 diff、产物或明确的未处理说明。
 - 接口、类型、命名、状态、错误语义、UI、配置、数据结构是否一致。
 - 是否重复修复、相反假设、两套路由/入口、冲突 fallback。
 - 是否需要端到端 smoke、集成测试、页面/API/tool runtime 验证。
