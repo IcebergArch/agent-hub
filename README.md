@@ -15,7 +15,7 @@ Codex 插件入口为 `agent-hub`，唯一用户入口为 `/hub`。用户用 `/h
 
 ## Routing
 
-- `AGENTS.md`：Codex、Cursor 共用的主入口、加载顺序和硬约束。
+- `AGENTS.md`：Codex、Cursor 共用的主入口、`/hub` 命令登记、加载顺序和硬约束。
 - `CLAUDE.md`：Claude 专属入口；默认只做项目 SPEC 编写，不执行代码，除非用户明确切换 Claude 执行。
 - `agents/`：不同 Agent 工具的适配说明，例如 `agents/codex.md`、`agents/cursor.md`。
 - `skills/`：Hub 内部 workflow 库，唯一目录定义为 `skills/<Category>/<skill-slug>/WORKFLOW.md`，长检查表放同目录 `references/`。

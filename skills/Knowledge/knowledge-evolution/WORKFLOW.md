@@ -9,7 +9,7 @@ description: 当任务暴露可复用组织经验、Hub 自迭代、外部方法
 
 # When to Use
 
-- 用户说 `receive`、`refactor hub`、优化 Hub、升级 Skill Library。
+- 用户说 `/hub get`、`/hub update`、优化 Hub、升级 Skill Library。
 - 外部 agent framework、插件、技能库或方法论需要吸收。
 - 任务暴露跨场景稳定缺口：owner、接口、验证、prompt、helper、workflow、agent 或 tool。
 

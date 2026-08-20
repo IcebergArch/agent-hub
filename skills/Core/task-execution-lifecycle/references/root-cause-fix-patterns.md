@@ -13,7 +13,7 @@ reproduce -> locate -> analyze -> root-cause gate
 
 - 授权范围是目标问题内的诊断、必要测试和生产修复；不包含机会主义重构或相邻功能扩展。
 - 方案形成后先简要说明根因、修改 owner、最小 diff 和验证方式；除非涉及新权限、高风险数据/接口动作或会改变用户目标，否则不等待额外确认，继续执行。
-- `fix` 不自动包含 commit、push、PR 或 merge；这些动作由 `coding`、`pr`、`push`、`git merge` 或用户的单独授权触发。
+- `fix` 不自动包含 commit、push、PR 或 merge；这些动作由 `coding`、`pr` 或用户的单独授权触发。
 
 ## 1. Reproduce
 
