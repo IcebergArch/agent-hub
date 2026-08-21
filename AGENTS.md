@@ -69,6 +69,7 @@
 | `/hub coding [<任务>]` | 更新基线、实现、严格验证并完成 PR 收尾，不自动 merge。 |
 | `/hub pr` | 清理并验证当前任务改动，推送 work branch，创建或更新 PR。 |
 | `/hub git update` | 用 rebase 将当前分支同步到最新目标分支。 |
+| `/hub save` | 停止当前工作区内可发现的 Agent 活动，把进度与遗留写回执行包，并依次提交、推送各项目检查点。 |
 | `/hub get` | 从当前信号提取可复用经验，判断是否沉淀及其唯一 owner。 |
 | `/hub update` | 审查并更新 Hub 的规则、Skill、reference、入口或结构。 |
 
@@ -105,6 +106,7 @@
 - 用户说 `/hub spec` 或 `/hub spec <需求>` 时，视为正式 SPEC 编写指令：以用户输入为需求源，先读文档工作区入口和当前项目的最小必要背景，再按 `requirements-brief` 收敛为可独立执行的 pending SPEC，并依文档工作区当前命名与生命周期规则写入指定位置。核心方向、项目归属或执行边界仍有阻塞歧义时只问一个最小问题；否则显式记录必要假设并直接完成。该指令不创建 STDD、不进入 execing、不修改业务仓库或开始执行；回复必须给出文件完整路径和仍待确认的问题。
 - 用户说 `spec-idea,<level>` 或 `spec-idea,<level> <想法>` 时，视为 SPEC IDEA 整理指令；`simple / middle / complex` 分别表示简 / 中 / 繁，具体深度以 `requirements-brief` 为准。先读文档工作区入口和当前项目的最小必要背景，再依文档工作区当前命名与生命周期规则写入对应项目的 IDEA 位置；级别只控制整理深度，不改变生命周期或授权边界。IDEA 不进入 pending/execing，不创建 STDD，不读改业务仓库或开始执行。只有项目归属或核心方向存在高风险歧义时才问一个最小问题，否则直接完成；回复必须给出文件完整路径和仍待确认的问题。
 - 用户说 `/hub refactor` 时，视为授权审查并直接调整当前改动：核对 staged、unstaged、untracked 及必要的 work branch 相对 target 差异，判断是否保持最小改动、领域 owner 与依赖方向清晰、架构整洁；删除或修正本任务内不合理、多余、临时或越界改动，保留用户已有无关改动，再做最窄有效验证和 diff 检查。该命令不授权暂存、提交、push、PR 或 merge。
+- 用户说 `/hub save` 时，视为授权按 `skills/Core/task-execution-lifecycle/references/workspace-save.md` 执行一次工作区检查点：先冻结并结束可验证发现的 workload Agent 活动，把真实进度写入 STDD、未完成或不确定项写入原执行包 Bug Pool，再按业务项目、doc-hub、agent-hub 的顺序提交并推送各自当前对应分支。发现完成后必须用一张确认单列出本轮业务仓库、本地/远端目标分支、主干风险和有归属证据的 workspace localhost 服务关闭动作，取得一次明确确认；`doc-hub` 与 `agent-hub` 不进入该确认单。该命令不授权 merge、rebase、stash/reset、删除任务或停止未确认/归属不明的服务。
 - 用户说“OK”“do it”“没问题”等确认时，默认进入执行模式；除非存在高风险歧义，不停留在方案描述。
 - 用户要求“只涉及”某范围时，最终检查变更清单；验证若只读越界内容，需要说明。
 - 用户偏好中文协作语境；方案、总结和长期文档默认中文，代码标识、命令、路径和接口名保留原文。

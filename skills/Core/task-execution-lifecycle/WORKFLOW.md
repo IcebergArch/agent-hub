@@ -62,3 +62,4 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 - `references/parallel-agent-coordination.md`
 - `references/root-cause-fix-patterns.md`
 - `references/review-git-and-cleanup-gates.md`
+- `references/workspace-save.md`
