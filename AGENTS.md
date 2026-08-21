@@ -151,7 +151,7 @@
 - 结构化配置面按 owner 和 provider/store 语义分层；外部配置只暴露稳定业务语义，内部 adapter/backend/proxy 映射留在 composition root/adapter。
 - 用户连续纠正配置命名、层级或服务边界时，先暂停新增实现并重建领域 owner map：区分业务服务、AI/Agent 服务、provider、store、runtime adapter 和本地调试替身；同品牌但职责不同的服务必须用真实 owner 语义显式分名。不要因为用户说某个词、点号或方向就机械新增层级、制造别名，或把一个服务的配置塞进另一个服务 owner。
 - 仓库已有 SQL 模板、query 目录、ORM mapper 或生成链路时，新增/调整持久化查询优先修改事实源模板并重新生成 client，不在 service 散落可复用 SQL。
-- 接口、路由、方法、DTO、按钮或危险操作命名必须表达真实前置约束和行为边界；例如只删空目录应命名为 `delete-empty-directory` / `DeleteEmptyDirectory`，不能泛化成 `delete-directory`。
+- 接口、路由、方法、DTO、按钮或危险操作命名必须表达真实前置约束和行为边界；通用能力按资源和行为命名，不把当前调用方、接入来源或临时业务场景写进名称，只有调用方身份确实改变鉴权、协议、schema 或生命周期且属于稳定契约时才保留限定。例如只删空目录应命名为 `delete-empty-directory` / `DeleteEmptyDirectory`，不能泛化成 `delete-directory`。
 
 ## Research, Docs, Reports
 
