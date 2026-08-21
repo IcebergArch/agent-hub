@@ -70,6 +70,7 @@
 | `/hub pr` | 清理并验证当前任务改动，推送 work branch，创建或更新 PR。 |
 | `/hub git update` | 用 rebase 将当前分支同步到最新目标分支。 |
 | `/hub save` | 停止当前工作区内可发现的 Agent 活动，把进度与遗留写回执行包，并依次提交、推送各项目检查点。 |
+| `/hub code-update` | 拉取远端更新，以 fast-forward 同步本地 doc-hub、agent-hub 和 sand-ai 下各 Git 仓库的 `main`。 |
 | `/hub get` | 从当前信号提取可复用经验，判断是否沉淀及其唯一 owner。 |
 | `/hub update` | 审查并更新 Hub 的规则、Skill、reference、入口或结构。 |
 
@@ -146,6 +147,7 @@
 
 ## Design And Data Gates
 
+- 新增或收紧产品限制前，必须指出其明确来源：用户需求、公开契约或已验证运行事实；不得把品牌、部署形态、具体实例、当前实现或单次事故推断成通用产品约束。来源不足时保持既有合法输入空间，并先补证据。
 - 未来演进方向未定责时，只沉淀兼容性边界、稳定契约和可组合性要求，不在当前模块提前加入未定责接口、目录或 lifecycle。
 - 暂无真实调用方、配置入口、验收场景或明确 owner 的扩展点不保留；diff 只表达本次目标。
 - 模块设计优先保持独立、原子、可验证；共享能力通过公开协议、元数据、回执和测试约束表达。
@@ -183,12 +185,13 @@
 - 大改动必须拆成解耦、独立、可验证的小改动，尽早且频繁合入 main；每次合入前都要同步最新 main、解决冲突并完成验证，避免长期维护大型功能分支。
 - 准备提交、暂存、amend、PR、合并或“只提交本次改动”前，必须做完整 diff 审查；无关用户改动保持原样。
 - 用户说 `git update` 时，表示把当前分支 rebase 到最新目标分支，默认基线是 `origin/main` 或 `main`；先检查当前分支、目标分支和 dirty worktree，保护用户本地改动。
+- 用户说 `code-update` 时，表示批量同步本地 doc-hub、agent-hub 和 sand-ai 目录下各 Git 仓库的 `main`：逐仓确认 remote、分支、worktree 和 ahead/behind，fetch 后只做 fast-forward；不切换或改写当前工作分支，不自动 stash、reset、rebase，不因单仓失败跳过结果汇报。详细流程见 `task-execution-lifecycle` 的 Git/cleanup reference。
 - 实际 push 或 merge 只作为 `coding`、`pr` 的内部步骤或用户另行明确授权执行；不得把已废弃的独立 `/hub push`、`/hub git merge` 当作授权。修改 target/main 仍需单独明确授权或适用的 auto-merge 规则。
 - 清理已修改内容时，先按本轮必要实现、测试/文档、旧入口、mock/fallback、临时文件、无关改动分层；删除前必须搜索确认没有生产入口、路由、导入、运行链路或配置引用。
 - 业务空间、preset、prompt、skill、tool、provider 或配置数据清理属于高风险数据治理：执行前必须先判断目标是局部废弃、能力迁移、形式收敛还是整体退役，并列出 `keep / delete / migrate / restore` 清单和 dry-run 计数。只有用户明确要求整体退役/清空时，才允许把业务空间 active agent/preset 清零；若目标是“保留能力但收敛形式”，应迁移为合适数量的 Agent 加必要 prompt + skill 支撑，再删除旧分散对象；删除必须有可回滚方式，软删除后按本次目标核对保留/清空结果。
 - 声称“完成”“通过”“可用”“已打通”前必须有 fresh evidence；验证报告要区分入口可打开、请求到达、下游支持、业务成功、结果可见。
 - smoke 只证明错误态暴露时，写“错误暴露/缺口确认”，不能写“接入可用”。遇到 4xx/5xx、unsupported、mock/fallback/dry-run、空数据或跳过步骤，默认未打通。
-- 详细 cleanup、`/hub refactor`、`coding`、`git update`、`pr` 和验证语言门禁见 `skills/Core/task-execution-lifecycle/references/review-git-and-cleanup-gates.md`。
+- 详细 cleanup、`/hub refactor`、`coding`、`git update`、`code-update`、`pr` 和验证语言门禁见 `skills/Core/task-execution-lifecycle/references/review-git-and-cleanup-gates.md`。
 
 ## Naming
 

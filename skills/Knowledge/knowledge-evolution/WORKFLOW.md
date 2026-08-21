@@ -25,6 +25,7 @@ description: 当任务暴露可复用组织经验、Hub 自迭代、外部方法
 # Decision Principles
 
 - 先判断是否值得沉淀，再判断沉淀位置。
+- 不直接沉淀事故表象、当次修复答案或具体实体；候选经验必须先上提为能覆盖相邻场景的触发条件、不变量和证据门禁。无法稳定泛化的一次事故删除而非入库。
 - 优先扩展已有 Skill，不新增近义 Skill。
 - 一次性项目经验进 Context/Report/Temp，不进 Skill。
 - Skill 保留长期组织经验；Prompt/Helper/Workflow/Agent/Tool 只在 owner 清楚时升级。
@@ -34,16 +35,20 @@ description: 当任务暴露可复用组织经验、Hub 自迭代、外部方法
 
 1. Freeze Signal：提取用户明确要求、反复纠偏、风险信号和证据。
 2. Inventory Owners：读最少入口，查是否已有 Rule、Skill、Reference、Helper 或 Prompt owner。
-3. Decide Value：用长期性、组织性、可触发性、可验证性判断是否沉淀。
-4. Classify Target：在 Skill、Rule、Reference、Project Helper、Report、Temp、Prompt、Workflow、Agent、Tool、Delete 中选唯一 owner。
-5. Counterexample：检查一个合法反例和一个相邻场景，避免过度绝对。
-6. Patch Owner：优先合并、压缩、删除重复内容；确实缺 owner 才新增。
-7. Sync Index：更新入口、Skill 索引、旧触发词和路径引用。
-8. Validate：搜索旧称、重复规则和失效引用，运行 diff check。
+3. Generalize Signal：去掉项目名、具体 ID、品牌、当次修复方案和错误文案，写出候选规则保护的不变量；确认它能在至少一个相邻场景中独立成立，而不是记住本次答案。
+4. Trace Constraint：若候选规则会新增或收紧产品限制，必须追溯到明确需求、公开契约或已验证运行事实；只有部署假设、单次实现现状或未验证猜测时，不得沉淀为产品约束。
+5. Decide Value：用长期性、组织性、可触发性、可验证性判断是否沉淀；仅一次事故且无法稳定泛化时选择 Delete。
+6. Classify Target：在 Skill、Rule、Reference、Project Helper、Report、Temp、Prompt、Workflow、Agent、Tool、Delete 中选唯一 owner。
+7. Counterexample：检查一个合法反例和一个相邻场景，避免过度绝对。
+8. Patch Owner：优先合并、压缩、删除重复内容；确实缺 owner 才新增。
+9. Sync Index：更新入口、Skill 索引、旧触发词和路径引用。
+10. Validate：搜索事故专名、具体实体、旧称、重复规则和失效引用，运行 diff check。
 
 # Checklist
 
 - 新增 Skill 五问是否通过。
+- 候选规则是否已经脱离事故表象和当次答案，并能覆盖相邻场景。
+- 新增产品限制是否能追溯到需求、契约或已验证运行事实。
 - 是否没有把项目名、一次性方案、临时命令或未验证猜测写进通用 Skill。
 - 是否没有形成双 owner。
 

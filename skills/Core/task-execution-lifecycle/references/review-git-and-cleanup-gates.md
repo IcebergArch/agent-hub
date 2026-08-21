@@ -1,6 +1,6 @@
 # Review, Git And Cleanup Gates
 
-用途：作为 `task-execution-lifecycle` 的按需参考；当任务进入 cleanup、`/hub refactor`、`coding`、`git update`、`pr`、提交/PR 前审查或完成状态校准时读取。默认入口只保留触发和硬边界，本文件承接细节。
+用途：作为 `task-execution-lifecycle` 的按需参考；当任务进入 cleanup、`/hub refactor`、`coding`、`git update`、`code-update`、`pr`、提交/PR 前审查或完成状态校准时读取。默认入口只保留触发和硬边界，本文件承接细节。
 
 ## Cleanup Review
 
@@ -56,6 +56,8 @@ git update -> understand -> minimal implementation -> strict verification
 
 用户说 `pr` 时，表示进入主动 PR 收尾，不是只读审查。默认目标分支是 `main` / `origin/main`；用户指定其它 target 时才改。流程：
 
+**顺序门禁**：第 1 步的基线更新是 commit、push 和创建/更新 PR 的前置条件，不得因工作区干净、已有提交或已有 PR 而跳过。若误在基线更新前完成 commit/push，立即停止后续 PR 动作，补做 fetch/rebase、冲突处理、验证和单提交整理，再用 `--force-with-lease` 更新 work branch；不得把旧 push 当作流程已完成。
+
 0. **确认工作仓库**：`/hub pr` 从哪个项目上下文发起，就以哪个项目仓库作为 work repo；Agent Hub 只提供流程规则。只有用户明确要求维护 Hub 本身时，才把 `/Users/shatang/Project/agent-hub` 当作 work repo。
 1. **更新本地基线**：先 `git fetch`，确认 target、当前分支、ahead/behind、staged/unstaged/untracked；把远端 target 更新到本地 target（默认 `origin/main -> main`）。如果当前就在 target 且有未提交改动，先确认本地 target 与远端 target 是否已对齐；未对齐且 dirty worktree 可能阻塞更新时，停止并保护本地改动。
 2. **进入 local work branch**：从已更新的本地 target 切出或确认当前 local work branch。不能把 PR 提交直接落在 target 分支；若发现自己在 `main` 上准备提交，应先切工作分支再继续。
@@ -79,6 +81,16 @@ git update -> understand -> minimal implementation -> strict verification
 4. 只有当前仓库/分支明显不符合用户预期、需要 stash/reset/checkout 等会隐藏或丢失本地改动的操作、或 rebase 被 Git 阻塞且无法在保留本地改动的前提下继续时，才停下请用户决策。
 5. 需要预判风险时优先只读检查，例如 merge-base、merge-tree、diff name-status 和冲突信号搜索；不要把大型输出原样倾倒给用户。
 6. fetch 后当前分支已基于目标分支时，可用只读状态和 diff 验证，不为流程制造 stash、重排 index、merge commit 或长报告。
+
+## Code Update
+
+`code-update` 表示批量更新本地代码基线，不等同于对当前工作分支执行 `git update`。
+
+1. **目标集合**：同步已登记的文档工作区仓库、live Agent Hub 仓库，以及 `sand-ai` 下运行时发现的全部 Git 仓库；执行 Git 动作前先冻结并去重目标集，不固化绝对路径、目录层级或仓库清单。
+2. **逐仓预检**：确认仓库路径、`origin`、本地与远端 `main`、当前分支、dirty worktree、ahead/behind；缺少 `origin/main` 或本地 `main` 时记录为未更新，不猜测替代 remote 或 target。
+3. **更新方式**：先 fetch 对应 remote，再仅以 fast-forward 更新本地 `main`。不得 merge、强推、reset、隐式 stash 或 rebase，也不得为了更新 `main` 切换、改写或提交当前工作分支。
+4. **冲突保护**：本地 `main` 已分叉、被其它 worktree 占用且无法安全更新、或当前 checked-out `main` 的本地改动阻塞 fast-forward 时，保留原状并报告；不自动清理用户改动。
+5. **独立结果**：一个仓库失败不阻止其余仓库继续安全同步。最终结果必须覆盖冻结目标集且数量一致，并逐仓报告 `updated / already up to date / skipped / failed`、旧新 commit 和原因；不把 fetch 成功写成 main 已更新。
 
 ## Completion Language
 
