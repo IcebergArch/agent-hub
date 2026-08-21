@@ -9,9 +9,9 @@
 
 1. 发现、冻结并结束当前 workspace 中宿主可验证管理的 workload Agent 活动。
 2. 读取这些活动的实际进度，把已完成工作登记到 STDD，把所有未完成、未验证、不确定或无法恢复的事项登记到原执行包 Bug Pool。
-3. 在所有受影响项目的文档检查点都落盘后，依次提交并推送业务项目、doc-hub、agent-hub 的当前对应分支。
+3. 在所有受影响项目的文档检查点都落盘后，依次提交并推送业务项目的确认目标分支、doc-hub 的远端 `main`、agent-hub 的远端 `main`。
 
-该授权不包含 merge、创建 PR、rebase、force push、stash/reset、丢弃改动、删除或归档任务、停止未确认或归属不明的服务、修改数据库或代替项目质量验收。发现完成后必须展示一张统一确认单，列全本轮业务仓库、本地分支、remote、即将推送的远端分支、主干风险，以及有项目归属证据的 workspace localhost 服务及关闭动作；用户一次明确确认后才执行这些动作。`doc-hub` 与 `agent-hub` 不进入确认单。调用 `/hub save` 本身不能代替该确认。
+该授权不包含创建 PR、rebase、force push、stash/reset、丢弃改动、删除或归档任务、停止未确认或归属不明的服务、修改数据库或代替项目质量验收；merge 只允许用于 doc-hub/agent-hub 非快进时合入一次最新 `origin/main`。发现完成后必须展示一张统一确认单，列全本轮业务仓库、本地分支、remote、即将推送的远端分支、主干风险，以及有项目归属证据的 workspace localhost 服务及关闭动作；用户一次明确确认后才执行这些动作。`doc-hub` 与 `agent-hub` 不进入确认单。调用 `/hub save` 本身不能代替该确认。
 
 当前协调 Agent 是控制面，不属于待停止 workload；它只在完成最终核验并返回结果后自然结束。否则命令会在保存工作区之前自我终止。
 
@@ -24,8 +24,9 @@
 - **SPEC 保持冻结**：需求事实不写进度。进度、决策、证据和 Git 状态进 STDD；未完成项、验证缺口、未知状态、发现/停止覆盖缺口和保存失败进 Bug Pool。
 - **不伪装完成**：checkpoint 可以成功而原业务任务仍有 open Bug；不得因此完成或归档 SPEC。
 - **不泄露秘密**：凭据、token、私钥、`.env`、缓存、日志中的敏感参数和来源不明的大文件不得提交；发现后记录脱敏 Bug 并阻止受影响仓库的保存完成。
-- **不改历史语义**：不为了 push 方便 rebase、merge、amend、squash 或 force push；只保存当前真实分支状态。
+- **不改已有提交**：不为了 push 方便 rebase、amend、squash 或 force push；除 doc-hub/agent-hub 非快进时允许的一次主干 merge 外，不产生流程 merge。
 - **顺序固定**：业务项目全部处理后才处理 doc-hub，agent-hub 永远最后处理；前一层有未解决保存失败时不宣称全局完成。
+- **Hub 主干固定**：doc-hub 与 agent-hub 不进入确认单，同一 checkpoint HEAD 必须推送到各自远端 `main`；能快进时直接快进，不能快进时合入最新 `origin/main` 且一次 save 最多形成一个 merge commit，不 rebase 或 force push。
 
 ## Phase 1: Freeze And Discover
 
@@ -65,8 +66,8 @@
 先建立 repo ledger，去重同一仓库的多个活动，并按以下顺序执行：
 
 1. 所有业务/代码项目。
-2. doc-hub。
-3. agent-hub。
+2. doc-hub，强制完成远端 `main` 快进。
+3. agent-hub，强制完成远端 `main` 快进且永远最后。
 
 每个仓库执行：
 
@@ -74,10 +75,10 @@
 2. 业务仓库必须与确认单中的 repo、local branch、remote、remote branch 完全一致；主干动作必须已在同一确认单显式标红。任一目标改变或未确认时不得执行，并把未推送状态登记为 Bug。doc-hub 与 agent-hub 跳过该确认单门禁。
 3. 审查实际 diff，把当前活动产生且允许版本控制的改动组成一个 checkpoint commit。保留已有提交，不改写历史；同仓库有多个 Agent 时默认形成一个真实工作区检查点，不伪造按 Agent 拆分。
 4. 纯 checkpoint 不要求补跑完整项目测试，但必须执行项目适用的最窄静态安全检查和 `git diff --check`；任何未跑测试都已经在 Bug Pool 中明确记录，不能写成验证通过。
-5. 提交到当前分支并 push 到该分支对应的远端分支。没有 upstream 时，仅当 remote 与同名分支归属明确时建立 upstream；不得猜 remote、改推其它分支或 force push。
-6. push 后用 fresh remote ref/HEAD 对账提交 SHA。认证失败、non-fast-forward、hook 拒绝、无 remote、分支歧义或本地仍有应保存改动时，记录 Bug 并把该仓库标为 `save_failed`；不使用 rebase、merge、stash、reset 或 force 绕过。
+5. 业务仓库提交到当前分支并 push 到确认单中的远端分支；没有 upstream 时，仅当 remote 与同名分支归属明确时建立 upstream。doc-hub 与 agent-hub 提交当前工作树后，若当前分支已有明确 upstream 则先保存该分支，再把同一 HEAD push 到远端 `main`。若远端 `main` 不是该 HEAD 的祖先，先 fetch 最新 `origin/main`，用一次 merge 把它合入当前 checkpoint；解决冲突、复核完整 diff 并重跑静态门禁后，只保留这一个 merge commit，再同步工作分支和 `main`。不得猜 remote、rebase、反复 merge、改写已有提交或 force push；冲突无法可靠裁决时标记 `save_failed`。
+6. push 后用 fresh remote ref/HEAD 对账提交 SHA。认证失败、non-fast-forward、hook 拒绝、无 remote、分支歧义或本地仍有应保存改动时，记录 Bug 并把该仓库标为 `save_failed`；除上一步限定的单次主干 merge 外，不使用 rebase、其它 merge、stash、reset 或 force 绕过。
 
-doc-hub 的 commit 应包含本轮全部项目执行包 checkpoint；agent-hub 的 commit 应包含 Hub 自身待保存改动和本次命令资产。若某仓库没有可提交改动，仍需核对当前 HEAD 已存在于对应远端分支，并记录为 verified no-op。
+doc-hub 的 commit 应包含本轮全部项目执行包 checkpoint；agent-hub 的 commit 应包含 Hub 自身待保存改动和本次命令资产。若某仓库没有可提交改动，业务仓库仍需核对当前 HEAD 已存在于确认目标分支；doc-hub 与 agent-hub 则必须核对当前 HEAD 已存在于远端 `main`，才能记录为 verified no-op。
 
 ## Phase 5: Completion Gate
 
@@ -85,7 +86,7 @@ doc-hub 的 commit 应包含本轮全部项目执行包 checkpoint；agent-hub �
 
 - 所有可发现 workload Agent 已处于可验证的终止/中止/暂停状态，发现覆盖边界已披露。
 - 确认单内所有 workspace localhost 服务已经停止并通过 PID/端口复核，或失败已使本次 save 保持 incomplete；确认单外服务未被改动。
-- 业务仓库实际 local/remote branch 与确认单一致，所有主干风险已显式包含；doc-hub 与 agent-hub 按固定收尾范围处理。
+- 业务仓库实际 local/remote branch 与确认单一致，所有主干风险已显式包含；doc-hub 与 agent-hub 的同一 checkpoint HEAD 已分别快进到远端 `main`。
 - 每个受影响项目的进度已进入 STDD，所有遗留与不确定项已进入 Bug Pool；没有把 open Bug 转移、隐藏或归档。
 - 所有业务项目、doc-hub、agent-hub 都已按固定顺序完成 commit/push 或 verified no-op。
 - 每个仓库本地 checkpoint SHA 与目标远端分支一致；没有应保存但仍未跟踪、未提交或未推送的安全文件。
@@ -103,5 +104,6 @@ doc-hub 的 commit 应包含本轮全部项目执行包 checkpoint；agent-hub �
 - 是否没有改写 SPEC 需求事实或错误归档执行包。
 - 是否将未知、未验证、敏感文件和 push 失败显式写入 Bug Pool。
 - 是否按业务项目 -> doc-hub -> agent-hub 执行且 agent-hub 最后。
+- 是否确认 doc-hub、agent-hub 的 checkpoint HEAD 已直接快进到各自远端 `main`。
 - 是否在统一确认单中显式列出了全部主干动作并取得确认。
 - 是否逐仓核对 remote SHA、dirty 状态和恢复入口。

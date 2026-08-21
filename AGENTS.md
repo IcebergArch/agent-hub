@@ -106,7 +106,7 @@
 - 用户说 `/hub spec` 或 `/hub spec <需求>` 时，视为正式 SPEC 编写指令：以用户输入为需求源，先读文档工作区入口和当前项目的最小必要背景，再按 `requirements-brief` 收敛为可独立执行的 pending SPEC，并依文档工作区当前命名与生命周期规则写入指定位置。核心方向、项目归属或执行边界仍有阻塞歧义时只问一个最小问题；否则显式记录必要假设并直接完成。该指令不创建 STDD、不进入 execing、不修改业务仓库或开始执行；回复必须给出文件完整路径和仍待确认的问题。
 - 用户说 `spec-idea,<level>` 或 `spec-idea,<level> <想法>` 时，视为 SPEC IDEA 整理指令；`simple / middle / complex` 分别表示简 / 中 / 繁，具体深度以 `requirements-brief` 为准。先读文档工作区入口和当前项目的最小必要背景，再依文档工作区当前命名与生命周期规则写入对应项目的 IDEA 位置；级别只控制整理深度，不改变生命周期或授权边界。IDEA 不进入 pending/execing，不创建 STDD，不读改业务仓库或开始执行。只有项目归属或核心方向存在高风险歧义时才问一个最小问题，否则直接完成；回复必须给出文件完整路径和仍待确认的问题。
 - 用户说 `/hub refactor` 时，视为授权审查并直接调整当前改动：核对 staged、unstaged、untracked 及必要的 work branch 相对 target 差异，判断是否保持最小改动、领域 owner 与依赖方向清晰、架构整洁；删除或修正本任务内不合理、多余、临时或越界改动，保留用户已有无关改动，再做最窄有效验证和 diff 检查。该命令不授权暂存、提交、push、PR 或 merge。
-- 用户说 `/hub save` 时，视为授权按 `skills/Core/task-execution-lifecycle/references/workspace-save.md` 执行一次工作区检查点：先冻结并结束可验证发现的 workload Agent 活动，把真实进度写入 STDD、未完成或不确定项写入原执行包 Bug Pool，再按业务项目、doc-hub、agent-hub 的顺序提交并推送各自当前对应分支。发现完成后必须用一张确认单列出本轮业务仓库、本地/远端目标分支、主干风险和有归属证据的 workspace localhost 服务关闭动作，取得一次明确确认；`doc-hub` 与 `agent-hub` 不进入该确认单。该命令不授权 merge、rebase、stash/reset、删除任务或停止未确认/归属不明的服务。
+- 用户说 `/hub save` 时，视为授权按 `skills/Core/task-execution-lifecycle/references/workspace-save.md` 执行一次工作区检查点：先冻结并结束可验证发现的 workload Agent 活动，把真实进度写入 STDD、未完成或不确定项写入原执行包 Bug Pool，再依次保存业务项目、doc-hub、agent-hub。发现完成后必须用一张确认单列出本轮业务仓库、本地/远端目标分支、主干风险和有归属证据的 workspace localhost 服务关闭动作，取得一次明确确认；`doc-hub` 与 `agent-hub` 不进入该确认单，固定将同一 checkpoint HEAD 推送到各自远端 `main`，能快进时直接快进，不能快进时允许合入最新 `origin/main` 并只形成一个 merge commit。该命令不授权 rebase、force push、stash/reset、删除任务或停止未确认/归属不明的服务；冲突无法可靠裁决时，本次 save 失败关闭。
 - 用户说“OK”“do it”“没问题”等确认时，默认进入执行模式；除非存在高风险歧义，不停留在方案描述。
 - 用户要求“只涉及”某范围时，最终检查变更清单；验证若只读越界内容，需要说明。
 - 用户偏好中文协作语境；方案、总结和长期文档默认中文，代码标识、命令、路径和接口名保留原文。
@@ -179,7 +179,7 @@
 - 用户说 `coding` 或 `coding <任务>` 时，视为授权在目标项目内执行 `git update -> 最小实现 -> 严格验证 -> PR 收尾`：实现必须保持最小 coherent diff、领域边界和架构整洁；测试同时使用项目内质量契约和可用的本地 `quality-orchestrator`，详细流程见 `task-execution-lifecycle` 的 Git/cleanup reference。
 - `coding` 默认授权创建或更新 work branch、单个任务提交和 PR，不单独授权实际 merge。PR 建立后等待审批；只有用户已明确授权合入，或仓库已有明确且适用的 auto-merge 规则时，才可在 required checks / approvals 全部满足后完成 merge。
 - 后续 push / PR 收尾前，必须清楚改动影响面和架构思路是否符合当前架构；可以不逐行审 AI 代码，但不能不理解实现设计、影响范围和验证证据。
-- 合入 main 必须走 rebase，不使用 merge；work branch 必须基于最新 target rebase，并尽量压成一个清晰提交后再推送；不得把 merge commit、无意义提交、临时修复或流程副作用落到目标分支，目标分支必须始终保持可构建、可测试、可发布。
+- 合入 main 必须走 rebase，不使用 merge；work branch 必须基于最新 target rebase，并尽量压成一个清晰提交后再推送；不得把 merge commit、无意义提交、临时修复或流程副作用落到目标分支，目标分支必须始终保持可构建、可测试、可发布。唯一例外是 `/hub save` 保存 doc-hub 或 agent-hub 时：若 checkpoint HEAD 无法直接快进远端 `main`，按 workspace-save reference 允许合入一次最新 `origin/main` 并保留一个 merge commit。
 - 大改动必须拆成解耦、独立、可验证的小改动，尽早且频繁合入 main；每次合入前都要同步最新 main、解决冲突并完成验证，避免长期维护大型功能分支。
 - 准备提交、暂存、amend、PR、合并或“只提交本次改动”前，必须做完整 diff 审查；无关用户改动保持原样。
 - 用户说 `git update` 时，表示把当前分支 rebase 到最新目标分支，默认基线是 `origin/main` 或 `main`；先检查当前分支、目标分支和 dirty worktree，保护用户本地改动。
