@@ -17,6 +17,7 @@ description: 当用户提出产品、功能、工具、自动化、workflow 或�
 # When NOT to Use
 
 - 用户已经给出明确实现任务，可以直接进入执行。
+- 用户说 `/hub spec 执行` 或 `/hub spec 验收`；这两种模式属于任务执行生命周期。
 - 只是代码实现、测试或文档刷新。
 
 # Inputs
@@ -27,7 +28,7 @@ description: 当用户提出产品、功能、工具、自动化、workflow 或�
 
 - `/hub spec [<需求>]`：产出可独立执行的正式 SPEC。按文档工作区当前规则写入目标项目的 `requirements/` pending 位置；阻塞执行的核心问题必须先澄清，非阻塞假设与开放问题写入正文。
 - `/hub spec-idea,<level> [<想法>]`：产出探索性 IDEA。按复杂度级别控制整理深度，写入目标项目的 IDEA 位置，不把 IDEA 提升为 pending。
-- 两种命令都只授权文档编写，不创建 STDD、不进入 execing、不修改业务仓库或开始实现。
+- 两种命令都只授权文档编写，不创建 STDD、不进入 execing、不修改业务仓库或开始实现；`/hub spec 执行` 与 `/hub spec 验收` 由 `task-execution-lifecycle` 分别承接实施和验收。
 
 # Complexity Levels
 

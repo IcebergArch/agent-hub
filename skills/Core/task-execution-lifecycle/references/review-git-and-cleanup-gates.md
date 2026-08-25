@@ -66,7 +66,13 @@ git update -> understand -> minimal implementation -> strict verification
 5. **调整并清理代码**：修复审查发现的问题；撤销自己引入的无效修改、临时文件、debug、mock/fallback、过渡脚手架和无真实 owner 的扩展；保留用户已有无关改动但不纳入 PR；保持架构、领域边界、接口 owner 和数据事实源不漂移。大改动先拆成解耦、独立、可验证的小改动，避免一次 PR/提交承载一大堆混杂变化。
 6. **验证**：跑最窄有效测试、静态检查、生成物检查或真实 workflow smoke；验证失败回到第 5 步。未验证项必须写进 merge comment 的风险段；main 合入候选必须保持可构建、可测试、可发布。
 7. **rebase 与冲突处理**：合入前必须同步最新 target/main，并用 rebase 解决当前 work branch 与 target 的差异；禁止用 merge 合入 main，禁止引入 merge commit。冲突解决后重新检查影响面和跑必要验证。
-8. **提交与 push**：只有 diff 聚焦、验证证据充分、提交内容边界清楚时才 commit/push；push 前将单次合入内容尽量整理成一个清晰提交，避免无意义提交记录。push 只推 local work branch 的远端，不改 target 分支，不把临时修复、调试提交或流程副作用落到 target。无权限或用户未授权 commit/push 时，停在可 PR 状态并说明缺口。
+8. **整理提交、提交信息与 push**：只有 diff 聚焦、验证证据充分、提交内容边界清楚时才 commit/push；push 前审查 `<target>..HEAD` 中每个将进入 PR 的提交，并将单次合入内容尽量整理成一个清晰提交，避免无意义提交记录。
+   - **遵循仓库约定**：使用目标仓库约定的语言和格式；没有明确规则时，以近期已合入提交的主语言和 Conventional Commit 使用方式为准，不自行发明新风格。
+   - **标题面向 reviewer**：使用具体领域对象和自然、直接的动作说明实际结果，使 reviewer 不看 diff 也能理解改变了什么。不要用模糊评价词、只有实现者才懂的内部缩写、代码动作直译或需要结合 diff 猜测含义的抽象短句；技术机制确实是变更主体时才写进标题。
+   - **标题与正文分工**：标题保持简洁，原因、约束和取舍放正文；不能为了短而牺牲语义或语言自然度。保留多个提交时，每条标题必须表达不同且连贯的意图。
+   - **安全改写历史**：已有远端提交需要改写时，先确认 work branch 可安全 force-push 且不会覆盖他人工作。
+
+   push 只推 local work branch 的远端，不改 target 分支，不把临时修复、调试提交或流程副作用落到 target。无权限或用户未授权 commit/push 时，停在可 PR 状态并说明缺口。
 9. **生成 merge comment**：给可直接贴到 PR/MR 的评论，包含 target、work branch、改动摘要、影响面、架构判断、验证命令与结果、风险/未验证项、保留的无关本地改动、review 关注点；不要把完整 diff 粘进 comment。
 
 `pr` 的核心是“更新基线 + 清理 diff + 推远端 + merge comment”。如果目标只是审查并收敛当前改动，使用 `/hub refactor`，不触发提交、push 或 PR。
