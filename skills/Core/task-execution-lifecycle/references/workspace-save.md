@@ -34,9 +34,9 @@
 
 ## Phase 4: Build Repository Plan
 
-逐个有变更的隔离空间记录：仓库、绝对路径、local branch、upstream/remote、拟推送分支、target、diff 归属、提交意图、最窄验证和风险。此阶段不 stage、commit、push、创建 PR 或 merge。
+逐个有未合入内容的隔离空间记录：仓库、绝对路径、local branch、upstream/remote、对应远端 work branch、target、diff 归属、提交意图、最窄验证和风险。一个仓库有多个隔离空间时逐行列出，不因仓库相同合并或遗漏。此阶段不 stage、commit、push、创建 PR 或 merge。
 
-- `PR`：push work branch 并创建或更新 PR，到此停止。
+- `PR`：把该隔离空间 push 到同名或确认单明确映射的远端 work branch，并创建或更新对应 PR，到此停止。dirty、ahead 或已有未合入提交的隔离空间不能只登记计划而不推送；已合入且 clean 的隔离空间只核验，不制造空 PR。
 - `MR`：创建或更新 PR，适用门禁通过后继续合并。
 - `doc-hub`、`agent-hub` 固定为 `MR -> main`，当前和后续 save 都不降级为只提 PR。
 - 其它仓库默认 `PR`；只有确认单明确标为 `MR` 才合并。
@@ -62,7 +62,7 @@
 
 1. 审查完整 diff，执行最窄安全检查和 `git diff --check`，只暂存归属明确的文件。
 2. 形成边界清楚的 checkpoint commit，必要时 rebase 最新 target；不 force push、不直接 push target、不用 merge commit 绕过冲突。
-3. 按表 push work branch。`PR` 行创建或更新 PR 后停止；`MR` 行创建或更新 PR，等待 required checks/approvals，并按仓库既有合入规则完成 merge。
+3. 按表将每个有未合入内容的隔离空间 push 到其对应远端 work branch。`PR` 行创建或更新对应 PR 后停止；`MR` 行创建或更新 PR，等待 required checks/approvals，并按仓库既有合入规则完成 merge。
 4. 顺序固定为：其它仓库先处理，之后 `doc-hub` MR，最后 `agent-hub` MR。两个 Hub 都属于最后合并阶段，agent-hub 永远最后。
 5. 远端、权限、冲突、验证或归属发生变化时，只停止受影响项并登记 blocker，不静默改 target、分支或动作。
 
@@ -84,6 +84,7 @@
 - 是否只优雅停止归属明确的本地服务并核对端口。
 - 是否在任何 Git 写操作前给出一张完整表格确认单。
 - 是否把 `PR` 与 `MR` 的语义写清，且其它仓库默认只到 PR。
+- 是否让每个有未合入内容的隔离空间都有对应远端 work branch 和 PR，没有只登记不推送。
 - 是否按其它仓库 -> doc-hub MR -> agent-hub MR 的顺序执行。
 - 是否没有直接 push main、force push、stash/reset 或丢弃用户改动。
 - 是否以同形表格报告实际远端状态和恢复入口。
