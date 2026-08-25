@@ -42,7 +42,7 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 # Save Command Mode
 
 - `/hub save` 在安全边界冻结新工作，用宿主任务事实和 Git workspace/worktree 状态快速保护现场；只对已有、归属明确的 `execing` 执行包登记真实进度、待办、验证缺口和恢复入口，只优雅停止归属明确的本地服务。
-- 准备阶段整理所有有变更仓库的代码记录和推送计划，但不执行 Git 写操作。确认单与结果统一使用仓库表格；其它仓库列完整 push 信息并默认止于 PR，随后依次完成 `doc-hub`、`agent-hub` 的 `MR -> main`，agent-hub 最后。确认后直接执行，用户修正则更新并重发完整版本。
+- 准备阶段按隔离空间整理代码记录和推送计划，但不执行 Git 写操作；每个有未合入内容的隔离空间都必须映射到对应远端 work branch 并创建或更新 PR。确认单与结果统一使用仓库表格；其它仓库默认止于 PR，随后依次完成 `doc-hub`、`agent-hub` 的 `MR -> main`，agent-hub 最后。确认后直接执行，用户修正则更新并重发完整版本。
 - 详细盘点、确认单、执行顺序和恢复门禁见 `references/workspace-save.md`；提交、push 与 PR 质量门禁见 `references/review-git-and-cleanup-gates.md`。
 
 # Workflow
