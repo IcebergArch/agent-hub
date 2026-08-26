@@ -64,6 +64,7 @@ git update -> understand -> minimal implementation -> strict verification
 3. **审查两层 diff**：同时看本地工作区变动和 work branch 相对 target 的变动；至少检查 `git status --short`、`git diff --name-status`、`git diff --stat`、`git diff --check`，以及 `git diff --name-status <target>...HEAD` 或等价 PR diff。工作区干净不代表 PR diff 干净。
 4. **确认影响面和架构思路**：必须能说清改动影响哪些入口、模块、接口、数据、配置、生成物和用户流程；AI 写的代码可以不逐行细看，但必须理解其实现设计、依赖关系、失败模式和当前架构是否匹配。不理解架构思路时不能进入合入。
 5. **调整并清理代码**：修复审查发现的问题；撤销自己引入的无效修改、临时文件、debug、mock/fallback、过渡脚手架和无真实 owner 的扩展；保留用户已有无关改动但不纳入 PR；保持架构、领域边界、接口 owner 和数据事实源不漂移。大改动先拆成解耦、独立、可验证的小改动，避免一次 PR/提交承载一大堆混杂变化。
+   - **验证工件边界**：一次性验证所需的脚本、workflow、构建开关或部署资源默认只作为临时验证工件，不进入产品 PR；只有用户明确要求长期保留，且它具备稳定消费者、维护 owner 和回归价值时，才作为正式测试或 CI 能力提交。
 6. **验证**：跑最窄有效测试、静态检查、生成物检查或真实 workflow smoke；验证失败回到第 5 步。未验证项必须写进 merge comment 的风险段；main 合入候选必须保持可构建、可测试、可发布。
 7. **rebase 与冲突处理**：合入前必须同步最新 target/main，并用 rebase 解决当前 work branch 与 target 的差异；禁止用 merge 合入 main，禁止引入 merge commit。冲突解决后重新检查影响面和跑必要验证。
 8. **整理提交、提交信息与 push**：只有 diff 聚焦、验证证据充分、提交内容边界清楚时才 commit/push；push 前审查 `<target>..HEAD` 中每个将进入 PR 的提交，并将单次合入内容尽量整理成一个清晰提交，避免无意义提交记录。

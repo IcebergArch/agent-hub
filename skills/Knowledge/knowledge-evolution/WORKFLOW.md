@@ -29,15 +29,17 @@ description: 当任务暴露可复用组织经验、Hub 自迭代、外部方法
 - 优先扩展已有 Skill，不新增近义 Skill。
 - 一次性项目经验进 Context/Report/Temp，不进 Skill。
 - Skill 保留长期组织经验；Prompt/Helper/Workflow/Agent/Tool 只在 owner 清楚时升级。
+- 单次方案是带上下文的“术”；Hub 只沉淀跨场景可复用的“道”。设计指导思想必须表达触发条件、保护的不变量、因果机制、适用边界、权衡、反例和验证方式，不沉淀问题穷举或案例清单。
+- 方案设计候选按周汇总：每份 plan 只登记候选，周复盘再合并、强化、观察或淘汰；只有通过长期性、跨场景和证据门禁的内容才更新 Hub。
 - 删除重复沉淀，保持唯一 owner 和索引一致。
 
 # Workflow
 
-1. Freeze Signal：提取用户明确要求、反复纠偏、风险信号和证据。
+1. Freeze Signal：提取用户明确要求、反复纠偏、风险信号和证据；周沉淀时先汇总当周 plan 的设计候选并合并近义项。
 2. Inventory Owners：读最少入口，查是否已有 Rule、Skill、Reference、Helper 或 Prompt owner。
-3. Generalize Signal：去掉项目名、具体 ID、品牌、当次修复方案和错误文案，写出候选规则保护的不变量；确认它能在至少一个相邻场景中独立成立，而不是记住本次答案。
+3. Generalize Signal：从当次采用的“术”中提取“道”，去掉项目名、具体 ID、品牌、当次修复方案和错误文案，写出候选策略的触发条件、保护的不变量、因果机制、边界、权衡与验证方式；确认它能在至少一个相邻场景中独立成立，而不是记住本次答案。
 4. Trace Constraint：若候选规则会新增或收紧产品限制，必须追溯到明确需求、公开契约或已验证运行事实；只有部署假设、单次实现现状或未验证猜测时，不得沉淀为产品约束。
-5. Decide Value：用长期性、组织性、可触发性、可验证性判断是否沉淀；仅一次事故且无法稳定泛化时选择 Delete。
+5. Decide Value：用长期性、组织性、可触发性、可验证性判断 `Strengthen / Add / Observe / Delete`；优先强化已有指导思想，仅一次事故或机制不清且无法稳定泛化时观察或删除。
 6. Classify Target：在 Skill、Rule、Reference、Project Helper、Report、Temp、Prompt、Workflow、Agent、Tool、Delete 中选唯一 owner。
 7. Counterexample：检查一个合法反例和一个相邻场景，避免过度绝对。
 8. Patch Owner：优先合并、压缩、删除重复内容；确实缺 owner 才新增。
@@ -48,6 +50,7 @@ description: 当任务暴露可复用组织经验、Hub 自迭代、外部方法
 
 - 新增 Skill 五问是否通过。
 - 候选规则是否已经脱离事故表象和当次答案，并能覆盖相邻场景。
+- 候选是否表达指导思想和策略，而不是穷举问题、案例或技术选型。
 - 新增产品限制是否能追溯到需求、契约或已验证运行事实。
 - 是否没有把项目名、一次性方案、临时命令或未验证猜测写进通用 Skill。
 - 是否没有形成双 owner。
