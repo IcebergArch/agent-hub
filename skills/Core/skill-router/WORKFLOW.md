@@ -37,12 +37,14 @@ description: 根据任务类型选择本轮应加载的最小 Skill 集合，避
 5. MCP/tool 任务组合 `agent-tool-design` 与 `interface-contract-audit`。
 6. Video 任务组合 `task-execution-lifecycle` 与 `video-creation`。
 7. Hub 维护、规则沉淀、外部方法吸收统一走 `knowledge-evolution`。
+8. 正式 SPEC 以 `requirements-brief` 为主 Skill；draft 先登记不变量、背景、目标和核心问题，init 再对七个维度标记 applicable / N/A 并选择最小 Skill/角色组合，形成专家约束、取舍和验收信号；update 正式撰稿并验收落实情况。产品、UI、架构、稳定性、安全或成本命中时，用 `agent-team-router` 选择必要角色并综合结论；owner/影响面不清加 `codebase-navigation`，接口/tool、外部事实、prompt 或视频只在真实命中时加载对应 Skill。选择结果写入 SPEC 建设与评审记录。
 
 # Checklist
 
 - 本轮 Skill 数量是否不超过必要的 2-4 个。
 - 是否避免加载 Bugfix、Review、Testing、Docs 这类默认能力 Skill。
 - 是否区分了执行 Skill、领域 Skill 和知识沉淀 Skill。
+- SPEC 评审的每个适用维度是否有 Skill 或角色 owner；N/A 是否有影响面理由，而不是因为没有对应 Skill 就跳过。
 
 # Escalation
 
