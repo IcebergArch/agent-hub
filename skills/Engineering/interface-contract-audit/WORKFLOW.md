@@ -29,16 +29,18 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 - 新增或迁移可被其他主体发现的能力，必须证明目标消费者可见/可用，非目标消费者不可见/不可用。
 - Create/import/update/delete 区分 system-generated ID、canonical ref、用户可编辑字段、source hint 和幂等键。
 - 没真实能力时返回 unsupported，不补本地替代。
+- UI/管理面预检不是执行授权；动态能力、权限、资源 owner 和 provider 支持必须在真实执行或副作用边界重新核对，TOCTOU 不一致时安全拒绝或显式降级。
+- Durable 副作用若依赖会变化的配置、目录或显示名，必须在第一次副作用前解析并持久化 versioned canonical intent/payload 与幂等身份；同一逻辑操作重试复用已冻结语义，不重新读取最新状态后静默改变目标。确需采用最新状态时，必须新建 revision/intent 并重新验证。
 
 # Workflow
 
 1. Inventory：列 route、operation、tool name、schema、generated client、UI、docs、tests、fixture。
 2. Concepts：标记 canonical、retired、internal-only、deprecated/alias terms。
 3. Consumers：核对真实消费者、测试、文档、fixture 和跨 agent/线程使用方。
-4. Visibility：冻结 owning service、可见主体、授权来源和 scope 默认值。
+4. Visibility：冻结 owning service、可见主体、授权来源和 scope 默认值；显示名/别名只作发现提示，provider-native identity 只能由 owning adapter 在已认证完整 scope 内解析。
 5. Operations：逐项证明 request 字段必要性，删除/解绑默认只用 canonical ref。
-6. Capability：确认真实后端能力、稳定 owner 和产品入口。
-7. Closure：model disclosure、schema/build、executor、result/event 必须闭合。
+6. Capability：确认真实后端能力、稳定 owner 和产品入口；区分管理/预检结果与执行边界 final check，并定义不一致时的 unsupported/降级语义。
+7. Closure：model disclosure、schema/build、executor、result/event 必须闭合；durable side effect 还要闭合 intent revision、幂等键、prepared payload/receipt 与 retry/recovery。
 8. Decision：标记 supported / unsupported / deprecated / internal，并补验证。
 
 # Checklist
@@ -47,6 +49,8 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 - 未发布契约定版时，是否同时检查文件名、key namespace、consumer group、schema/type、常量、配置、文档、测试和 fixture，清除无真实前代的版本/兼容痕迹。
 - 是否有 allow/deny 两侧的 visibility 证据。
 - 是否没有把 mock、dry-run 或旧 fixture 升格成正式契约。
+- 名称解析是否不会越过 provider adapter、认证 scope 和完整性门禁，歧义/截断时不会产生错误身份或副作用。
+- preflight 与 execute 之间能力或权限变化时是否有安全结果；重试是否复用同一 canonical intent，而不是重新解析成另一目标。
 
 # Escalation
 
@@ -55,4 +59,5 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 
 # References
 
-- None.
+- [OWASP Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html)（默认拒绝、逐请求校验和正确执行位置；访问 2026-08-29）
+- [AWS Builders' Library — Making retries safe with idempotent APIs](https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/)（显式请求身份、语义等价重试和副作用幂等；访问 2026-08-29）

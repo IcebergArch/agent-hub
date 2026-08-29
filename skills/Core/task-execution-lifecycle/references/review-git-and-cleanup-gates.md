@@ -76,6 +76,13 @@ git update -> understand -> minimal implementation -> strict verification
    push 只推 local work branch 的远端，不改 target 分支，不把临时修复、调试提交或流程副作用落到 target。无权限或用户未授权 commit/push 时，停在可 PR 状态并说明缺口。
 9. **生成 merge comment**：给可直接贴到 PR/MR 的评论，包含 target、work branch、改动摘要、影响面、架构判断、验证命令与结果、风险/未验证项、保留的无关本地改动、review 关注点；不要把完整 diff 粘进 comment。
 
+### 仓库历史隔离
+
+- PR/MR 正文、评论、review、commit message、release note 等远端可见历史只记录当前仓库的交付事实。内部使用过的文档库、规则库、工具库、验证仓库或其它工作区，不因参与过程而成为当前仓库的关联项。
+- 跨仓库 issue/PR shorthand、URL 或 backlink 会生成额外通知和可能长期保留的时间线事件；只有对方确属依赖、共同发布单元或需要双向追踪的契约 owner 时才可建立引用。仅用于过程记录、取证或内部编排时不得写入。
+- push、创建/更新 PR 或发布评论前，检查标题、正文、评论草稿、commit message 与将提交的文档中是否出现其它仓库 slug、issue/PR URL 或本地工作区路径；没有明确交付关系的引用必须移除，以仓库内可验证事实表达结果。
+- 若已误建跨仓库引用，先编辑或删除可控的引用源并停止继续传播；平台自动生成且不可删除的 cross-reference 事件要明确报告残余，不能通过更多跨仓库评论解释或“修复”。
+
 `pr` 的核心是“更新基线 + 清理 diff + 推远端 + merge comment”。如果目标只是审查并收敛当前改动，使用 `/hub refactor`，不触发提交、push 或 PR。
 
 ## Git Update

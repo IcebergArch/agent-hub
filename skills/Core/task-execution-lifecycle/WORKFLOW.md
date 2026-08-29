@@ -30,6 +30,7 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 - 只加载能改变本轮决策的 Skill 或 reference。
 - `fix` 先用复现、交叉验证和正/逆向推理确认根因，方案明确后才执行最小修复；按 `references/root-cause-fix-patterns.md` 闭环。
 - Run Case 与 Build Capability 分开：配置和页面能力能完成时，不擅自改服务层或公共契约。
+- 长任务、高模糊设计或历史信息较重时，按 `references/execution-control-patterns.md` 分离当前事实、稳定约束、已废弃历史和冲突信息，并冻结 demo/checkpoint、停止信号与恢复点。
 - 完成声明必须有 fresh evidence；错误暴露不能写成业务成功。
 
 # SPEC Command Modes
