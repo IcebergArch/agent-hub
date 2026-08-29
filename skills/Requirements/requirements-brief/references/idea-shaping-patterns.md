@@ -8,6 +8,18 @@
 
 先理解目标，再讨论方案；先收敛需求，再写实现计划。设计门禁按风险缩放：小修冻结不变量即可，高模糊/高风险/多角色任务需要明确 brief 或分段确认。
 
+## Goal / Demo Calibration Loop
+
+当真实目标难以一次说清、需要多轮设计或用户明确要求 `show me the demo` 时，不继续堆文字假设；选择能最快暴露方向偏差的最小可见产物，循环校准：
+
+1. **Freeze goal**：写出本轮不变目标、用户判断“好 / 不好”的信号和明确非目标。
+2. **Choose one narrative axis**：只选用户旅程、业务流程、状态流或时间线中的一个作为当前主叙事轴；其它维度只补主轴无法表达的约束，不并列制造多套事实源。
+3. **Show the smallest demo**：按问题选择流程草图、界面 mockup、交互原型、API example、示例代码或可运行 vertical slice；demo 用于作决策，不得把假数据或静态画面写成真实链路通过。
+4. **Keep / Add / Remove**：每轮明确保留什么、增加什么、删除什么，以及哪条旧假设已 superseded。旧草稿和临时措辞不得继续作为 active requirement 影响后续判断。
+5. **Decide direction**：用户认可则进入下一层细化；用户判断方向不对时立即停止该分支，回到最新目标和主叙事轴，不在错误方向上继续润色。
+
+示例代码只在能消除接口、状态转换或行为歧义时使用，并标明 `normative` 还是 `illustrative`；最终 brief 必须提炼示例保护的不变量，不能让示例本身成为唯一需求。
+
 ## Discovery Flow
 
 1. Read context first：读相关代码、helper、用户点名文档或已有产品形态；不默认读报告目录。
@@ -15,7 +27,7 @@
 3. Ask one key question：一次只问一个会改变方向的问题。
 4. Separate goal from solution：用户第一版方案只是候选。
 5. Offer 2-3 approaches：给推荐、替代、最小方案及取舍。
-6. Confirm design fidelity：简单任务 3-7 条不变量；复杂任务 brief/PRD/流程图。
+6. Confirm design fidelity：简单任务 3-7 条不变量；高模糊或体验型任务用最小 demo 做 `Keep / Add / Remove` 校准；复杂任务 brief/PRD/流程图。
 7. Check unit boundaries：对象、组件、服务、工具、页面先确认职责、接口、依赖、可验证性。
 8. Transition deliberately：需求清楚后再进入 `skills/Core/task-execution-lifecycle/WORKFLOW.md`。
 

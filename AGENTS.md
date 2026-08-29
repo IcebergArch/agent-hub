@@ -141,11 +141,12 @@
 - API、route、operation、SDK surface、tool/MCP、runtime/gateway 链路变更，必须先盘点完整接口面、真实消费者、真实能力、owner 和目标状态：supported / unsupported / deprecated / internal。
 - 新增跨服务接口、SDK surface、tool/MCP 对接或 runtime/gateway 链路前，先冻结 public surface、application owner、data/source owner、consumer 四项 owner；不因当前目录方便而落错 owner。
 - 新增业务入口、自动初始化、GET/list 页面副作用、跨模块持久化路径、MCP/tool 变更或 resource/business/prompt/preset/service 自动创建链路，默认都是高风险扩展；必须先列出现有能力缺口、真实消费者、owner、最小 diff 和验证链路，并取得用户明确确认。
-- 资源身份由 owning service 生成且保持不可变；用户输入只能成为 name/title/displayName/slug/alias/search/source hint，不得成为主 ID、权限主键、审计主键或存储路径。
+- 资源身份由 owning service 生成且保持不可变；用户输入只能成为 name/title/displayName/slug/alias/search/source hint，不得成为主 ID、权限主键、审计主键或存储路径。显示名或别名也不能直接成为外部投递目标、授权身份或原生协议标记；只有 owning adapter 能在当前已认证且完整的 scope 内解析 provider-native identity，歧义、截断或目录不完整时必须安全拒绝或降级为无副作用表达。
 - Create/import/update/delete 契约要区分 system-generated/output-only ID、canonical ref、用户可编辑字段和幂等键；删除、解绑、禁用默认只接收 canonical resource ref，额外 scope 字段必须证明服务端无法自行定位。
 - Registry/DB 是发现、权限、状态、索引、版本和轻量缓存层；真实内容事实源属于 backend、artifact store、NAS 或其它 source owner。写入先 source 成功再刷新 registry，读取先 registry 定位再按需加载 source。
 - MCP 协作默认只有两条公开通道：平台通过 MCP provider/gateway 调 MCP tool；MCP 通过平台 SDK/API、callback、artifact/resource refs 回到平台。本地路径、脚本、本机端口和 runtime 内部 route 只能是实现细节或测试夹具。
 - 新增或迁移可被其他主体发现、选择、调用或复用的能力/资源/surface 时，默认按真实 workspace、business、owner、provider 或授权关系收敛 visibility 和 scope；调试、项目或私有资源不能注册成全局可见，必须审计目标消费者可见/可用、非目标消费者不可见/不可用。
+- 管理目录、能力预检和前端提示只能改善选择与体验，不能代替执行或副作用边界的最终能力、权限和 owner 复核；依赖模型、工具、Provider、资源或权限的动态能力在最终边界不成立时，必须明确 `unsupported`、安全降级或拒绝，不能沿用过期预检结果伪装成功。
 - 模型可调用工具必须来自显式 `toolIds`、授权引用或等价配置；管理目录、全量 catalog、默认工具集合和 runtime 兜底不得混入 model build contract。
 - Tool schema/build 和 execute 必须闭合在同一 gateway/surface 语义下；runtime loop 只编排模型消息、调用 gateway、回塞结果，不按 tool name 直连具体工具。
 - Tool name 唯一性、授权集合和启停状态治理属于 preset/config 保存阶段或对应管理 owner；runtime/gateway 默认接收已验证配置，只做普通 name -> tool 映射，不为契约上不应出现的重复态定义“谁赢”的运行时语义。
