@@ -28,6 +28,7 @@ description: 当用户设计 AI agent tool、MCP/server tool、function calling�
 - 管理目录、模型可调用工具、runtime 内部动作不能混成一个 surface。
 - 调用目标未知或未提供 canonical ref 时，先用现有 discovery/list/search 能力在当前已认证 scope 内取得真实授权候选，再按用户已给约束选择；候选仍不唯一时请求用户确认。名称、别名或 source hint 只作查询提示，不能要求用户填写 provider 底层 ID。确有能力缺口时，只在 owning adapter 补通用发现能力，不向 runtime 或单个业务下沉特例。
 - Tool name 去重、授权集合和启停状态属于配置保存阶段或管理 owner；runtime/gateway 只消费已验证配置。
+- 同步外部 provider 工具时，先区分 provider 拥有的定义字段与平台拥有的治理状态；刷新名称、schema、描述等远端投影不得重置本地启停、授权、可见范围或人工策略。只有契约明确规定某状态也由 provider 权威管理时，才允许随完整投影替换。
 - 平台通过 MCP provider/gateway 调 MCP；MCP 通过平台 SDK/API、callback 或 artifact/resource refs 回到平台。
 - 页面、Canvas、Chat、附件或 artifact 显示问题先确认真实消费者和 store/backend，不默认改 MCP 项目存储或 tool schema。
 - 大结果或敏感正文只保留一个 canonical owner；模型视图、事件、队列和追踪面优先传有界 receipt/resourceRef。只有引用在同一权限边界可恢复且消费语义已满足时才允许投影或缩短，派生视图不得变成第二事实源。
@@ -51,6 +52,7 @@ description: 当用户设计 AI agent tool、MCP/server tool、function calling�
 
 - schema/build 与 execute 是否闭合在同一 gateway/surface 语义下。
 - 目标未知时是否先复用现有发现能力并返回当前 scope 内的 canonical ref 与可辨识元数据，歧义时是否请求选择；新增 surface 是否有缺口证据、真实 consumer 和正确 owning adapter。
+- provider reconcile 是否只覆盖远端事实，并保留现有本地治理状态；新发现、远端删除和身份变化是否分别有明确策略与回归测试。
 - 项目/调试/客户工具是否没有被注册成全局可见。
 - 没真实后端能力时是否明确 unsupported，而不是 mock 成功。
 - 大结果投影是否仍有唯一正文 owner、稳定引用、同 scope 恢复与生命周期清理；引用失败是否不会伪造摘要或成功。
