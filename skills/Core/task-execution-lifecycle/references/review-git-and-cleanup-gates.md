@@ -1,6 +1,6 @@
 # Review, Git And Cleanup Gates
 
-用途：作为 `task-execution-lifecycle` 的按需参考；当任务进入 cleanup、`/hub refactor`、`coding`、`git update`、`code-update`、`pr`、提交/PR 前审查或完成状态校准时读取。默认入口只保留触发和硬边界，本文件承接细节。
+用途：作为 `task-execution-lifecycle` 的按需参考；当任务进入 cleanup、`/hub refactor`、`coding`、`git update`、`code-update`、`pr`、PR 代码/架构审查、合入/发布就绪判断、提交前审查或完成状态校准时读取。默认入口只保留触发和硬边界，本文件承接细节。
 
 ## Cleanup Review
 
@@ -18,14 +18,30 @@
 4. 对 UI 或前后端联动变更，验证真实 workflow；不能用前端 mock、空页面或旧服务掩盖后端缺口。
 5. 最终说明删除了什么、保留了什么、保留原因和验证命令。
 
+## Review Lenses And Change Decomposition
+
+- 审查前固定 base / merge-base、目标任务或 SPEC 和完整 diff；空 diff、错误 ref 或缺失目标来源先显式标记，不能靠审查者猜范围。
+- 独立检查两条轴：`目标符合性` 判断遗漏、偏差和 scope creep；`工程与架构质量` 判断项目规则、owner、依赖方向、可维护性和测试质量。两条轴分别保留结论，一条通过不能抵消另一条失败。
+- 非机械大任务默认拆成纵向切片：每片贯穿完成目标所需的层、可独立演示或验证、结束时保持验证通过，并显式写出真正阻塞它的前置依赖；不把 UI、API、数据和测试按层横切成彼此不可验收的批次。
+- 机械性宽重构若单片会同时破坏大量调用方，使用 `expand -> migrate -> contract`：先并存新旧形式，再按 blast radius 分批迁移，所有迁移完成后删除旧形式。只有迁移批次确实无法独立保持绿色时才使用共享 integration branch，并保留最终集成验证 gate。
+
+## PR Review Freshness Gate
+
+PR 代码/架构审查及合入或发布就绪判断必须“先 `git update`，再审核”；这里的 `git update` 是新鲜度门禁，不自动授权 merge 或 release：
+
+1. **先解析远端事实**：结论前从用户指定对象、现有 PR 或平台元数据确定唯一 PR 与 target，并检查远端 `state`、`mergedAt`、base、head 及对应 commit；对象或 target 不唯一、元数据与本地假设冲突时先停止结论，不能只凭本地分支名或旧 checkout 猜测生命周期。
+2. **可变更的自有 work branch**：PR 尚未合入、当前确为该 PR 的自有 work branch，且现有命令或用户已授权 rebase 时，fetch 后按本文件 `/hub git update` 的 rebase 语义同步已确认 target；只有最新远端 target 相对 HEAD 为 `behind 0`，且内容变化后的必要验证已重跑，才能给出代码、架构或就绪结论。
+3. **只读或第三方 PR**：review 本身不授权改写分支。无法确认 rebase 权限、当前并非 PR head，或分支由第三方维护时，只刷新 base/head refs 并计算相对最新 target 的状态；`behind > 0` 是审查新鲜度 blocker，不得擅自 rebase，也不得给出“代码/架构通过”“可合入”或“可发布”的结论。
+4. **已合入 PR**：以远端 lifecycle metadata 为准，不再把可能已废弃的 head branch ahead/behind 当作合入前状态。检查平台记录的 merge/squash commit、该提交与 target 的 ancestry 及合入 tree；squash 会改变 commit identity，原 head 提交继续显示为独有并不能反证 PR 未合入或还原当时的 readiness。
+
 ## Refactor Command
 
 用户说 `/hub refactor` 时，授权 Agent 审查并直接收敛当前改动，不只是返回 review findings：
 
 1. **冻结范围**：确认当前任务、目标 owner、必须保留的既有效果、target/base 和用户已有无关改动；高风险歧义未消除前不删除或重写。
-2. **盘点完整 diff**：检查 staged、unstaged、untracked，以及必要的 base/head、`origin/main...HEAD` 或 PR diff；工作区干净不等于没有分支差异。
+2. **盘点完整 diff**：检查 staged、unstaged、untracked，以及必要的 base/head、`<target>...HEAD` 或 PR diff；工作区干净不等于没有分支差异。
 3. **最小改动审查**：逐项判断改动是否直接服务当前目标，是否存在重复实现、无真实消费者的扩展、兼容层、fallback、mock、debug、临时文件、过度生成物或机会主义重构。
-4. **领域与架构审查**：确认 owner、依赖方向、public surface、数据事实源和模块职责未漂移；共享面改动搜索 API、schema、公共组件、配置、runtime、tool、gateway、生成 client 和 UI 等真实消费者。
+4. **双轴审查**：分别检查当前 diff 对目标/SPEC 的符合性，以及工程与架构质量；确认 owner、依赖方向、public surface、数据事实源和模块职责未漂移，共享面改动搜索 API、schema、公共组件、配置、runtime、tool、gateway、生成 client 和 UI 等真实消费者。不得用“实现了需求”掩盖架构问题，也不得用代码整洁掩盖遗漏或 scope creep。
 5. **直接调整**：修正不合理实现，删除本任务引入的多余或越界改动，合并重复逻辑并恢复清晰边界；不用 reset、checkout 等方式回滚用户已有无关改动。
 6. **验证收口**：执行最窄有效测试、引用搜索、生成物检查和 `git diff --check`；再次核对文件清单、影响面与架构形状。
 7. **报告结果**：说明调整了什么、保留了什么、最小性与领域/架构结论、验证证据和残余风险。
@@ -43,38 +59,40 @@ git update -> understand -> minimal implementation -> strict verification
 ```
 
 1. **冻结任务与仓库**：确认 work repo、target、任务目标、非目标、验收信号、owner、当前分支和用户已有改动。只有仓库、目标或写入边界存在高风险歧义时才停下询问；`coding` 不授权顺手重构、跨项目业务改动或丢弃既有改动。
-2. **第一次 git update**：按本文件 `Git Update` 用 rebase 同步最新 target/main。dirty worktree 不得用 reset、checkout 或隐式 stash 绕过；目标已是当前分支祖先时以 fresh fetch 和祖先检查确认 no-op，不制造流程提交。
+2. **第一次 git update**：按当前项目与 work branch 已确认的 target，用 rebase 同步最新基线。dirty worktree 不得用 reset、checkout 或隐式 stash 绕过；目标已是当前分支祖先时以 fresh fetch 和祖先检查确认 no-op，不制造流程提交。
 3. **理解后实现**：用当前代码、配置、接口和运行事实确认缺口，再沿现有依赖方向完成最小 coherent diff。实现过程中持续保持领域 owner 清晰、公共 surface 克制、架构整洁；发现相邻问题只在阻塞验收或破坏不变量时纳入。
 4. **严格验证**：开发中先跑最窄测试，PR 前必须覆盖项目声明的 required checks；代码项目还必须通过可用的本地 `quality-orchestrator` 先检查/规划，再覆盖所有适用层。缺少项目质量契约不能静默跳过，应按下一步补齐项目侧 manifest；只有纯文档/内容仓库没有可执行质量面时，才可明确记录为不适用。不能把 `0 tests`、skipped、mock/fallback、缺凭据或仅错误暴露计为通过。
 5. **质量 owner 分流**：项目自己的命令、manifest、scenario、fixture、selector、domain assertion 和 impact rule 由目标项目补齐；planner、runner、evidence、reporting、policy 等跨项目通用编排缺口才属于 `quality-orchestrator`。确认后者不完备且阻塞严格验证时，拆出有明确边界的子 Agent 完善编排器并独立验证；不得把产品知识迁入编排器，也不得用子 Agent summary 替代主 Agent 对两个仓库 diff 和最终结果的复核。
 6. **PR-ready gate**：只有任务验收、项目 required checks、适用的 quality orchestration、diff/影响面/架构审查和临时产物清理全部通过，才进入 PR 阶段。环境或编排能力仍有缺口时报告 blocker，不降级宣称“准备好 PR”。
-7. **第二次 git update 与最终门禁**：再次 fetch/rebase 最新 target，解决冲突后检查 staged、unstaged、untracked、work branch 相对 target 的完整 diff、影响面、领域边界、架构匹配、验证证据和提交形状。将本次任务整理为相对 target **恰好一个**清晰提交；若任务过大，应先拆成多个独立任务/PR，每个 PR 仍保持一个提交。rebase、冲突解决或提交整理改变内容后，重新跑受影响验证。
-8. **提交、push 与 PR**：只提交当前任务并只推 work branch，然后创建或更新 PR；不得直接 push target/main。PR 描述包含任务范围、影响面、架构判断、验证证据、quality-orchestrator 覆盖情况和残余风险。创建 PR 是 `coding` 的默认终点。
+7. **第二次 git update 与最终门禁**：再次 fetch/rebase 最新 target，解决冲突后检查 staged、unstaged、untracked、work branch 相对 target 的完整 diff、影响面、领域边界、架构匹配、验证证据和提交形状。将本次任务整理为相对 target **恰好一个**清晰提交，并确认最新远端 target 相对 HEAD 为 `behind 0 / ahead 1`；若任务过大，应先拆成多个独立任务/PR，每个 PR 仍保持一个提交。rebase、冲突解决或提交整理改变内容后，重新跑受影响验证。
+8. **提交、push 与 PR**：只提交当前任务并只推 work branch，然后创建或更新 PR；不得直接 push target。PR 描述包含任务范围、影响面、架构判断、验证证据、quality-orchestrator 覆盖情况和残余风险。创建 PR 是 `coding` 的默认终点。
 9. **等待或获准 merge**：`coding` 本身不授权实际 merge。没有额外授权时等待 review/审批；用户已明确授权，或仓库存在明确且适用的 auto-merge 规则时，required checks 与 approvals 全部满足后，按 rebase 合入约束完成 merge，不引入 merge commit。
 
 ## PR Command
 
-用户说 `pr` 时，表示进入主动 PR 收尾，不是只读审查。默认目标分支是 `main` / `origin/main`；用户指定其它 target 时才改。流程：
+用户说 `pr` 时，表示进入纯 Git/PR 收尾：保存已经形成的任务代码、更新基线、把任务历史压成一个提交、push work branch，并创建或更新 PR。它不是测试、代码/架构 review、功能验收、UI 审核或问题修复命令；这些工作由 `coding`、`/hub refactor`、`/hub spec-smoke` 或明确 review 任务在前序阶段完成。`pr` 只消费已有证据并如实披露缺口，不重新制造证据，也不借收尾修改产品内容。
 
-**顺序门禁**：第 1 步的基线更新是 commit、push 和创建/更新 PR 的前置条件，不得因工作区干净、已有提交或已有 PR 而跳过。若误在基线更新前完成 commit/push，立即停止后续 PR 动作，补做 fetch/rebase、冲突处理、验证和单提交整理，再用 `--force-with-lease` 更新 work branch；不得把旧 push 当作流程已完成。
+target 必须从当前具体项目与 work branch 的真实上下文确定，优先使用用户明确指定、现有 PR base、任务/SPEC 登记或项目分支约定；不得固定或猜测为 `main`。多条证据冲突、任务代码边界不清或无法安全改写远端 work branch 时，停止并请求最小决策。Agent Hub 自维护不进入本节 PR 流程，只在 canonical 主工作目录的 `main` 上形成任务提交，并且只有用户另行明确授权或 `/hub save` 确认后才直接 push。其它项目流程如下。
 
-0. **确认工作仓库**：`/hub pr` 从哪个项目上下文发起，就以哪个项目仓库作为 work repo；Agent Hub 只提供流程规则。只有用户明确要求维护 Hub 本身时，才把 `/Users/shatang/Project/agent-hub` 当作 work repo。
-1. **更新本地基线**：先 `git fetch`，确认 target、当前分支、ahead/behind、staged/unstaged/untracked；把远端 target 更新到本地 target（默认 `origin/main -> main`）。如果当前就在 target 且有未提交改动，先确认本地 target 与远端 target 是否已对齐；未对齐且 dirty worktree 可能阻塞更新时，停止并保护本地改动。
-2. **进入 local work branch**：从已更新的本地 target 切出或确认当前 local work branch。不能把 PR 提交直接落在 target 分支；若发现自己在 `main` 上准备提交，应先切工作分支再继续。
-3. **审查两层 diff**：同时看本地工作区变动和 work branch 相对 target 的变动；至少检查 `git status --short`、`git diff --name-status`、`git diff --stat`、`git diff --check`，以及 `git diff --name-status <target>...HEAD` 或等价 PR diff。工作区干净不代表 PR diff 干净。
-4. **确认影响面和架构思路**：必须能说清改动影响哪些入口、模块、接口、数据、配置、生成物和用户流程；AI 写的代码可以不逐行细看，但必须理解其实现设计、依赖关系、失败模式和当前架构是否匹配。不理解架构思路时不能进入合入。
-5. **调整并清理代码**：修复审查发现的问题；撤销自己引入的无效修改、临时文件、debug、mock/fallback、过渡脚手架和无真实 owner 的扩展；保留用户已有无关改动但不纳入 PR；保持架构、领域边界、接口 owner 和数据事实源不漂移。大改动先拆成解耦、独立、可验证的小改动，避免一次 PR/提交承载一大堆混杂变化。
-   - **验证工件边界**：一次性验证所需的脚本、workflow、构建开关或部署资源默认只作为临时验证工件，不进入产品 PR；只有用户明确要求长期保留，且它具备稳定消费者、维护 owner 和回归价值时，才作为正式测试或 CI 能力提交。
-6. **验证**：跑最窄有效测试、静态检查、生成物检查或真实 workflow smoke；验证失败回到第 5 步。未验证项必须写进 merge comment 的风险段；main 合入候选必须保持可构建、可测试、可发布。
-7. **rebase 与冲突处理**：合入前必须同步最新 target/main，并用 rebase 解决当前 work branch 与 target 的差异；禁止用 merge 合入 main，禁止引入 merge commit。冲突解决后重新检查影响面和跑必要验证。
-8. **整理提交、提交信息与 push**：只有 diff 聚焦、验证证据充分、提交内容边界清楚时才 commit/push；push 前审查 `<target>..HEAD` 中每个将进入 PR 的提交，并将单次合入内容尽量整理成一个清晰提交，避免无意义提交记录。
-   - **遵循仓库约定**：使用目标仓库约定的语言和格式；没有明确规则时，以近期已合入提交的主语言和 Conventional Commit 使用方式为准，不自行发明新风格。
-   - **标题面向 reviewer**：使用具体领域对象和自然、直接的动作说明实际结果，使 reviewer 不看 diff 也能理解改变了什么。不要用模糊评价词、只有实现者才懂的内部缩写、代码动作直译或需要结合 diff 猜测含义的抽象短句；技术机制确实是变更主体时才写进标题。
-   - **标题与正文分工**：标题保持简洁，原因、约束和取舍放正文；不能为了短而牺牲语义或语言自然度。保留多个提交时，每条标题必须表达不同且连贯的意图。
-   - **安全改写历史**：已有远端提交需要改写时，先确认 work branch 可安全 force-push 且不会覆盖他人工作。
+### Formal SPEC Evidence
 
-   push 只推 local work branch 的远端，不改 target 分支，不把临时修复、调试提交或流程副作用落到 target。无权限或用户未授权 commit/push 时，停在可 PR 状态并说明缺口。
-9. **生成 merge comment**：给可直接贴到 PR/MR 的评论，包含 target、work branch、改动摘要、影响面、架构判断、验证命令与结果、风险/未验证项、保留的无关本地改动、review 关注点；不要把完整 diff 粘进 comment。
+当 `/hub pr` 处理已进入 execing 的正式 SPEC 时，只读取 STDD、Bug Pool 和已有 `spec-smoke` evidence，把现状与残余风险如实写入 STDD 和 PR。缺失、过期或因收尾内容变化而失效的证据标为未验证，不在 `pr` 内重跑测试、smoke、UI 审核或最终验收，也不伪造通过结论；后续验证和修复由 `/hub spec-smoke` 承接。
+
+### Common Flow
+
+**顺序门禁**：基线更新是形成最终任务提交、push 和创建/更新 PR 的前置步骤，不得因已有本地提交、远端分支或 PR 而跳过。若误在基线更新前 push，补做 fetch/rebase 与单提交整理，再在确认远端分支无人共享后用 `--force-with-lease` 更新；不得把旧 push 当作流程已完成。`pr` 全程只允许 Git/PR 形态检查，不运行测试、typecheck、build、smoke 或 UI/功能验收。
+
+0. **确认工作仓库与任务边界**：以当前项目仓库为 work repo，核对需要保存的任务代码，以及必须原样保留、不纳入本次提交的用户已有改动。Agent Hub 自维护按上方 canonical `main` 单分支例外处理。
+1. **确定并更新基线**：确认当前 work branch、唯一 target 和对应 remote，fetch 最新 target，检查当前分支、ahead/behind、staged/unstaged/untracked。target 不由 remote 默认分支名自动决定；dirty worktree 会阻塞安全更新时先保护现场，不能用 reset、checkout 或隐式 stash 丢弃或隐藏改动。
+2. **确认 local work branch**：不能把 PR 提交直接落在 target 分支；若当前在 target 上且任务代码尚未提交，先从已更新 target 建立或切入语义清晰的 local work branch。已有 PR 时应确认当前分支就是其 head，不能另建同义分支。
+3. **盘点待保存内容**：同时检查本地工作区与 `<target>...HEAD`，使用 `git status --short`、`git diff --name-status`、`git diff --stat`、`git diff --check` 和提交列表确认文件归属、格式完整性与任务边界。这里不评价实现方案或功能正确性；发现疑似无关、临时或越界内容时停止并报告，不在 `pr` 内改代码或替用户猜测取舍。
+4. **rebase 与单提交整理**：用 rebase 同步最新 target，禁止用 merge 同步基线或引入 merge commit；只暂存并提交本任务代码，把相对最新远端 target 的任务历史安全压缩为恰好一个清晰提交。执行 `git rev-list --left-right --count <remote>/<target>...HEAD` 或等价检查，结果必须为 `0 1`，即 `behind 0 / ahead 1`。冲突只能在能证明保持既有语义时解决；无法证明、任务内容实质变化或旧验证证据失效时如实记录风险，不在本命令内补跑验证。
+   - **提交信息**：遵循目标仓库约定；没有明确规则时参考近期已合入提交。标题用领域对象和自然动作表达实际结果，原因与约束放正文，不用模糊评价词或内部缩写让 reviewer 猜测。
+   - **安全改写历史**：已有远端提交需要压缩或重写时，先确认 work branch 无人共享且不会覆盖他人工作；不能证明时停止。
+5. **push work branch**：只 push local work branch，不直接 push target。历史未改写时普通 push；已安全改写时只用 `--force-with-lease`。push 后核对远端 head 等于本地 HEAD，且相对 target 仍为 `behind 0 / ahead 1`。
+6. **创建或更新 PR**：以冻结的 target 为 base 创建或更新 PR，核对 PR head/base 和唯一提交。标题与正文只记录当前仓库交付事实；正文包含任务范围、影响面、继承的前序验证证据、未验证或已失效项和残余风险，不把未在本命令执行的测试写成本轮结果。
+
+`pr` 授权本次暂存、commit、必要的安全历史整理、push work branch 和创建或更新 PR，不授权 merge。
 
 ### 仓库历史隔离
 
@@ -83,13 +101,13 @@ git update -> understand -> minimal implementation -> strict verification
 - push、创建/更新 PR 或发布评论前，检查标题、正文、评论草稿、commit message 与将提交的文档中是否出现其它仓库 slug、issue/PR URL 或本地工作区路径；没有明确交付关系的引用必须移除，以仓库内可验证事实表达结果。
 - 若已误建跨仓库引用，先编辑或删除可控的引用源并停止继续传播；平台自动生成且不可删除的 cross-reference 事件要明确报告残余，不能通过更多跨仓库评论解释或“修复”。
 
-`pr` 的核心是“更新基线 + 清理 diff + 推远端 + merge comment”。如果目标只是审查并收敛当前改动，使用 `/hub refactor`，不触发提交、push 或 PR。
+`pr` 的核心是“保护并保存任务代码 + 确定 target + 更新基线 + 收敛为 behind 0 / ahead 1 + push work branch + 创建或更新 PR”。如果目标是审查、修复、验证或收敛实现内容，使用对应 review、`/hub refactor`、`coding` 或 `/hub spec-smoke` 流程，不把这些职责塞回 `pr`。
 
 ## Git Update
 
 `git update` 表示用 rebase 将当前分支同步到最新目标分支，不是 Git 子命令。
 
-1. 默认基线：`origin/main` 或 `main`，除非用户指定其它目标。
+1. 用户单独调用 `git update` 时，默认基线为 `origin/main` 或 `main`，除非用户指定其它目标；作为 `coding` 或 `pr` 的内部步骤时，使用调用流程已按具体项目与 work branch 冻结的 target，不继承 `main` 默认值。
 2. rebase 前确认当前仓库、当前分支、目标分支、ahead/behind、dirty worktree；重点判断“当前分支是否符合用户预期”。
 3. 分支和目标符合预期时，rebase 是默认动作；不要用 merge 或制造 merge commit。先用只读检查识别风险，再执行 rebase，保护本地改动并按冲突继续解决。
 4. 只有当前仓库/分支明显不符合用户预期、需要 stash/reset/checkout 等会隐藏或丢失本地改动的操作、或 rebase 被 Git 阻塞且无法在保留本地改动的前提下继续时，才停下请用户决策。

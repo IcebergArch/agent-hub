@@ -4,10 +4,12 @@
 - 读取 `README.md` 作为长期协作上下文，不要求用户每次手动附带背景。
 - 搜索文件优先用 `rg` 或 `rg --files`。
 - 手工编辑文件优先用 patch。
+- 维护 Agent Hub 时，必须把 canonical 主工作目录的 `main` 作为唯一可见现场；即使当前 Codex 任务运行在自动创建的 detached worktree，也只从该现场读取并把规则修改直接落回该现场，不为 Agent Hub 创建 `codex/*` 分支或 linked worktree。检测到历史隔离现场时只做恢复与安全收拢，不把它继续当作规则 owner。
 - 在 Codex app 环境中，若用户打开了 in-app browser 或要求验证页面，必须优先使用 Codex 内置浏览器能力进行导航、点击、输入、截图或检查；只有对应浏览器工具未加载、权限受限或目标不可达时，才说明具体限制，不得笼统声称“没有浏览器操作能力”。
 - 当消息包含 `# In app browser`、`Current URL`，或用户说“我已经打开了”“直接操作页面”“用 Codex 的 in-app-browser”等表达时，视为当前页已由用户打开并授权直接操作；先加载/使用 Browser 插件控制当前 tab，不用本地端口探测、macOS `open`、外部 Chrome/Playwright 或“页面没开”的猜测替代。若 Browser 插件缺少某项能力，应说清具体缺口并请求最小协助，例如文件选择器无法由运行时直接写入。
-- Codex 不得把页面验证、本地调试或热部署上下文理解成启动服务授权；`npm run dev`、`npm start`、`go run`、`make run*`、kill 端口或任何可能抢占现有服务的命令，都必须先得到用户明确允许。
+- Codex 不得只凭页面验证、本地调试或热部署上下文推断服务动作授权；服务启停与同步按根 `AGENTS.md` 和 `task-execution-lifecycle` 的执行面规则判断。执行 `/hub spec-smoke` 时，完整重放后只停止已核验为当前主工作空间专属、与受测应用对应且可恢复的本地 Docker 服务，不停止 Docker daemon、依赖或无关容器；从主工作空间运行最终回测，通过后冻结本次已验证的不可变构建输入或产物，用后台 agent/task 只派发一次本地 Docker 重建/更新并立即返回回执，部署结果另行回报，失败或中断则恢复原状态。其它 `npm run dev`、`npm start`、`go run`、`make run*`、kill 端口或可能抢占服务的命令仍需用户明确允许。
 - 执行 `/hub save` 时，优先用当前宿主实际暴露的 agent/team 与 task/thread 管理能力做一次快速发现和停止：当前 agent tree 用 `list_agents` 核对、用消息能力请求 checkpoint、再用 `interrupt_agent` 结束仍在运行的 workload；项目/任务列表排除普通 ChatGPT 对话，对 active 任务取即时 snapshot，只有归属或恢复入口仍不清时才读正文，不穷举已完成或归档历史。若宿主另有 task/thread 列表、读取、消息或停止能力，再把其可验证覆盖的当前 workspace 活动纳入。不得用进程扫描猜测 Agent 身份，也不得把“未发现”“已发消息”或缺少停止 API 写成“全部已暂停”；覆盖缺口按 workspace-save reference 进入 Bug Pool。当前协调 Agent 是控制面，完成远端核验前不自我中断。
+- 执行 `/hub get` 时，使用 Codex 当前可用的后台 agent/task 能力承接冻结后的信号与最小上下文，前台创建后立即返回回执，不轮询等待、不把后台工作重新拉回当前对话同步完成。后台任务完成或失败后另行回报；宿主没有可持续的异步执行能力时明确返回 `async unavailable`，不得静默同步执行或伪造已受理。
 - 需要使用 Hub 内部 workflow 时，按 `/hub` loader 或任务信号读取 `skills/<Category>/<skill-slug>/WORKFLOW.md`；不要把 Hub 内部 workflow 暴露成一组独立命令。
 - 读取外部或移植来的 Skill 时，遇到 `Task`、`TodoWrite`、`Read/Edit/Write`、`Bash`、`WebSearch`、agent manifest 或平台 prompt，不照搬外部工具名；先按 `skills/Knowledge/knowledge-evolution/WORKFLOW.md` 判断是否值得吸收和落位，无法等价执行时明确降级或标记为 watch。
 - 生成可沉淀的分析、审查、运行记录或需要更新项目 helper 时，按文档工作区的 `README.md` 的目录树落位；日期、类型、项目、来源、版式写入文档顶部。

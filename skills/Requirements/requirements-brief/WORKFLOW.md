@@ -10,14 +10,14 @@ description: 当用户提出产品、功能、工具、自动化、workflow 或�
 # When to Use
 
 - “整理需求”“写 PRD”“功能简报”“把想法落成需求”。
-- 用户说 `/hub spec` 或 `/hub spec-idea,<level>`。
+- 用户说 `/hub spec` 或 `/hub spec-idea`。
 - 目标、用户、非目标或验收标准还不清楚。
 - 要做工具、页面、自动化或 workflow，但实现边界需要先收敛。
 
 # When NOT to Use
 
 - 用户已经给出明确实现任务，可以直接进入执行。
-- 用户说 `/hub spec 执行` 或 `/hub spec 验收`；这两种模式属于任务执行生命周期。
+- 用户说 `/hub spec-exec`、`/hub spec-smoke` 或 `/hub pr`；这些模式属于任务执行生命周期。
 - 只是代码实现、测试或文档刷新。
 
 # Inputs
@@ -26,16 +26,16 @@ description: 当用户提出产品、功能、工具、自动化、workflow 或�
 
 # Command Output Modes
 
-- `/hub spec [<需求>]`：产出可独立执行的正式 SPEC。draft 登记不变量、背景、目标、核心问题和非目标；init 按影响面汇总当前事实、历史经验、行业实践和参与 Skill/角色的专家设计输入；update 正式撰写第一版完整方案并评审修正；全部适用维度通过后转为最终定稿 plan。通过即停止，绝大多数方案应在 2-3 轮内收敛；10 轮只是单个实质变更周期的硬上限。阻塞问题未解除时停在 update，不得强行定稿。
-- `/hub spec-idea,<level> [<想法>]`：产出探索性 IDEA。按复杂度级别控制整理深度，写入目标项目的 IDEA 位置，不把 IDEA 直接提升为 plan。
-- 两种命令都只授权文档编写，不创建 STDD、不进入 execing、不修改业务仓库或开始实现；`/hub spec 执行` 与 `/hub spec 验收` 由 `task-execution-lifecycle` 分别承接实施和验收。
+- `/hub spec-idea [<想法>]`：登记可追踪 IDEA。输出至少明确项目归属、背景或问题、目标结果、初步边界、升级价值和开放问题，使登记内容具备后续由 `/hub spec` 升级为正式 SPEC 的资格；不直接提升为 draft 或 plan。
+- `/hub spec [<需求或IDEA>]`：录入并建设可独立执行的正式 SPEC。新输入或已登记 IDEA 进入 draft；init 汇总事实、经验、行业实践和参与 Skill/角色的专家设计输入；update 正式撰写并评审修正；全部适用维度通过后转为最终定稿 plan。阻塞问题未解除时停在 update，不得强行定稿。
+- 两种命令都只授权文档编写，不创建 STDD、不进入 execing、不修改业务仓库或开始实现；`/hub spec-exec`、`/hub spec-smoke` 与 `/hub pr` 由 `task-execution-lifecycle` 分别承接执行闭环、主工作空间提档与最终验收，以及 Git/PR 收尾。
 
-# Complexity Levels
+# Optional Shaping Depth
 
 - `simple`（简）：单一目标、边界明确；只保留目标、范围、关键 workflow、验收、非目标和必要开放问题。
 - `middle`（中）：普通产品或工程想法；完整执行本 workflow 的需求收敛与评审流程。
 - `complex`（繁）：跨系统、高风险或多阶段想法；在完整流程基础上补充依赖、方案取舍、失败恢复、风险和分阶段验收。
-- 级别只控制整理深度，不改变 IDEA 生命周期、执行授权或验证门禁。
+- `simple / middle / complex` 只在用户另行明确要求时控制整理深度，不属于 `/hub spec-idea` 命令语法，也不改变 IDEA 的升级资格、生命周期或执行授权。
 
 # Decision Principles
 
@@ -69,7 +69,7 @@ description: 当用户提出产品、功能、工具、自动化、workflow 或�
 7. Init：基于 draft 判断七个维度的适用性，用 `skill-router` 选择最小 Skill/角色组合；按 `references/spec-review-gates.md` 汇总当前事实、历史经验、行业实践和专家判断，提炼关键设计约束、候选模式、适用条件、取舍、风险和验收信号。此阶段完成方案构型输入，但不提前展开完整方案正文。
 8. Update Authoring Loop：进入 `update` 后正式撰写第一版完整方案，逐项记录设计输入和专家意见的 `adopted / adapted / rejected` 处置，再按 `references/spec-review-gates.md` 评审、修正和复评；无 blocker 即停止，绝大多数方案在 2-3 轮内收敛。第 3 轮后仍未通过时，先定位不收敛根因并选择缩小范围、补证据、请求决策或调整参与方；只有下一轮有明确新输入或修改目标时才继续，最多 10 轮。
 9. Plan：全部适用维度通过、跨维度结论一致且验收可执行后转为 `plan`；实质修改 plan 时，按最早受影响内容退回 `draft`、`init` 或 `update` 开启新的评审周期。
-10. Persist Or Return：普通 brief 在当前回复交付；命令模式按文档工作区当前命名与生命周期规则写入 IDEA/draft/init/update/plan，并返回完整路径、当前阶段、评审结论和开放问题。
+10. Persist Or Return：普通 brief 在当前回复交付；`spec-idea` 按文档工作区规则登记 IDEA 并返回完整路径、升级资格和开放问题，`spec` 写入 draft/init/update/plan 并返回完整路径、当前阶段、评审结论和开放问题。
 
 # Checklist
 
@@ -81,6 +81,7 @@ description: 当用户提出产品、功能、工具、自动化、workflow 或�
 - 架构图与时序图是否突出全局关系和关键变更，没有为了形式完整而复杂化。
 - 内容详略是否服务于可读、可理解，而不是平均展开所有部分。
 - 是否只写入文档工作区指定位置，未误建 STDD、进入执行或修改业务仓库。
+- `spec-idea` 是否已达到可升级登记的最小信息门禁，且没有被误写成正式 SPEC。
 
 # Escalation
 

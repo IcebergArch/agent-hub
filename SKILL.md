@@ -9,6 +9,11 @@ Treat this repository as the canonical, live Agent Hub source. Do not copy Hub
 content into a generated cache or expose its internal workflows as separate
 user-facing skills.
 
+The canonical main worktree is the only Agent Hub rule owner. If the current
+task runs in a detached or generated worktree, load and maintain the canonical
+main worktree instead; do not create or continue an Agent Hub work branch or
+linked worktree.
+
 ## Load the Hub
 
 1. Read `AGENTS.md` for repository-wide rules.
@@ -25,7 +30,10 @@ user-facing skills.
   into the product or service being designed.
 - Follow the Hub's command semantics and lifecycle rules rather than inventing
   parallel conventions.
-- Make durable Hub improvements in this repository so every registered client
-  sees the same source.
+- Always dispatch `/hub get` asynchronously: return a receipt immediately,
+  keep the current conversation unblocked, and report the background result
+  separately. Never silently fall back to synchronous extraction.
+- Make durable Hub improvements directly in the canonical main worktree so
+  every registered client and conversation sees the same current source.
 - Preserve project boundaries and existing user changes when applying Hub
   workflows to another repository.

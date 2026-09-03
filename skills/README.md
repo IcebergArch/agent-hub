@@ -16,7 +16,7 @@ skills/<Category>/<skill-slug>/references/   # optional
 | Core | `task-execution-lifecycle` | 任务阶段流转与收口 |
 | Core | `skill-router` | 选择本轮最小 Skill 组合 |
 | Requirements | `requirements-brief` | 需求简报、IDEA、正式 SPEC 和验收边界 |
-| Requirements | `spec-lifecycle` | SPEC 的 draft/init/update/plan、执行包和归档流转 |
+| Requirements | `spec-lifecycle` | 项目观察登记及 SPEC 的 draft/init/update/plan、执行包和归档流转 |
 | Navigation | `codebase-navigation` | 业务模型、owner 和影响范围建立 |
 | Research | `source-grounded-research` | 来源可信度、交叉验证和结论形成 |
 | Prompt | `prompt-improvement` | 统一输出规范和 prompt 资产整理 |
@@ -37,6 +37,7 @@ skills/<Category>/<skill-slug>/references/   # optional
 3. 能否扩展已有 Skill，而不是新增一个？
 4. 是否可以通过 Router 按需加载，而不是默认加载？
 5. 如果一年后模型能力提升，这份 Skill 是否仍然有价值？
+6. description / 入口指针是否写出真实触发分支；高波动步骤是否有可观察且足够完整的完成条件？
 
 ## Template
 
