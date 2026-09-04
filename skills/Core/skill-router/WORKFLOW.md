@@ -30,14 +30,15 @@ description: 根据任务类型选择本轮应加载的最小 Skill 集合，避
 
 # Workflow
 
-1. 识别任务类型：执行、需求、导航、研究、prompt、tool/contract、context、knowledge、domain。
+1. 识别任务类型：执行、需求、导航、研究、prompt、tool/contract、observability、context、knowledge、domain。
 2. 执行类任务先选 `task-execution-lifecycle`。
 3. Bug 或普通修复只加 `codebase-navigation`，不加载 Bugfix Skill。
 4. Research 任务组合 `task-execution-lifecycle` 与 `source-grounded-research`。
 5. MCP/tool 任务组合 `agent-tool-design` 与 `interface-contract-audit`。
-6. Video 任务组合 `task-execution-lifecycle` 与 `video-creation`。
-7. Hub 维护、规则沉淀、外部方法吸收统一走 `knowledge-evolution`。
-8. 正式 SPEC 以 `requirements-brief` 为主 Skill；draft 先登记不变量、背景、目标和核心问题，init 再对七个维度标记 applicable / N/A 并选择最小 Skill/角色组合，形成专家约束、取舍和验收信号；update 正式撰稿并验收落实情况。产品、UI、架构、稳定性、安全或成本命中时，用 `agent-team-router` 选择必要角色并综合结论；owner/影响面不清加 `codebase-navigation`，接口/tool、外部事实、prompt 或视频只在真实命中时加载对应 Skill。选择结果写入 SPEC 建设与评审记录。
+6. 监控、告警聚合、故障修复或自愈体系设计使用 `observability-system-design`；只查日志、处理一次事故或机械添加既定指标时不加载。
+7. Video 任务组合 `task-execution-lifecycle` 与 `video-creation`。
+8. Hub 维护、规则沉淀、外部方法吸收统一走 `knowledge-evolution`。
+9. 正式 SPEC 建设固定使用 `requirements-brief` 管内容、`spec-lifecycle` 管状态；只有适用性或风险命中时才追加 requirements 的 spec-review reference、领域、导航、Engineering 或 Research。`spec-exec`、`spec-smoke`、`pr` 转入 `task-execution-lifecycle` 的对应 command reference，不重复加载需求建设流程。
 
 # Checklist
 

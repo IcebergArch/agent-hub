@@ -22,6 +22,7 @@ skills/<Category>/<skill-slug>/references/   # optional
 | Prompt | `prompt-improvement` | 统一输出规范和 prompt 资产整理 |
 | Engineering | `agent-tool-design` | Agent tool / MCP / function calling 设计原则 |
 | Engineering | `interface-contract-audit` | API / Gateway / route / tool surface 契约审计 |
+| Engineering | `observability-system-design` | 监控、事件聚合、修复与有界自愈体系建设 |
 | Context | `project-context-rebuild` | 项目 Context Health Check 与重建 |
 | Context | `project-content-curation` | 内容归位、迁移、保留和删除 |
 | Knowledge | `knowledge-evolution` | 知识沉淀、升级和去重 |
