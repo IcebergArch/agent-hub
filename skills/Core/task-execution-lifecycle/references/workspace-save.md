@@ -5,7 +5,7 @@
 
 ## Contract
 
-`/hub save` 是跨项目的 checkpoint-and-stop，不代表原任务完成、SPEC 验收、PR 内容审查或通用环境清理。它不重新判断业务实现是否合理，不借保存流程修复、重构或补测试；只核对现场归属、Git 完整性、目标分支冲突和恢复入口。`doc-hub` 是中央文档事实源，只使用主工作目录和短生命周期 work branch，不创建 linked worktree；发现历史 linked worktree 时，先把未合入内容保存到远端 branch/PR，再按门禁收拢。`agent-hub` 只使用 canonical 主工作目录的 `main`，不创建 work branch、PR 或 linked worktree；所有对话直接共享该工作树，历史隔离现场仅在内容已有恢复入口且工作树为空后收拢。固定顺序为：
+`/hub save` 是跨项目的 checkpoint-and-stop，不代表原任务完成、SPEC 验收、PR 内容审查或通用环境清理。它不重新判断业务实现是否合理，不借保存流程修复、重构、补测试、rebase，也不读取、判断或处理目标分支冲突；只核对现场归属、Git 完整性和恢复入口。PR 创建或更新成功即完成该 checkpoint 行，冲突与后续处置留给 PR 流程。`doc-hub` 是中央文档事实源，只使用主工作目录和短生命周期 work branch，不创建 linked worktree；发现历史 linked worktree 时，先把未合入内容保存到远端 branch/PR，再按门禁收拢。`agent-hub` 只使用 canonical 主工作目录的 `main`，不创建 work branch、PR 或 linked worktree；所有对话直接共享该工作树，历史隔离现场仅在内容已有恢复入口且工作树为空后收拢。固定顺序为：
 
 `保护现场 -> 登记进度与待办 -> 结束本地服务 -> 整理推送计划 -> doc-hub 直接 MR 并收拢历史 worktree -> agent-hub canonical main 直接保存并收拢历史现场 -> 其它仓库表格确认 -> 执行 -> 表格核验`
 
@@ -76,8 +76,8 @@
 每个表格行是一个执行单元。互不共享 repo/worktree/branch/index/remote ref 的其它仓库 `PR` 行可有界并行，但单行内部的审查、提交、push、PR 与核验保持顺序；共享 Git 状态的行串行。动作列中的 `MR` 按仓库解释为 doc-hub PR merge 或 agent-hub canonical main 直接同步，仍按下述固定收口顺序执行。
 
 1. 只核对完整 diff 的归属和可保存性，执行 `git diff --check`；不得把 `/hub save` 路由为 branch/PR 业务审查，不评价或改写实现内容，也不为保存追加测试。只暂存归属明确且不含凭据、缓存或临时产物的文件。
-2. 形成边界清楚的 checkpoint commit，必要时 rebase 最新 target；不 force push、不直接 push target、不用 merge commit 绕过冲突。直接授权的 `agent-hub MR` 执行单元按单分支例外提交 `main`，fetch 后必须确保可安全更新 `origin/main`，分叉或冲突时停止而不覆盖远端。
-3. 按表将每个有未合入内容的隔离空间 push 到其对应远端 work branch。`PR` 行创建或更新对应 PR 后停止；`MR` 行创建或更新 PR，等待 required checks/approvals，并按仓库既有合入规则完成 merge；仅 `agent-hub MR` 的底层执行允许 `agent-hub main -> origin/main`，不得推广到其它仓库。
+2. 形成边界清楚的 checkpoint commit，保留当前 branch 历史，不为保存 rebase、merge target、解决冲突或改写提交；不 force push、不直接 push target。直接授权的 `agent-hub MR` 执行单元按单分支例外提交 `main`，fetch 后必须确保可 fast-forward 更新 `origin/main`，分叉时停止而不覆盖远端。
+3. 按表将每个有未合入内容的隔离空间 push 到其对应远端 work branch。`PR` 行创建或更新对应 PR 后立即停止，不读取或判断 mergeability/conflict；`MR` 行创建或更新 PR，并按仓库既有合入规则尝试完成 merge，平台拒绝时保留 PR 作为恢复入口并报告 blocker。仅 `agent-hub MR` 的底层执行允许 `agent-hub main -> origin/main`，不得推广到其它仓库。
    `Cleanup` 行只处理确认单点名的 clean 隔离空间：再次核对无 active task、归属服务、staged/unstaged/untracked 后，按普通 `git worktree remove` 收拢并删除 local branch；不得 force remove。对应 PR 已 merged 时以 merged commit 为恢复入口；明显落后且用户明确废弃、又没有远端恢复入口时，确认单必须已经披露将删除最后一个普通 Git ref。默认不删除 remote branch。
 4. 顺序固定为：先直接执行 `doc-hub` MR 与历史 linked worktree 收拢，再执行 `agent-hub` MR 与历史现场 Cleanup，最后等待并执行其它仓库确认单。不得把这两个 Hub 的直接授权和清理规则扩散到其它仓库。
 5. 收拢 `doc-hub` 历史 linked worktree 前，逐个证明工作树无 staged、unstaged、untracked，所有本地提交已进入 `main` 或与同 SHA 的远端 work branch/PR 对齐，且没有运行任务或归属服务；协调控制面离开待删除路径后才正常 remove worktree、删除有远端恢复入口的本地 branch 并 prune。阻塞 PR 不得为了清理而强行合入或删除远端恢复入口。
@@ -105,6 +105,7 @@
 - 是否在其它仓库的任何 Git 写操作前给出一张完整表格确认单；doc-hub 与 agent-hub 是否按直接授权执行且未混入待确认项。
 - 确认单是否只用“仓库、备注、动作”三列，是否不展示本地 branch，动作只使用 `Local`、`Cleanup`、`PR`、`MR`，备注是否严格按“空间、分支、改动、背景”四行展示。
 - 是否把 `PR` 与 `MR` 的语义写清，且其它仓库默认只到 PR。
+- 是否保持 checkpoint branch 原历史，未为 save rebase、读取或处理 target 冲突，并在 PR 创建或更新后立即停止。
 - 已合并 PR 或被明确废弃且明显落后的 clean 隔离空间是否优先标为 `拟 cleanup`，并准确披露 behind、恢复入口和最后普通 ref 风险。
 - 是否让每个有未合入内容的隔离空间都有对应远端 work branch 和 PR，没有只登记不推送。
 - 是否先直接执行 doc-hub MR + 历史 linked worktree 收拢 -> agent-hub MR + 历史现场 Cleanup，再等待并执行其它仓库确认单，且未把 Agent Hub 直接 push `main` 的例外扩散到其它仓库。
