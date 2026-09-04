@@ -1,11 +1,11 @@
 # Workspace Save
 
 日期：2026-08-25
-用途：作为 `task-execution-lifecycle` 的 `/hub save` 唯一详细 owner；快速保护工作现场、登记可恢复进度、停止本地服务，并在确认后完成仓库保存。
+用途：作为 `task-execution-lifecycle` 的 `/hub save` 唯一详细 owner；以 checkpoint 方式快速保护工作现场、登记可恢复进度、停止本地服务，并在确认后完成仓库保存。
 
 ## Contract
 
-`/hub save` 是跨项目的 checkpoint-and-stop，不代表原任务完成、SPEC 验收或通用环境清理。`doc-hub` 是中央文档事实源，只使用主工作目录和短生命周期 work branch，不创建 linked worktree；发现历史 linked worktree 时，先把未合入内容保存到远端 branch/PR，再按门禁收拢。`agent-hub` 只使用 canonical 主工作目录的 `main`，不创建 work branch、PR 或 linked worktree；所有对话直接共享该工作树，历史隔离现场仅在内容已有恢复入口且工作树为空后收拢。固定顺序为：
+`/hub save` 是跨项目的 checkpoint-and-stop，不代表原任务完成、SPEC 验收、PR 内容审查或通用环境清理。它不重新判断业务实现是否合理，不借保存流程修复、重构或补测试；只核对现场归属、Git 完整性、目标分支冲突和恢复入口。`doc-hub` 是中央文档事实源，只使用主工作目录和短生命周期 work branch，不创建 linked worktree；发现历史 linked worktree 时，先把未合入内容保存到远端 branch/PR，再按门禁收拢。`agent-hub` 只使用 canonical 主工作目录的 `main`，不创建 work branch、PR 或 linked worktree；所有对话直接共享该工作树，历史隔离现场仅在内容已有恢复入口且工作树为空后收拢。固定顺序为：
 
 `保护现场 -> 登记进度与待办 -> 结束本地服务 -> 整理推送计划 -> doc-hub 直接 MR 并收拢历史 worktree -> agent-hub canonical main 直接保存并收拢历史现场 -> 其它仓库表格确认 -> 执行 -> 表格核验`
 
@@ -75,7 +75,7 @@
 
 每个表格行是一个执行单元。互不共享 repo/worktree/branch/index/remote ref 的其它仓库 `PR` 行可有界并行，但单行内部的审查、提交、push、PR 与核验保持顺序；共享 Git 状态的行串行。动作列中的 `MR` 按仓库解释为 doc-hub PR merge 或 agent-hub canonical main 直接同步，仍按下述固定收口顺序执行。
 
-1. 审查完整 diff，执行最窄安全检查和 `git diff --check`，只暂存归属明确的文件。
+1. 只核对完整 diff 的归属和可保存性，执行 `git diff --check`；不得把 `/hub save` 路由为 branch/PR 业务审查，不评价或改写实现内容，也不为保存追加测试。只暂存归属明确且不含凭据、缓存或临时产物的文件。
 2. 形成边界清楚的 checkpoint commit，必要时 rebase 最新 target；不 force push、不直接 push target、不用 merge commit 绕过冲突。直接授权的 `agent-hub MR` 执行单元按单分支例外提交 `main`，fetch 后必须确保可安全更新 `origin/main`，分叉或冲突时停止而不覆盖远端。
 3. 按表将每个有未合入内容的隔离空间 push 到其对应远端 work branch。`PR` 行创建或更新对应 PR 后停止；`MR` 行创建或更新 PR，等待 required checks/approvals，并按仓库既有合入规则完成 merge；仅 `agent-hub MR` 的底层执行允许 `agent-hub main -> origin/main`，不得推广到其它仓库。
    `Cleanup` 行只处理确认单点名的 clean 隔离空间：再次核对无 active task、归属服务、staged/unstaged/untracked 后，按普通 `git worktree remove` 收拢并删除 local branch；不得 force remove。对应 PR 已 merged 时以 merged commit 为恢复入口；明显落后且用户明确废弃、又没有远端恢复入口时，确认单必须已经披露将删除最后一个普通 Git ref。默认不删除 remote branch。
