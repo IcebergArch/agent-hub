@@ -48,7 +48,7 @@
 | 研究、业界优秀实践、最新资料、官方文档、论文、竞品或需要来源链接 | `skills/Research/source-grounded-research/WORKFLOW.md` |
 | 优化 prompt、agent instructions 或统一输出模板 | `skills/Prompt/prompt-improvement/WORKFLOW.md` |
 | 设计 AI agent tool、MCP/function calling、tool gateway、schema、回执、权限 | `skills/Engineering/agent-tool-design/WORKFLOW.md` |
-| 新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，跨仓库/跨 agent 契约 | `skills/Engineering/interface-contract-audit/WORKFLOW.md` |
+| 新增、删除、改名或暴露 API/Gateway/route/operation/tool surface，跨仓库/跨 agent 契约，或持久化操作的排期、激活、幂等与 mutation 结果语义 | `skills/Engineering/interface-contract-audit/WORKFLOW.md` |
 | 设计或评审监控、可观测性、告警聚合、故障修复、自愈闭环，或判断复用现有能力与自建边界 | `skills/Engineering/observability-system-design/WORKFLOW.md` |
 | 文档工作区项目背景缺失、被删除、过期，或要求 Context Health Check / 重建 | `skills/Context/project-context-rebuild/WORKFLOW.md` |
 | 整理项目内容、规则、Skills、报告、长期上下文、删除内容 | `skills/Context/project-content-curation/WORKFLOW.md` |
