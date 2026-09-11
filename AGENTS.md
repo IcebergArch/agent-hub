@@ -64,6 +64,7 @@
 | --- | --- |
 | `/hub cmd` | 列出当前登记的全部有效命令及简短用途。 |
 | `/hub spec [<需求>]` | 将用户输入按 `draft（不变量、背景、目标、核心问题）-> init（事实、经验、行业实践与专家设计输入）-> update（正式撰稿与评审修正）-> plan（最终定稿）` 收敛为正式 SPEC。 |
+| `/hub spec-owner [<SPEC/需求>]` | 为一个 SPEC 建立端到端隔离 owner：绑定独立 workspace/worktree、work branch 和按需隔离服务，持有 SPEC、实施、部署回测与交付上下文；详细契约见 `skills/Core/task-execution-lifecycle/references/spec-owner-isolation.md`。 |
 | `/hub spec-idea,<level> [<想法>]` | 按 `simple / middle / complex`（简 / 中 / 繁）整理 IDEA SPEC，不进入执行。 |
 | `/hub spec 执行 [<SPEC>]` | 选择已有正式 SPEC，建立或恢复执行包并按冻结范围实施修改；完成实现后保持 `execing`，等待独立验收。 |
 | `/hub spec 验收 [<SPEC>]` | 验证已修改内容，并执行当前 SPEC 增量场景与项目级存量回归；以 fresh evidence 判定通过或登记 Bug。 |
@@ -108,6 +109,7 @@
 - 用户说 `fix`、`fix <问题>` 或明确要求修复某个问题时，视为授权在指定范围内连续完成 `复现 -> 定位 -> 交叉验证与正/逆向推理 -> 根因 -> 方案 -> 最小修复 -> 原始路径与回归验证`；根因必须能解释症状及其边界，证据不足时不得编造或先改症状，详细见 `skills/Core/task-execution-lifecycle/references/root-cause-fix-patterns.md`。
 - `fix` 默认授权诊断和执行修复，但不自动授权 commit、push、PR 或 merge；需要完整 PR 收尾时使用 `coding` 或另行明确授权。
 - 用户说 `/hub spec` 或 `/hub spec <需求>` 时，视为正式 SPEC 编写指令：以用户输入为需求源，先读文档工作区入口和当前项目的最小必要背景。draft 只登记必须保留的不变量、背景、目标、核心问题和非目标；init 再按影响面选择最小 Skill/角色组合，并把已验证当前事实、历史运行/事故/项目经验、适用行业实践和专家判断转成会改变方案的设计约束、候选模式、取舍、风险和验收信号。业界实践是带适用条件的设计输入，不是必须照抄的答案；高风险、新颖或外部能力不确定的决策按 `source-grounded-research` 核对权威来源，低风险稳定模式可用已验证本地证据停止。update 才进入正式撰稿，形成第一版完整方案，记录设计输入和专家意见的吸收/调整/拒绝，并在同一文件中评审、修正和复评。通过即停止，绝大多数方案应在 2-3 轮内收敛；第 3 轮后仍未通过时先做收敛检查，不得机械复评，单个实质变更周期 10 轮只是硬上限。只有全部适用维度无 blocker 才转为最终定稿 `plan`；达到上限、证据不足或仍有 blocker 时保持 `update` 并报告最小解除条件。变更回到最早受影响阶段：不变量/背景/目标/核心问题变化回 draft，设计证据、专家范围或意见变化回 init，方案正文修正留在 update，并始终保持同一 SPECID。核心方向、项目归属或执行边界仍有阻塞歧义时只问一个最小问题；否则显式记录必要假设并直接推进。该指令不创建 STDD、不进入 execing、不修改业务仓库或开始执行；回复必须给出当前文件完整路径、阶段、评审结论和仍待确认的问题。
+- 用户通过 `/hub spec-owner` 或 Agent Hub 插件参数 `spec-owner` 指定 owner 时，不得把它解释为普通文档评审角色。先读取 `skills/Core/task-execution-lifecycle/references/spec-owner-isolation.md`，建立并回报隔离空间清单；纯 SPEC 阶段可以不启动服务，但必须绑定隔离 workspace/worktree 和 work branch，进入实施或回测后再绑定独立服务实例。未完成隔离绑定前不得修改业务仓库或宣称该 owner 已接管执行。
 - 用户说 `spec-idea,<level>` 或 `spec-idea,<level> <想法>` 时，视为 SPEC IDEA 整理指令；`simple / middle / complex` 分别表示简 / 中 / 繁，具体深度以 `requirements-brief` 为准。先读文档工作区入口和当前项目的最小必要背景，再依文档工作区当前命名与生命周期规则写入对应项目的 IDEA 位置；级别只控制整理深度，不改变生命周期或授权边界。IDEA 不进入 draft/init/update/plan/execing，不创建 STDD，不读改业务仓库或开始执行。只有项目归属或核心方向存在高风险歧义时才问一个最小问题，否则直接完成；回复必须给出文件完整路径和仍待确认的问题。
 - 用户说 `/hub spec 执行` 或 `/hub spec 执行 <SPEC>` 时，视为正式 SPEC 实施指令：只选择目标项目中最终定稿的 plan SPEC，或恢复已存在执行包的 execing SPEC；draft、init、update 和 IDEA 均不是执行候选。首次实现性修改前，按文档工作区生命周期将 SPEC 转为 `execing`、创建 STDD 与两个问题池并冻结验收范围；随后用当前代码、配置、页面、API 和运行事实校验目标与 owner，按冻结范围完成修改改造和最窄开发验证。实现结束后 SPEC 保持 `execing`，STDD 记录真实进度与待验收入口；该指令不代替 `/hub spec 验收`，也不因实现完成直接宣称任务验收通过。多个候选无法唯一定位时，只列候选并要求用户指定。
 - 用户说 `/hub spec 验收` 或 `/hub spec 验收 <SPEC>` 时，视为正式 SPEC 验收指令：只选择目标项目中已有执行包的 execing SPEC，不开始新实现，也不把 plan SPEC 跳过执行阶段直接验收。先基于冻结 SPEC、实际 diff/影响范围、STDD 和项目 `ACCEPTANCE.md` 形成验收矩阵，再同时执行本次增量场景、受影响路径和适用的项目级存量回归，验证新增与既有功能均正常且符合预期。所有结论必须有 fresh evidence；mock、dry-run、空数据、跳过步骤、只跑新增测试或仅证明错误暴露均不得写为通过。失败或证据缺失时登记 Bug、保留 `execing` 并报告失败边界，不在验收命令内擅自修改生产实现；全部通过后记录验收证据，并按文档工作区当前完成门禁判断是否具备收口条件。该指令本身不额外授权 commit、push、PR 或 merge。
