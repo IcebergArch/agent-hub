@@ -22,7 +22,7 @@
 3. **分层承载**：通用约束放 `AGENTS.md`，工具差异放 `agents/`，可重复流程放 `skills/`，项目背景和报告放文档工作区。
 4. **按需加载**：默认只读必要入口；Skill、reference、helper、外部搜索和 subagent 必须由任务类型、风险信号或用户要求触发。
 5. **可验证沉淀**：新增或保留规则前，必须能说清触发条件、保护的不变量、检查工件、例外和验证方式。
-6. **项目隔离**：Hub 只沉淀跨项目可复用的泛化规则、workflow 和工具适配；具体项目路径、仓库约束、业务事实、SPEC/STDD、helper、报告和路由映射只写入文档工作区或项目自身，不写进 Hub。
+6. **项目隔离**：Hub 只沉淀跨项目可复用的泛化规则、workflow 和工具适配；我们新建的 SPEC/STDD、验收、运行/回测记录、helper、报告和其他长期协作资产统一写入 Hub README 登记的文档工作区，不写进 Hub 或业务代码仓库。
 
 ## Loading
 
@@ -43,7 +43,7 @@
 | 任务可能命中多个 Skill，需要选择最小组合 | `skills/Core/skill-router/WORKFLOW.md` |
 | 非机械实现、重构、UI、架构、协议、数据、工具链或跨模块任务 | `skills/Core/task-execution-lifecycle/WORKFLOW.md` |
 | 模糊产品、功能、工具、自动化或 workflow 需求 | `skills/Requirements/requirements-brief/WORKFLOW.md` |
-| 创建、评审、更新、执行、恢复、归档 SPEC / IDEA / STDD，或使用 `/hub record` 维护项目观察记录 | `skills/Requirements/spec-lifecycle/WORKFLOW.md` |
+| 创建、评审、更新、执行、恢复、归档 SPEC / IDEA / STDD，或使用 `/hub record`、`/hub promote` 维护与提档项目观察记录 | `skills/Requirements/spec-lifecycle/WORKFLOW.md` |
 | 理解项目、业务模型、修改边界、ownership 或影响范围 | `skills/Navigation/codebase-navigation/WORKFLOW.md` |
 | 研究、业界优秀实践、最新资料、官方文档、论文、竞品或需要来源链接 | `skills/Research/source-grounded-research/WORKFLOW.md` |
 | 优化 prompt、agent instructions 或统一输出模板 | `skills/Prompt/prompt-improvement/WORKFLOW.md` |
@@ -66,15 +66,18 @@
 | --- | --- |
 | `/hub cmd` | 列出当前登记的全部有效命令及简短用途。 |
 | `/hub record [<内容>]` | 将当前项目中已经发生且有可追踪证据的观察记录到 `spec-record.md`；不创建或更新 IDEA、SPEC、STDD。 |
+| `/hub promote <Record ID>` | 将指定观察记录完整转入当前会话的处理 owner，确认承接后从原 `spec-record.md` 移除该记录。 |
 | `/hub spec-idea [<想法>]` | 登记可追踪、具备升级为正式 SPEC 资格的 IDEA；不进入正式 SPEC 生命周期或执行。 |
 | `/hub spec [<需求或IDEA>]` | 录入并建设正式 SPEC，按 `draft -> init -> update -> plan` 收敛为可执行定稿。 |
-| `/hub spec-exec [<SPEC>]` | 以正式 SPEC 为原本，分配适用资源、空间、分支、服务和端口，完成实施、隔离回测与缺陷修复闭环。 |
-| `/hub spec-smoke [<SPEC>]` | 将隔离空间变更重放至项目主工作空间，只在主工作空间执行最终链路回测；通过后安全移除该 SPEC 已分配的隔离空间，并异步更新本地 Docker 部署。 |
-| `/hub save` | 快速暂停并保存全工作空间：先保护现场、登记进度与待办、停止归属明确的本地服务并整理推送计划，再经一张确认单执行 Git 收尾。 |
+| `/hub spec-exec [<SPEC>]` | 以正式 SPEC 为原本，在隔离工作空间、隔离分支和隔离端口完成实施、局部功能验证与缺陷修复。 |
+| `/hub spec-smoke [<SPEC>]` | 将同一隔离分支交接到项目主工作空间，在主端口完成相对完整的功能验收与修复；通过后移除隔离工作空间，并用项目固定入口更新本地 Docker。 |
+| `/hub save` | 快速暂停并保存全工作空间：把变更、任务进度、恢复入口和停止结果收敛到唯一 checkpoint 文档，再按确认单完成 Git 保存。 |
+| `/hub resume` | 从唯一 checkpoint 恢复工作现场，安全更新相关分支，并为当前账号的 PR 分支创建只回放进度、保持暂停的新会话。 |
 | `/hub fix [<问题>]` | 在目标范围内完成根因定位、最小修复和回归验证。 |
+| `/hub issue <编号>` | 从项目登记的问题源精确读取编号，记录真实现场、确认根因并完成安全止损；永久修复方案经明确审批后才实施和回归。 |
 | `/hub refactor` | 审查并调整当前改动，使 diff 最小、领域边界清晰、架构整洁。 |
 | `/hub coding [<任务>]` | 更新基线、实现、严格验证并完成 PR 收尾，不自动 merge。 |
-| `/hub pr` | 保存当前任务代码，更新唯一 target 基线，将 work branch 收敛为相对基线 ahead 1 个任务提交，push 并创建或更新 PR；不运行测试或重新验收。 |
+| `/hub pr` | 保存当前任务代码，更新唯一 target 基线，完成 final diff 的 fresh 代码/架构审查后，将 work branch 收敛为相对基线 ahead 1 个任务提交，push 并创建或更新 PR；不运行测试或重新验收。 |
 | `/hub git update` | 用 rebase 将当前分支同步到最新目标分支。 |
 | `/hub code-update` | 拉取远端更新，以 fast-forward 同步本地 doc-hub、agent-hub 和 sand-ai 下各 Git 仓库的 `main`。 |
 | `/hub get` | 异步受理当前信号的经验提取，立即返回任务回执，由后台判断沉淀价值与唯一 owner，并独立回报结果。 |
@@ -100,7 +103,7 @@
 - 文档工作区 helper：运行时高频项目背景、边界和事实源。
 - 文档工作区报告：产物、完整论证、审查记录和历史证据；写入和点名查找，不默认加载。
 - `Documents/temp/`：当前任务有用但不值得长期保留的临时证据、外部组件迁移账本、缓存路径和过度产物；不默认加载，不当事实源。
-- 具体项目路径、仓库名、业务约束、SPEC/STDD 状态、helper、报告和路由映射不属于 Hub 内容；如需长期保留，放入文档工作区对应项目或项目自身规则文件。
+- 具体项目路径、仓库名、业务约束、SPEC/STDD 状态、helper、验收、运行/回测记录、报告和路由映射不属于 Hub 内容；需长期保留时统一写入文档工作区对应项目。业务代码仓库的既有文档仅在明确任务要求时读取或修改，不作为我们新建记录的默认或备选 owner。
 
 入口文件、工具适配文件和高频 Skill 都应短小、索引化、可快速扫描。为了“更完整”而增加内容量，默认不通过；优先合并、删除、下沉或重命名旧内容。
 
@@ -110,17 +113,20 @@
 - 修改既有实现前，先冻结必须保留的现有效果与本次必须达成的目标；方案应显式权衡并同时守住两者，默认选择能闭环的最小高价值 diff，保持领域 owner、依赖方向和架构边界清晰，并分别验证目标达成与既有效果未回退。
 - 用户说 `fix`、`fix <问题>` 或明确要求修复某个问题时，视为授权在指定范围内连续完成 `复现 -> 定位 -> 交叉验证与正/逆向推理 -> 根因 -> 方案 -> 最小修复 -> 原始路径与回归验证`；根因必须能解释症状及其边界，证据不足时不得编造或先改症状，详细见 `skills/Core/task-execution-lifecycle/references/root-cause-fix-patterns.md`。
 - `fix` 默认授权诊断和执行修复，但不自动授权 commit、push、PR 或 merge；需要完整 PR 收尾时使用 `coding` 或另行明确授权。
+- `/hub issue <编号>` 保留编号文本及前导零，从当前项目 helper 登记的唯一问题源做整值精确匹配；问题记录只作为入口线索，必须沿页面、Thread、Run、Task、Tool Call、日志、持久化或外部系统事实确认现场和根因。命令授权只读取证、归档现场，以及无需新增权限、低风险且可回滚的止损；任何永久修复必须先提交包含影响、验证和回滚的方案并取得明确审批。详细流程见 `skills/Core/task-execution-lifecycle/references/issue-response.md`。
 - `/hub record` 只把有可追踪证据的已发生观察按稳定证据去重写入项目唯一观察账本；不创建或更新 IDEA、SPEC、STDD，不修改业务仓库或授权实施。项目不唯一时只问一个最小问题；回复给出路径、Record ID、定性和后续动作。完整流程见 `spec-lifecycle`。
+- `/hub promote <Record ID>` 按稳定 ID 从项目唯一观察账本读取完整记录，把事实、判断、开放问题、关联与下一动作转入当前会话正在处理的唯一 owner；目标 owner 确认完整承接后删除原记录，禁止只复制摘要、保留双份 owner 或先删后转。当前会话已有 SPEC、IDEA、STDD 或其它持久文档 owner 时写入该 owner；没有持久 owner 时在当前会话明确回显完整记录并继续处理。提档只转移上下文与 owner，不扩大当前命令的实现、Git、服务或外部写入权限。完整流程见 `spec-lifecycle`。
 - `/hub spec-idea` 只登记具备升级资格的 IDEA，不分配 SPECID、不进入正式状态、不创建 STDD 或修改业务仓库；回复给出路径、升级资格和开放问题。内容门禁见 `requirements-brief`，状态与路径见 `spec-lifecycle`。
 - `/hub spec` 只建设 `draft -> init -> update -> plan` 的正式需求契约；IDEA 升级时重写唯一 owner，不创建 STDD、不进入实现或修改业务仓库。回复给出路径、阶段、评审结论和开放问题；内容评审见 `requirements-brief`，生命周期见 `spec-lifecycle`。
-- `/hub spec-exec` 只执行 plan SPEC 或恢复 execing 包；首次实现性修改前创建或恢复执行包，完成隔离实施、回测和修复闭环后仍保持 `execing`。`/hub spec-smoke` 只提档已闭环的 execing SPEC，并在主工作空间形成 fresh 最终链路及适用 UI/交互证据；成功终态还必须确认无隔离空间独有内容，安全移除该 SPEC 已分配的隔离空间，并保留已有 work branch/ref 与恢复指纹；按项目规则未分配隔离空间时记录已核验的 N/A。二者均不授权 commit、push、PR 或 merge；详细边界按 `spec-lifecycle` 路由到执行 reference。
-- 用户说 `/hub save` 时，按 `skills/Core/task-execution-lifecycle/references/workspace-save.md` 快速完成“保护现场 -> 登记进度与待办 -> 停止归属明确的本地服务 -> 整理推送计划”。save 启动后持续优先，后续消息默认作为现场登记、待办或确认单修正继续纳入；只有用户明确要求暂停、停止或取消 save 才中断。每个有未合入内容的隔离空间都要按状态选择远端保存或明确 Cleanup；`doc-hub` 只使用主工作目录和短生命周期 work branch，不新建 linked worktree，发现历史 linked worktree 时先建立远端恢复入口再安全收拢；`agent-hub` 只在 canonical 主工作目录的 `main` 维护，不创建 PR/work branch。`doc-hub` MR 与 `agent-hub` canonical main 直接保存由 `/hub save` 本身授权，无需进入用户确认单；其它仓库的远端写入与 Cleanup 仍须先用表格统一确认。用户修正时重发表格确认单；结果使用同形表格回报。
+- `/hub spec-exec` 只执行 plan SPEC 或恢复 execing 包；首次实现性修改前创建或恢复执行包，默认把业务代码放在隔离工作空间的隔离分支上，并只用登记的隔离端口做局部功能验证与修复，结束时仍保持 `execing`。`/hub spec-smoke` 只提档已闭环的 execing SPEC：冻结源现场，把同一隔离分支及其完整变更安全交接到项目主工作空间，以该项目登记的主端口做相对完整的功能验收与修复；同一分支不能同时被两个 Git worktree checkout 时，必须先完成可恢复的分支占用交接，不得复制出第二条 smoke 分支。成功终态还必须确认无隔离工作空间独有内容，安全移除该 SPEC 已分配的隔离工作空间，并保留隔离分支/ref 与恢复指纹；按项目规则未分配隔离空间时记录已核验的 N/A。二者均不授权 commit、push、PR 或 merge；详细边界按 `spec-lifecycle` 路由到执行 reference。
+- 用户说 `/hub save` 时，按 `skills/Core/task-execution-lifecycle/references/workspace-save.md` 快速完成“保护现场 -> 写唯一 checkpoint -> 停止归属明确的本地服务 -> 整理推送计划 -> 保存并回写实际结果”。save 启动后持续优先，后续消息默认纳入同一 checkpoint；只有用户明确要求暂停、停止或取消 save 才中断。每个有未合入内容的隔离空间都要按状态选择远端保存或明确 Cleanup；`doc-hub` 只使用主工作目录和短生命周期 work branch，不新建 linked worktree，发现历史 linked worktree 时先建立远端恢复入口再安全收拢；`agent-hub` 只在 canonical 主工作目录的 `main` 维护，不创建 PR/work branch。`doc-hub` MR 与 `agent-hub` canonical main 直接保存由 `/hub save` 本身授权，无需进入用户确认单；其它仓库的远端写入与 Cleanup 仍须先用表格统一确认。用户修正时重发表格确认单；结果使用同形表格回报。
+- 用户说 `/hub resume` 时，按同一 reference 读取 `/Users/shatang/Documents/temp/workspace-checkpoint.md`，以 checkpoint 记录的仓库为边界，刷新本地分支、当前账号所建 open PR 的 head 分支及其 baseline；只允许 fetch 与可证明安全的 fast-forward，不 rebase、merge、force、清理或改业务内容。随后为每个 PR head 创建一个新会话，回放该分支的保存时进度与 fresh Git 状态后明确保持暂停，等待用户继续指令；仅在同一次 resume 的部分重试中复用带相同 checkpoint/PR 标识的恢复会话。resume 不授权实现、测试、服务启动、commit、push、PR 更新或 merge。
 - 用户说 `/hub refactor` 时，视为授权审查并直接调整当前改动：核对 staged、unstaged、untracked 及必要的 work branch 相对 target 差异，判断是否保持最小改动、领域 owner 与依赖方向清晰、架构整洁；删除或修正本任务内不合理、多余、临时或越界改动，保留用户已有无关改动，再做最窄有效验证和 diff 检查。该命令不授权暂存、提交、push、PR 或 merge。
 - 用户说“OK”“do it”“没问题”等确认时，默认进入执行模式；除非存在高风险歧义，不停留在方案描述。
 - 用户要求“只涉及”某范围时，最终检查变更清单；验证若只读越界内容，需要说明。
 - 用户偏好中文协作语境；方案、总结和长期文档默认中文，代码标识、命令、路径和接口名保留原文。
 - 用户要求本地调试时，优先给可直接运行的 Markdown shell block，写明 `cd` 路径、必要环境变量、窄范围测试和全量验证命令。
-- 用户明确处于热部署、已有本地服务、页面已打开、或要求“改代码就完了”，本身不构成启动、重启、替换、kill 或抢占服务/端口的授权。`/hub spec-smoke` 是明确例外：完整重放后，允许成组停止已记录或核验为当前主工作空间专属、与受测应用对应且可恢复的本地 Docker 服务，在主工作空间完成回测，再按 smoke 结果异步更新或恢复这些服务，无需重复提问；不得停止依赖、无关、共享、生产、外部或归属不明的容器，也不得停止 Docker daemon。用户明确禁止服务动作、目标不归当前执行面或没有可恢复方案时，仍须停在最小授权或恢复决策点。除该例外外，其它服务启停、替换或端口抢占仍需用户明确允许。
+- 用户明确处于热部署、已有本地服务、页面已打开、或要求“改代码就完了”，本身不构成启动、重启、替换、kill 或抢占服务/端口的授权。`/hub spec-smoke` 是明确例外：分支与完整变更交接后，允许成组停止已记录或核验为当前主工作空间专属、与受测应用对应且可恢复的本地 Docker 服务，占用项目登记的主端口完成验收；通过后只能使用文档工作区登记的项目固定脚本/命令，从冻结输入更新或恢复这些服务，无需重复提问。不得使用一次性部署脚本，不得停止依赖、无关、共享、生产、外部或归属不明的容器，也不得停止 Docker daemon。用户明确禁止服务动作、固定入口不存在或不适用、目标不归当前执行面或没有可恢复方案时，仍须停在最小授权或恢复决策点。除该例外外，其它服务启停、替换或端口抢占仍需用户明确允许。
 - 用户主线任务包含架构调整、链路清理、数据治理或多事项推进时，测试补齐、验证矩阵、边界 case 扩写这类不阻塞下一步实现的支线默认交给异步/后台 agent；主 Agent 不在每个测试文件写完前卡住用户主线。后台 agent 只负责明确测试范围，不启动服务、不抢端口、不改生产实现。
 - 用户要求“给我文件内容”“最终文案”“完整 prompt”“新窗口测试文案”等可复制正文时，核心交付先给完整正文，不让用户拆段拼装。
 - 用户中断、连续催促或新消息覆盖旧请求时，进入快速收敛模式：先确认当前状态，只做最新请求需要的最小动作。
@@ -190,14 +196,14 @@
 ## Review, Git, Verification
 
 - `/hub refactor` 按代码与架构审查姿态处理当前改动，但发现不合理、多余、临时或越界内容后直接在本任务范围内调整，而不是只报告问题；调整后重新检查 diff 边界、影响面、领域 owner、依赖方向和验证证据。
-- 用户说 `pr` 时，视为纯 Git/PR 收尾指令：先按具体项目、当前 work branch、已有 PR base 和项目分支约定确定唯一 target，不固定为 `main`；保护无关本地改动，fetch/rebase 最新 target，保存当前任务代码，将提交图收敛为相对 target `behind 0 / ahead 1`，只 push work branch 并创建或更新以该 target 为 base 的 PR。该指令不运行测试、typecheck、build、smoke、UI 审核或代码/功能验收，不借收尾修改产品内容；只如实引用前序流程已有证据并披露缺失或失效项。target、任务边界或安全改写权限无法唯一确定时停止，不得猜测。Agent Hub 自维护除外：只在 canonical `main` 直接形成任务提交，并且只有 `/hub save` 已确认或用户另行明确授权时才 push。
+- 用户说 `pr` 时，视为 Git/PR 收尾指令：先按具体项目、当前 work branch、已有 PR base 和项目分支约定确定唯一 target，不固定为 `main`；保护无关本地改动，fetch/rebase 最新 target，随后对 final diff 完成代码/架构审查，审查通过后才能将提交图收敛为相对 target `behind 0 / ahead 1`、push work branch 并创建或更新以该 target 为 base 的 PR。该指令不运行测试、typecheck、build、smoke、UI 或功能验收，也不借收尾修复审查问题；只如实引用前序验证证据并披露缺失或失效项。target、任务边界、安全改写权限或审查结论无法确定时停止，不得猜测。Agent Hub 自维护除外：只在 canonical `main` 直接形成任务提交，并且只有 `/hub save` 已确认或用户另行明确授权时才 push。
 - `/hub pr` 处理正式 SPEC 时，只读取并随 PR 记录已有 STDD、Bug Pool 与 fresh smoke evidence，不重新制造验证证据，也不承接最终验收；证据缺失或内容在收尾中发生实质变化时必须如实标为未验证或已失效，由 `/hub spec-smoke` 承接后续修复与重新验收。
-- 用户说 `coding` 或 `coding <任务>` 时，视为授权在目标项目内执行 `git update -> 最小实现 -> 严格验证 -> PR 收尾`：实现必须保持最小 coherent diff、领域边界和架构整洁；测试同时使用项目内质量契约和可用的本地 `quality-orchestrator`，详细流程见 `task-execution-lifecycle` 的 Git/cleanup reference。
+- 用户说 `coding` 或 `coding <任务>` 时，视为授权在目标项目内执行 `git update -> 最小实现 -> 严格验证 -> final git update -> 完整代码/架构审查 -> PR 收尾`：实现必须保持最小 coherent diff、领域边界和架构整洁；测试同时使用项目内质量契约和可用的本地 `quality-orchestrator`，详细流程见 `task-execution-lifecycle` 的 Git/cleanup reference。
 - `coding` 默认授权创建或更新 work branch、单个任务提交和 PR，不单独授权实际 merge。PR 建立后等待审批；只有用户已明确授权合入，或仓库已有明确且适用的 auto-merge 规则时，才可在 required checks / approvals 全部满足后完成 merge。
-- `coding`、`/hub refactor`、代码/架构审查或 `/hub spec-smoke` 必须在进入 PR 收尾前形成影响面、架构和验证结论；`pr` 只消费这些前序证据，不重新执行审查或验证。
+- `coding`、`/hub refactor` 或 `/hub spec-smoke` 在进入 PR 收尾前形成的验证证据由 `pr` 如实消费；PR 对应分支的最终代码/架构审查必须发生在 fresh `git update` 之后，且审查完成前不得提交、push、创建/更新 PR、merge、release 或进入其它后续动作。审查后 tracked tree、base 或完整 diff 实质变化时，重新执行 update 与审查。
 - 合入目标分支必须通过 PR，work branch 先基于最新 target rebase；默认使用 rebase merge，需要让目标分支只新增一个提交时使用 squash merge，均不得引入 merge commit。不得把无意义提交、临时修复或流程副作用落到目标分支，目标分支必须始终保持可构建、可测试、可发布。Agent Hub 自维护按 canonical `main` 单分支例外执行，不创建 PR。
 - 大改动必须拆成解耦、独立、可验证的小改动，尽早且频繁合入目标分支；每次合入前都要同步最新 target、解决冲突并完成验证，避免长期维护大型功能分支。
-- 准备提交、暂存、amend、PR、合并或“只提交本次改动”前，必须做完整 diff 审查；无关用户改动保持原样。
+- 准备提交、暂存、amend、PR、合并或“只提交本次改动”前，必须在 PR 对应分支完成 fresh `git update`，再做完整 diff 审查；审查完成前保持后续动作阻塞，无关用户改动保持原样。
 - 用户单独说 `git update` 时，表示把当前分支 rebase 到最新目标分支，默认基线是 `origin/main` 或 `main`；作为 `coding` 或 `pr` 的内部步骤时，必须使用该项目与 work branch 已冻结的 target，不继承 `main` 默认值。执行前先检查当前分支、目标分支和 dirty worktree，保护用户本地改动。
 - 用户说 `code-update` 时，表示批量同步本地 doc-hub、agent-hub 和 sand-ai 目录下各 Git 仓库的 `main`：逐仓确认 remote、分支、worktree 和 ahead/behind，fetch 后只做 fast-forward；不切换或改写当前工作分支，不自动 stash、reset、rebase，不因单仓失败跳过结果汇报。详细流程见 `task-execution-lifecycle` 的 Git/cleanup reference。
 - 实际 push 只作为 `coding`、`pr`、用户已确认的 `/hub save` 或另行明确授权的内部步骤；merge 仅由用户已确认的 `/hub save` MR、另行明确授权或适用的 auto-merge 规则授权。不得把已废弃的独立 `/hub push`、`/hub git merge` 当作授权，且除已确认的 Agent Hub 单分支保存外不得直接 push target/main。

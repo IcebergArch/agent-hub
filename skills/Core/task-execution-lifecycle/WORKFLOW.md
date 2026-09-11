@@ -1,6 +1,6 @@
 ---
 name: task-execution-lifecycle
-description: 当用户发布实现、重构、UI、架构、协议、数据、工具链或跨模块任务，或进入验证、收口、PR、保存阶段时使用；负责路由下一步执行流程。
+description: 当用户发布实现、重构、UI、架构、协议、数据、工具链或跨模块任务，或进入验证、收口、PR、保存、恢复阶段时使用；负责路由下一步执行流程。
 ---
 
 # Purpose
@@ -10,7 +10,7 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 # When to Use
 
 - 非机械实现、重构、UI、架构、协议、数据或工具链任务。
-- 用户说开始做、继续、do it、`coding`、`fix`、`/hub refactor`、`/hub spec-exec`、`/hub spec-smoke`、`/hub pr`、`/hub save` 或按计划执行。
+- 用户说开始做、继续、do it、`coding`、`fix`、`/hub issue <编号>`、`/hub refactor`、`/hub spec-exec`、`/hub spec-smoke`、`/hub pr`、`/hub save`、`/hub resume` 或按计划执行。
 - 任务进入验证、收口、提交、PR 或交付前。
 
 # When NOT to Use
@@ -63,7 +63,8 @@ description: 当用户发布实现、重构、UI、架构、协议、数据、�
 | --- | --- |
 | `/hub spec-exec` 或 `/hub spec-smoke` | `references/spec-execution-and-smoke.md` |
 | `coding`、`/hub refactor`、`/hub pr` 或 Git/PR 收口 | `references/review-git-and-cleanup-gates.md` |
-| `/hub save` | `references/workspace-save.md`；确认后涉及 Git/PR 时再读 review/git reference |
+| `/hub save` 或 `/hub resume` | `references/workspace-save.md`；save 确认后涉及 Git/PR 时再读 review/git reference |
+| `/hub issue <编号>` | `references/issue-response.md`；根因定位同时读取 root-cause reference，真实产品链路按项目规则读取 case reference |
 | `fix` 或根因未明的故障 | `references/root-cause-fix-patterns.md` |
 | 页面、Chat/MCP、附件、文件或素材 Run Case | `references/case-execution-recovery.md` |
 | 长任务、高模糊设计、历史冲突或需要 checkpoint | `references/execution-control-patterns.md` |

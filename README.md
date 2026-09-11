@@ -11,7 +11,7 @@ Codex 插件入口为 `agent-hub`，唯一用户入口为 `/hub`。用户用 `/h
 3. **分层承载**：通用约束放入口和 Skill，工具差异放 `agents/`，项目 helper 与报告放文档工作区，具体路径由工作区 `README.md` 说明。
 4. **按需加载**：默认只读必要入口；Skill、reference 和项目 helper 由任务类型、风险信号或用户要求触发。
 5. **主动升级**：当任务暴露跨场景不变量、规则失效、owner 混淆、验证缺口或用户不应反复重述的稳定要求时，按 `skills/Knowledge/knowledge-evolution/WORKFLOW.md` 判断是否沉淀。
-6. **项目隔离**：Hub 只保留跨项目可复用的泛化规则、workflow 和工具适配；具体项目路径、仓库约束、业务事实、SPEC/STDD、helper、报告和路由映射只写入文档工作区或项目自身。
+6. **项目隔离**：Hub 只保留跨项目可复用的泛化规则、workflow 和工具适配；我们新建的 SPEC/STDD、验收、运行/回测记录、helper 和报告等长期协作资产统一由下方文档工作区承载，不写入业务代码仓库。
 
 ## Routing
 
