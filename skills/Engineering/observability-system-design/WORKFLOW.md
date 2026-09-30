@@ -32,6 +32,7 @@ description: 当用户设计或评审长期运行系统的监控、可观测性�
 
 - 系统建设第一：先定义必须感知和恢复的系统结果，再决定指标、策略、组件和供应方。
 - 分离 `Fact -> Observation -> Policy -> Incident -> Action -> Verification`：生产者只上报可证明的原子事实；时间窗口、基线、阈值、异常、健康度和告警由策略层动态推导，不回写成第二事实源。
+- 供应方或基础设施的原始 error/status 指标只是 Fact，不自动等于业务失败或 Incident。错误分类必须结合操作契约与上下文；比率必须保留 numerator、denominator、窗口和样本充足性，低流量或窗口刚切换时允许 `insufficient_data`，不能用失真的百分比覆盖用户结果。
 - 监控是拓扑、生命周期、因果和恢复状态的联合模型，不用指标数量代表完备度。
 - 显式覆盖“没有发生”：无数据、未启动、未结束、卡住、乱序、恢复未完成和观测链路自身失效都要有判定语义。
 - 事件围绕影响和因果聚合：保留根事件、父子关联、领域与节点顺序、阶段、策略证据和恢复进度；单个症状不是默认告警主干。
@@ -47,7 +48,7 @@ description: 当用户设计或评审长期运行系统的监控、可观测性�
 3. **Model**：建立系统观测画像，至少表达实体与父子/依赖关系、系统领域、节点顺序、生命周期阶段、终态、超时和 correlation keys。
 4. **Facts**：定义事实目录和最小公共 envelope；区分状态事实、事件事实和度量事实，明确时间、来源、身份、因果、结果与数据质量，不在 producer 中固化告警结论。
 5. **Coverage**：按关键旅程 × 拓扑节点 × 生命周期阶段 × 失败模式建立覆盖矩阵；同时检查显式失败、缺失/卡住、乱序/冲突、退化/饱和、重试耗尽、恢复失败和 telemetry failure。
-6. **Observe And Decide**：由事实生成可重算的 observation，再用阶段、窗口、基线/SLO、阈值、异常、no-data 和抑制条件形成 policy；阈值必须披露来源与适用范围。
+6. **Observe And Decide**：由事实生成可重算的 observation，再用阶段、窗口、基线/SLO、阈值、异常、no-data、样本充足性和抑制条件形成 policy；错误率同时保留错误分类、分子、分母和用户结果关联，阈值必须披露来源与适用范围。
 7. **Aggregate Incidents**：围绕一次系统影响或根执行聚合症状，输出事件主干、父子树、领域与节点顺序、命中阶段、策略证据、影响、当前诊断和恢复状态；定义去重、合并、抑制、路由、升级与恢复通知。
 8. **Repair Loop**：为高价值事件闭合 `detect -> diagnose -> select -> authorize -> execute -> verify -> rollback/escalate`；按观察、建议、审批执行、有界自愈分级推进，不跨过安全门禁追求自动化率。
 9. **Deliver Vertically**：先选择当前系统最关键的一条用户旅程，贯通事实、观察、策略、事件、通知、修复和验证，再按覆盖缺口扩展；不先建设脱离真实消费方的通用平台或组件全集。
@@ -57,6 +58,7 @@ description: 当用户设计或评审长期运行系统的监控、可观测性�
 
 - 方案是否从系统结果和恢复目标出发，而不是从指标或组件数量出发。
 - 事实、观察、策略、事件、动作和验证是否 owner 清楚、可追溯且没有双事实源。
+- 原始 error/status 是否仍作为可回放事实保留，业务失败判断是否有上下文分类、样本量和用户结果支撑；低流量是否不会被单个样本放大成高置信 Incident。
 - 主子关系、领域、节点顺序、阶段、无数据和恢复状态是否可表达。
 - 已有能力是否经过真实盘点和适配性验证；自建项是否有缺口证据、真实 consumer、owner、触发条件和退出/回滚方案。
 - 告警是否按因果和影响聚合，并披露策略证据，而不是重复通知每个症状。
@@ -74,3 +76,5 @@ description: 当用户设计或评审长期运行系统的监控、可观测性�
 # References
 
 - `references/system-method.md`
+- [OpenTelemetry — Recording errors](https://opentelemetry.io/docs/specs/semconv/general/recording-errors/)（错误分类依赖操作上下文，handled error 不应写成操作失败；访问 2026-09-20）
+- [Google SRE Workbook — Alerting on SLOs](https://sre.google/workbook/alerting-on-slos/)（面向用户结果的 SLI、低流量比率失真与多窗口告警取舍；访问 2026-09-20）

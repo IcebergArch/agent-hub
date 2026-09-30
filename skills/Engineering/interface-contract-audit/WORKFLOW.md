@@ -34,6 +34,7 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 - UI/管理面预检不是执行授权；动态能力、权限、资源 owner 和 provider 支持必须在真实执行或副作用边界重新核对，TOCTOU 不一致时安全拒绝或显式降级。
 - Durable 副作用若依赖会变化的配置、目录或显示名，必须在第一次副作用前解析并持久化 versioned canonical intent/payload 与幂等身份；同一逻辑操作重试复用已冻结语义，不重新读取最新状态后静默改变目标。确需采用最新状态时，必须新建 revision/intent 并重新验证。
 - 持久化 workflow 要区分 `scheduled/eligible`、durable authorization 与 `executing/terminal`：时钟、队列消息或页面预检只能改变可运行性，不得产生新授权或绕过执行时复核。状态面只投影 canonical lifecycle owner，scheduler ledger 只记幂等、租约和补偿回执，不成为第二事实源。用户已对明确范围作出可持久预授权时，到期可无互动执行，但必须复用冻结的 intent 并确认权限、能力和影响边界仍有效。
+- 当 transport/ingress 连接、执行 placement/readiness、已接纳工作的目标快照和结果 delivery 可以独立变化时，必须分别建模并从各自 canonical owner 投影；切换未来执行目标不能覆盖入口连接事实、改写已接纳工作的冻结目标或要求执行器接管原通道投递。只有部署上已证明这些生命周期不可分且由同一 owner 原子管理时，才允许合并为一个状态。
 - 写读分离或异步投影下先将读取分为 `canonical result / strong control read / stale-tolerant query`；当 mutation 契约承诺资源状态时，成功回执优先来自事务结果或写 owner 的 authoritative read，不用可能落后的副本重读“证明”写入。授权、CAS、幂等恢复和模糊提交核对属于 strong control read；只有明确容忍陈旧的查询才可使用 replica/cache/projection。异步命令可返回 durable accepted receipt 而非资源快照，但不得把投影可见冒充成功终态。
 - 当同一资源可被多请求、多进程、多实例或多 storage adapter 并发修改时，丢失更新保护必须闭合在 owning store：使用事务、version/CAS 或等价条件写，不用单进程 mutex 伪装全局原子性。只有单进程本身是明确且可验证的部署不变量时，in-process lock 才可独立成立。
 
@@ -59,6 +60,7 @@ description: 当任务涉及新增、删除、改名或暴露 API、Gateway、ro
 - 名称解析是否不会越过 provider adapter、认证 scope 和完整性门禁，歧义/截断时不会产生错误身份或副作用。
 - preflight 与 execute 之间能力或权限变化时是否有安全结果；重试是否复用同一 canonical intent，而不是重新解析成另一目标。
 - missed/duplicate/concurrent trigger、重启与租约回收是否不会扩张授权、重复副作用或把 scheduler ledger 变成状态事实源。
+- 入口连接、执行 readiness/placement、已接纳目标和结果投递若可独立变化，是否分别有 owner、状态与交叉组合验收；页面聚合是否没有用目标离线覆盖真实连接，或用连接正常冒充任务可执行/已投递。
 - 强制复制落后和模糊提交时，mutation 是否仍返回 canonical 结果或可幂等恢复，且陈旧投影不会把已提交成功改写为业务失败。
 - 并发更新是否由 owning store 的 transaction/version/CAS 防止 lost update；若只用进程内锁，是否有单实例不变量与部署验证。
 

@@ -52,6 +52,24 @@ init 先回答“参考方案中什么机制值得采用”，不按品牌、产
 
 不保留每次都要扫描的静态“默认来源表”。确需外部证据时，先按具体设计问题和风险选择来源类型，再由 `source-grounded-research` 核对当前权威原文、版本和日期；来源只用于提取机制与反例，不能替代本地事实或自动生成约束。
 
+## 自适应策略与默认值实验门禁
+
+当方案用阈值、摘要/裁剪、预测、缓存、重试、降级或其它自适应策略控制质量、容量、延迟或成本时，实验必须先区分“机制在受控压力下有效”和“适合作为平台默认值”。局部窗口的峰值或费用下降只能证明对应机制；默认值还要用代表性真实 workload 或可追踪事件流回放，比较完整生命周期的质量、总成本、请求数、延迟、恢复工作和失败风险，不能用单个 proxy 或一次合成压力外推整体收益。
+
+- 冻结 control、策略版本、触发输入与完成口径；同时记录实际策略链、唯一触发原因、触发前后规模和未触发反例，避免只看结果猜机制。
+- 区分硬安全护栏、可调优化策略与业务特定参数。来自公开协议、模型窗口或已验证容量上限的硬边界可以不做默认值 A/B，但仍需边界和失败测试；优化默认值必须有回退档位、灰度/对照和退出条件。
+- 质量验证使用任务级和字段级不变量，至少覆盖 required recall、过期状态拒绝、取消/失败内容污染和 unsupported inference；关键字段失败不能被总分平均掉。
+- 取消、尾缀、输入不一致、旧版本混跑或证据来源不明的样本必须标记为 contaminated，只能用于诊断，不得进入严格效果结论。持久化压缩、摘要或状态替换应绑定已提交的稳定边界，取消不能静默激活新的 canonical 状态。
+- 当代表性回放显示局部收益被全链路摘要、缓存失效、额外模型调用或恢复调用抵消时，保留机制为候选/护栏并继续实验，不升级为默认策略。
+
+## 长周期 Agent 状态与模型视图门禁
+
+当 Agent 跨越多个上下文窗口、会话阶段或委派任务时，必须分开设计稳定身份、canonical 历史/状态、当前模型可见工作集、派生记忆与子任务上下文：模型窗口是有界投影，不是 Thread、任务或业务世界本身。压缩、摘要和检索应保留来源、时间与范围，只有在稳定提交边界后才能替换当前投影；召回内容进入当前决策前重新验证时效、scope 和替代关系。子 Agent 或后台任务只回传有界结论、证据和 artifact，不把完整探索历史注入主 Agent。短生命周期且输入始终能在预算内完整重建的任务可以不持久化派生记忆；层级/向量索引也不是默认前提，先用最简单的可追踪结构验证 required recall、过期拒绝、取消污染、延迟、容量与全生命周期成本，只有量化瓶颈成立才升级结构。
+
+## 在线服务发布生命周期门禁
+
+设计长期运行服务、Worker 或流式连接的发布与退出时，分别冻结启动就绪、停止接纳、在途排空、已接纳工作交接、结果投递和依赖关闭的 owner 与完成信号；编排层的 `Running/Ready/Terminating` 不能替代业务任务终态。关闭预算必须从外层总 deadline 向内分配，覆盖摘流传播、应用 drain、SDK/Worker 停止、资源关闭和安全余量，并保持完成在途工作所需依赖直到对应阶段结束。无长连接、后台工作、durable 副作用或跨进程交接的纯无状态同步服务，可以在证明生命周期不可分后简化；验收仍需把受控滚动、强制终止和非受控故障分开，不用前者冒充后两者。
+
 ## 建设与验收循环
 
 1. **Build Draft**：登记必须保留的不变量、背景、目标、核心问题、非目标、事实源和仍属假设的内容；draft 不写专家意见或具体方案。
@@ -118,3 +136,11 @@ SPEC 正文结构由 Hub README 登记的文档工作区唯一拥有，本 refer
 ## 沉淀交接
 
 plan 定稿只登记 0-3 条设计沉淀候选；写清机制、边界和证据，没有则记 `None`，不在单次 SPEC 中扩写 Hub 或阻塞 plan。后续合并、筛选和更新由 `knowledge-evolution` 唯一负责。
+
+## References
+
+- [Anthropic Context Editing](https://platform.claude.com/docs/en/build-with-claude/context-editing)（上下文清理的 trigger/keep/clear-at-least、缓存失效权衡与 applied edits 观测；访问 2026-09-12）
+- [LangChain Deep Agents Context Engineering](https://docs.langchain.com/oss/python/deepagents/context-engineering)（工具结果外置、摘要与 canonical 历史保留；访问 2026-09-12）
+- [Anthropic — Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)（有限模型上下文、压缩、结构化外部记录与子 Agent 上下文隔离；访问 2026-09-20）
+- [Kubernetes — Liveness, Readiness, and Startup Probes](https://kubernetes.io/docs/concepts/workloads/pods/probes/)（启动、存活、接流量与终止摘流语义；访问 2026-09-20）
+- [Kubernetes — Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/)（`preStop`、TERM、EndpointSlice 摘流与总宽限期；访问 2026-09-20）
